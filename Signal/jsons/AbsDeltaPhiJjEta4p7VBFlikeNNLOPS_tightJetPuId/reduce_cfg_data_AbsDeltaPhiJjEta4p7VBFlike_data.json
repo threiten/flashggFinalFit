@@ -1,0 +1,16 @@
+{
+"variables": [
+             ["", "recoAbsDeltaPhiJjEta4p7VBFlike", [],  [-1000.0,0.0,0.9,1.8,3.15]]
+],
+
+"cut": "(leadmva > 0.23 && subleadmva > 0.23)",
+"procs": ["Data_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho", "processIndex", "CMS_hgg_mass"]
+
+
+}

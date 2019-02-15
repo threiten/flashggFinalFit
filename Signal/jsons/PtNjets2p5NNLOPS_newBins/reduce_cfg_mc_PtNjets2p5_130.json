@@ -1,0 +1,18 @@
+{
+"variables": [
+	     ["genPtNjets2p5", "recoPtNjets2p5", [0.0,20.0,60.0,13000.0,13060.0,13120.0,26000.0,26150.0,26300.0,39000.0], [0.0,20.0,60.0,13000.0,13060.0,13120.0,26000.0,26150.0,26300.0,39000.0]] ],
+
+"cut": "(leadmva > 0.23 && subleadmva > 0.23)*(NNLOPSweight)",
+
+"procs": ["InsideAcceptance_130_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho"]
+
+
+}

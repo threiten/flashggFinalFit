@@ -1,0 +1,18 @@
+{
+"variables": [
+	     ["genJet4p7AbsRapidity1", "recoJet4p7AbsRapidity1", [-1000.0,0.0,1.2,2.5,100.0], [-1000.0,0.0,1.2,2.5,100.0]] ],
+
+"cut": "(leadmva > 0.23 && subleadmva > 0.23)*(NNLOPSweight)",
+
+"procs": ["InsideAcceptance_120_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho"]
+
+
+}

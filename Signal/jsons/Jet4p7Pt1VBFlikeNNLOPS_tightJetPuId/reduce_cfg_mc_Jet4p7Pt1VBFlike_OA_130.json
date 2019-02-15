@@ -1,0 +1,18 @@
+{
+"variables": [
+             ["", "recoJet4p7Pt1VBFlike", [], [-1000.0,0.0,45.0,90.0,13000.0]]
+],
+
+"cut": "(leadmva > 0.23 && subleadmva >0.23)*(NNLOPSweight)",
+"procs": ["OutsideAcceptance_130_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho", "processIndex"]
+
+
+}

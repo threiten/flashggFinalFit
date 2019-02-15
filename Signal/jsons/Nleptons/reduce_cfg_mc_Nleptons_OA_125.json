@@ -1,0 +1,18 @@
+{
+"variables": [
+             ["", "recoNleptons", [], [-0.5,0.5,1.5,100.0]]
+],
+
+"cut": "(leadmva > 0.23 && subleadmva >0.23)",
+"procs": ["OutsideAcceptance_125_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho", "processIndex"]
+
+
+}

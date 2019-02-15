@@ -1,0 +1,16 @@
+{
+"variables": [
+             ["","recoAbsRapidity", [], [0.0,0.15,0.30,0.60,0.90,3.00]]
+],
+
+"cut": "(leadmva > 0.23 && subleadmva > 0.23)",
+"procs": ["Data_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho", "processIndex", "CMS_hgg_mass"]
+
+
+}

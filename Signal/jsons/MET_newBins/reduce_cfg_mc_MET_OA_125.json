@@ -1,0 +1,18 @@
+{
+"variables": [
+             ["", "recoMET", [], [-0.5,50.0,130.0,13000.0]]
+],
+
+"cut": "(leadmva > 0.23 && subleadmva >0.23)",
+"procs": ["OutsideAcceptance_125_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho", "processIndex"]
+
+
+}

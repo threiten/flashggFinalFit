@@ -1,0 +1,18 @@
+{
+"variables": [
+             ["", "recoAbsRapidity", [],  [0.0,0.15,0.30,0.60,0.90,1.20,3.00]]
+],
+
+"cut": "(leadmva > 0.23 && subleadmva >0.23)*(NNLOPSweight)",
+"procs": ["OutsideAcceptance_130_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho", "processIndex"]
+
+
+}

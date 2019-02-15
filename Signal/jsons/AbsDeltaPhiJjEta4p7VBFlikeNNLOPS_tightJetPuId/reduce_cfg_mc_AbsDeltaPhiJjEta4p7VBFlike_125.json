@@ -1,0 +1,18 @@
+{
+"variables": [
+	     ["genAbsDeltaPhiJjEta4p7VBFlike", "recoAbsDeltaPhiJjEta4p7VBFlike", [-1000.0,0.0,0.9,1.8,3.15], [-1000.0,0.0,0.9,1.8,3.15]] ],
+
+"cut": "(leadmva > 0.23 && subleadmva > 0.23)*(NNLOPSweight)",
+
+"procs": ["InsideAcceptance_125_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho"]
+
+
+}

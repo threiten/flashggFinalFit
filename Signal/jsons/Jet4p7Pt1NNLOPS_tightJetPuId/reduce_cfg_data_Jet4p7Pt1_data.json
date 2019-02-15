@@ -1,0 +1,16 @@
+{
+"variables": [
+             ["", "recoJet4p7Pt1", [], [-1000.0,0.0,45.0,90.0,13000.0]]
+],
+
+"cut": "(leadmva > 0.23 && subleadmva > 0.23)",
+"procs": ["Data_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho", "processIndex", "CMS_hgg_mass"]
+
+
+}

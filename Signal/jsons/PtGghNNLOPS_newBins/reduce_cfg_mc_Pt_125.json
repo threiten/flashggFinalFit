@@ -1,0 +1,18 @@
+{
+"variables": [
+	     ["genPt", "recoPt", [0.0,15.0,30.0,45.0,80.0,120.0,200.0,350.0,600.0,10000.0], [0.0,15.0,30.0,45.0,80.0,120.0,200.0,350.0,600.0,10000.0]] ],
+
+"cut": "(leadmva > 0.23 && subleadmva > 0.23)*(NNLOPSweight)",
+
+"procs": ["gghInsideAcceptance_125_13TeV"],
+
+"cats": ["SigmaMpTTag_0",
+       "SigmaMpTTag_1", 
+       "SigmaMpTTag_2"],
+
+"systlabels": ["SigmaEOverEShiftDown01sigma", "SigmaEOverEShiftUp01sigma"],
+
+"othervars": [ "event", "candidate_id", "run", "npu", "nvtx", "rho"]
+
+
+}
