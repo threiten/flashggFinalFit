@@ -258,7 +258,7 @@ set -x
 echo "reduceAndFit_Jets.sh: RANGE"
 echo ${RANGE}
 
-bash runFinalFitsScripts_differential_${EXT}.sh --obs=$OBS --ext=$EXT --procs=$PROCNAMES --cats=$CATNAMES --refTagDiff=$REFTAGDIFF --refTagWV=$REFTAGWV --refProcWV=$REFPROCWV --refProcDiff=$REFPROCDIFF --refProc=$REFPROC --noSkip=$NOSKIP --runCombineOnly=$COMBINEONLY --runDatacardOnly=$DATACARDONLY --runSignalOnly=$SIGNALONLY --runBackgroundOnly=$BKGONLY --range=${RANGE} --npoints=${NPOINTS} --shiftOffDiag=${SHIFTOFFDIAG} --unblind=${UNBLIND} --inputDir="/mnt/t3nfs01/data01/shome/vtavolar/FinalFits_74_wip/CMSSW_7_4_7/src/flashggFinalFit/Signal/" ##--sigModOpt="${SIGMODOPT}"  ### --DatacardOpt="${DATACARDOPT} " #####--bkgModOpt="${BKGMODOPT}"    ##"${SPECIFICOPTS}" 
+bash runFinalFitsScripts_differential_${EXT}.sh --obs=$OBS --ext=$EXT --procs=$PROCNAMES --cats=$CATNAMES --refTagDiff=$REFTAGDIFF --refTagWV=$REFTAGWV --refProcWV=$REFPROCWV --refProcDiff=$REFPROCDIFF --refProc=$REFPROC --noSkip=$NOSKIP --runCombineOnly=$COMBINEONLY --runDatacardOnly=$DATACARDONLY --runSignalOnly=$SIGNALONLY --runBackgroundOnly=$BKGONLY --range=${RANGE} --npoints=${NPOINTS} --shiftOffDiag=${SHIFTOFFDIAG} --unblind=${UNBLIND} --inputDir="/t3home/threiten/Hgg/Differentials/CMSSW_7_4_7/src/flashggFinalFit/Signal" ##--sigModOpt="${SIGMODOPT}"  ### --DatacardOpt="${DATACARDOPT} " #####--bkgModOpt="${BKGMODOPT}"    ##"${SPECIFICOPTS}" 
 
 mkdir /afs/cern.ch/user/v/vtavolar/www/DiffHggPt/outdir_Differential_SignalModel_ICHEPconditions_1bis_newphp/afterMoriond17/ub17025/outdir_differential_${EXT}
 cp Background/outdir_differential_${EXT}/bkgPlots-Data/bkgplot_* /afs/cern.ch/user/v/vtavolar/www/DiffHggPt/outdir_Differential_SignalModel_ICHEPconditions_1bis_newphp/afterMoriond17/ub17025/outdir_differential_${EXT}

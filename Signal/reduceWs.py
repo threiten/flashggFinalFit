@@ -21,9 +21,9 @@ from ROOT import *
 
 gSystem.AddIncludePath("$CMSSW_BASE/src/flashggFinalFit/Signal/interface/")
 
-gSystem.Load("/mnt/t3nfs01/data01/shome/vtavolar/FinalFits_74_wip/CMSSW_7_4_7/src/flashggFinalFit/Signal/src/DataSetFiller_vec_cc.so")
-gSystem.Load("/mnt/t3nfs01/data01/shome/vtavolar/FinalFits_74_wip/CMSSW_7_4_7/src/flashggFinalFit/Signal/Phi12_C.so")
-gSystem.Load("/mnt/t3nfs01/data01/shome/vtavolar/FinalFits_74_wip/CMSSW_7_4_7/src/flashggFinalFit/Signal/DeltaPhi_C.so")
+gSystem.Load("/mnt/t3nfs01/data01/shome/threiten/Hgg/Differentials/CMSSW_7_4_7/src/flashggFinalFit/Signal/src/DataSetFiller_vec_cc.so")
+gSystem.Load("/mnt/t3nfs01/data01/shome/threiten/Hgg/Differentials/CMSSW_7_4_7/src/flashggFinalFit/Signal/Phi12_C.so")
+gSystem.Load("/mnt/t3nfs01/data01/shome/threiten/Hgg/Differentials/CMSSW_7_4_7/src/flashggFinalFit/Signal/DeltaPhi_C.so")
 #gROOT.ProcessLine('#include "flashgg/Systematics/macros/DataSetFiller.h"')
 
 

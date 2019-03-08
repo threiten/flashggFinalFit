@@ -216,8 +216,9 @@ int main(int argc, char *argv[]){
   RooMsgService::instance().setSilentMode(true);
 
   // make output dir
+  //std::cout<< "Making outdir " << outdir<<endl;
   system(Form("mkdir -p %s/fTest",outdir_.c_str()));
-
+  std::cout<< "Outdir existing" << outdir_<<endl;
   // split procs, cats
   vector<string> procs;
   split(procs,procString_,boost::is_any_of(","));
@@ -483,8 +484,9 @@ int main(int argc, char *argv[]){
       }
       
       catForTex = boost::replace_all_copy(flashggCats_[cat], "_", "\\_");
+      auto procForTex = boost::replace_all_copy(proc, "_", "\\_");
       cout << catForTex << endl;
-      cout <<  Form("[TEX] \\section{RV proc %s cat $$%s$$}", proc.c_str(), catForTex.c_str()) << endl;
+      cout <<  Form("[TEX] \\section{RV proc %s cat %s}", procForTex.c_str(), catForTex.c_str()) << endl;
       cout << "[TEX] \\begin{tabular}{ l l l l l l l }" << endl;
       cout << "[TEX] \\hline" << endl;
       cout << "[TEX]   Order & Mean & Sigma & Dist & chi2 & entries & dist/entrie\\\\" << endl;
@@ -753,8 +755,9 @@ int main(int argc, char *argv[]){
       dataWV->plotOn(plotsWV[proc][cat]);
 
       catForTex = boost::replace_all_copy(flashggCats_[cat], "_", "\\_");
+      procForTex = boost::replace_all_copy(proc, "_", "\\_");
       cout << catForTex << endl;
-      cout <<  Form("[TEX] \\section{WV proc %s cat $$%s$$}", proc.c_str(), catForTex.c_str()) << endl;
+      cout <<  Form("[TEX] \\section{WV proc %s cat %s}", procForTex.c_str(), catForTex.c_str()) << endl;
       cout << "[TEX] \\begin{tabular}{ l l l l l l l }" << endl;
       cout << "[TEX] \\hline" << endl;
       cout << "[TEX]   Order & Mean & Sigma & Dist & chi2 & entries & dist/entries\\\\" << endl;

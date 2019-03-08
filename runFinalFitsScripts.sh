@@ -257,7 +257,7 @@ if [ $CONTINUELOOP == 0 ]; then
 		echo "------------>> Running KEEPING current signal fits"
 		echo "------------------------------------------------"
 		echo "./runSignalScripts.sh -i $FILE -p $PROCS -f $CATS --ext $EXT --intLumi $INTLUMI $BATCHOPTION --scalesCorr $SCALESCORR --scalesGlobal $SCALESGLOBAL --bs $BS $MHREFOPT --sigFitOnly --fTestOnly --sigPlotsOnly  --keepCurrentFits --noSyts $RUNSIGOPT"
-		./runSignalScripts.sh -i $FILE -p $PROCS -f $CATS --ext $EXT --intLumi $INTLUMI $BATCHOPTION --smears $SMEARS --scales $SCALES --scalesCorr $SCALESCORR --scalesGlobal $SCALESGLOBAL --bs $BS $MHREFOPT --sigFitOnly --fTestOnly --sigPlotsOnly --keepCurrentFits --noSysts $RUNSIGOPT
+       		./runSignalScripts.sh -i $FILE -p $PROCS -f $CATS --ext $EXT --intLumi $INTLUMI $BATCHOPTION --smears $SMEARS --scales $SCALES --scalesCorr $SCALESCORR --scalesGlobal $SCALESGLOBAL --bs $BS $MHREFOPT --sigFitOnly --fTestOnly --sigPlotsOnly --keepCurrentFits --noSysts $RUNSIGOPT
 	    else
 		echo "------------------------------------------------"
 		echo "------------>> Running WITHOUT KEEPING current signal fits"
