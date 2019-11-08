@@ -16,7 +16,7 @@ SIGFITONLY=0
 SIGPLOTSONLY=0
 INTLUMI=1
 BATCH=""
-DEFAULTQUEUE=""
+QUEUE=""
 BS=""
 MHREF=""
 REFPROC=""
@@ -61,6 +61,7 @@ usage(){
 		echo "--normalisationCut) cut on datasets for final signal normalisation)"      
 		echo "--skipSecondaryModels) Turn off creation of all additional models) "
 		echo "--useFtest) Use f-test result as it is, without manual tuning) "
+		echo "--queue) queue to submit jobs to (specific to batch)) "
 }
 
 
@@ -68,7 +69,7 @@ usage(){
 
 
 # options may be followed by one colon to indicate they have a required argument
-if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,smears:,scales:,scalesCorr:,scalesGlobal:,flashggCats:,ext:,fTestOnly,calcPhoSystOnly,skipCalcPhoSyst,sigFitOnly,sigPlotsOnly,intLumi:,batch:,MHref:,keepCurrentFits,noSysts,shiftOffDiag,noSkip,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,skipSecondaryModels,useFtest -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,smears:,scales:,scalesCorr:,scalesGlobal:,flashggCats:,ext:,fTestOnly,calcPhoSystOnly,skipCalcPhoSyst,sigFitOnly,sigPlotsOnly,intLumi:,batch:,MHref:,keepCurrentFits,noSysts,shiftOffDiag,noSkip,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,skipSecondaryModels,useFtest,queue: -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
 exit 1
@@ -108,6 +109,7 @@ case $1 in
 --normalisationCut) NORMCUT=$2; shift;;
 --skipSecondaryModels) SKIPSECONDARYMODELS=1;;
 --useFtest) USEFTEST=1;;
+--queue) QUEUE=$2; shift;;
 
 (--) shift; break;;
 (-*) usage; echo "$0: error - unrecognized option $1" 1>&2; usage >> /dev/stderr; exit 1;;
@@ -137,15 +139,23 @@ CALCPHOSYSTONLY=0
 fi
 
 if [[ $BATCH == "IC" ]]; then
-DEFAULTQUEUE=hepshort.q
+QUEUE=hep.q
+echo "[INFO] Batch = $BATCH, using QUEUE = $QUEUE"
 fi
-if [[ $BATCH == "LSF" ]]; then
-DEFAULTQUEUE=1nh
-fi
-if [[ $BATCH == "T3CH" ]]; then
-DEFAULTQUEUE='short.q -l h_vmem=4g'
+if [[ $BATCH == "HTCONDOR" ]]; then
+  if [[ $QUEUE == "" ]]; then
+    QUEUE=espresso
+    echo "[INFO] Batch = $BATCH, QUEUE not specified. Using QUEUE = $QUEUE"
+  fi
+  else
+    echo "[INFO] Batch = $BATCH, Using QUEUE = $QUEUE"
 fi
 
+if [[ $BATCH == "T3CH" ]]; then
+QUEUE='short.q -l h_vmem=4g'
+fi
+
+BSOPT=""
 if [[ $BS == "" ]]; then
 echo "NO BS SPECIFIED"
 else
@@ -177,17 +187,17 @@ else
       echo "./bin/signalFTest -i $FILE -d dat/newConfig_$EXT.dat -p $PROCS -f $CATS -o $OUTDIR"
       ./bin/signalFTest -i $FILE -d dat/newConfig_$EXT.dat -p $PROCS -f $CATS -o $OUTDIR
     else
-      echo "./python/submitSignaFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q '$DEFAULTQUEUE'"
-       ./python/submitSignaFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q "$DEFAULTQUEUE"
+	echo "./python/submitSignaFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q '$QUEUE'"
+       ./python/submitSignaFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q "$QUEUE"
 
       PEND=`ls -l $OUTDIR/fTestJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.log"  |wc -l`
       TOTAL=`ls -l $OUTDIR/fTestJobs/sub*| grep "\.sh"  |wc -l`
       echo "PEND $PEND"
       while (( $PEND > 0 )) ; do
-        PEND=`ls -l $OUTDIR/fTestJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.log" |wc -l`
-        RUN=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.run" |wc -l`
-        FAIL=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.fail" |wc -l`
-        DONE=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.done" |wc -l`
+        PEND=`ls -l $OUTDIR/fTestJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
+        RUN=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.run" | wc -l`
+        FAIL=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.fail" | wc -l`
+        DONE=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.done" | wc -l`
         (( PEND=$PEND-$RUN-$FAIL-$DONE ))
         echo " PEND $PEND - RUN $RUN - DONE $DONE - FAIL $FAIL"
         if (( $RUN > 0 )) ; then PEND=1 ; fi
@@ -297,9 +307,6 @@ if [ $SIGFITONLY == 1 ]; then
     fi    
 
     echo "runsigopt is $SIGFITOPTS"
-
-
-
     if [[ $BATCH == "" ]]; then
 	if [[ $NOSYSTS == 0 ]]; then
 	    echo "./bin/SignalFit -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_mva_13TeV_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI $MHREFOPT $SIGFITOPTS"
@@ -352,7 +359,6 @@ if [ $SIGFITONLY == 1 ]; then
     echo "./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root"
     ./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root > package.out
   fi
-
 fi
 
 
@@ -361,42 +367,38 @@ fi
 #####################################################
 
 if [ $SIGPLOTSONLY == 1 ]; then
+  echo "=============================="
+  echo "Make Signal Plots"
+  echo "-->Create Validation plots"
+  echo "=============================="
+  
+  if [ -z $BATCH ]; then
+    echo " ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR -p $PROCS -f $CATS"
+    ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR/sigplots -p $PROCS -f $CATS > signumbers_${EXT}.txt
+    
+    ./makeSlides.sh $OUTDIR
+    mv fullslides.pdf $OUTDIR/fullslides_${EXT}.pdf
+  else
+    echo "./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE"
+    ./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE
 
-echo "=============================="
-echo "Make Signal Plots"
-echo "-->Create Validation plots"
-echo "=============================="
-
-echo " ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR -p $PROCS -f $CATS"
-#./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR/sigplots -p $PROCS -f $CATS 
-./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR/sigplots -p $PROCS -f $CATS > signumbers.txt
-#mv $OUTDIR/sigfit/initialFits $OUTDIR/initialFits
-
-fi
-
-if [ $USER == "lcorpe" ]; then
-cp -r $OUTDIR ~/www/.
-cp ~lcorpe/public/index.php ~/www/$OUTDIR/sigplots/.
-cp ~lcorpe/public/index.php ~/www/$OUTDIR/systematics/.
-cp ~lcorpe/public/index.php ~/www/$OUTDIR/sigfit/.
-cp ~lcorpe/public/index.php ~/www/$OUTDIR/sigfTest/.
-
-echo "plots available at: "
-echo "https://lcorpe.web.cern.ch/lcorpe/$OUTDIR"
-
-fi
-
-if [ $USER == "lc1113" ]; then
-cp -r $OUTDIR ~lc1113/public_html/.
-cp ~lc1113/index.php ~lc1113/public_html/$OUTDIR/sigplots/.
-cp ~lc1113/index.php ~lc1113/public_html/$OUTDIR/systematics/.
-cp ~lc1113/index.php ~lc1113/public_html/$OUTDIR/sigfit/.
-cp ~lc1113/index.php ~lc1113/public_html/$OUTDIR/sigfTest/.
-echo "plots available at: "
-echo "http://www.hep.ph.imperial.ac.uk/~lc1113/$OUTDIR"
-echo "~lc1113/public_html/$OUTDIR/sigfTest/."
-echo " if you want the plots on lxplus, fill in your password!"
-echo " scp -r ~lc1113/public_html/$OUTDIR lcorpe@lxplus.cern.ch:~/www/. "
-scp -r ~lc1113/public_html/$OUTDIR lcorpe@lxplus.cern.ch:~/www/. 
-echo "https://lcorpe.web.cern.ch/lcorpe/$OUTDIR"
+    PEND=`ls -l $OUTDIR/sigplots/PlottingJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
+    echo "PEND $PEND"
+    while (( $PEND > 0 )) ; do
+      PEND=`ls -l $OUTDIR/sigplots/PlottingJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
+      RUN=`ls -l $OUTDIR/sigplots/PlottingJobs/sub* | grep "\.run" | wc -l`
+      FAIL=`ls -l $OUTDIR/sigplots/PlottingJobs/sub* | grep "\.fail" | wc -l`
+      DONE=`ls -l $OUTDIR/sigplots/PlottingJobs/sub* | grep "\.done" | wc -l`
+      (( PEND=$PEND-$RUN-$FAIL-$DONE ))
+      echo " PEND $PEND - RUN $RUN - DONE $DONE - FAIL $FAIL"
+      if (( $RUN > 0 )) ; then PEND=1 ; fi
+      if (( $FAIL > 0 )) ; then 
+        echo "[ERROR] at least one job failed :"
+        ls -l $OUTDIR/sigplots/PlottingJobs/sub* | grep "\.fail"
+        exit 1
+      fi
+      sleep 10
+    done
+    cat $OUTDIR/sigplots/PlottingJobs/sub*.log > signumbers_${EXT}.txt
+  fi
 fi

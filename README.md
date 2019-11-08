@@ -8,12 +8,17 @@ cmsrel CMSSW_7_4_7
 cd CMSSW_7_4_7/src
 cmsenv
 git cms-init
-# Install Combine as per Twiki: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideHiggsAnalysisCombinedLimit#ROOT6_SLC6_release_CMSSW_7_4_X
-git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-cd ${CMSSW_BASE}/src/HiggsAnalysis/CombinedLimit
-git fetch origin
-git checkout v6.3.1 
-cd ${CMSSW_BASE}/src
+
+# Install the GBRLikelihood package which contains the RooDoubleCBFast implementation
+git clone git@github.com:jonathon-langford/HiggsAnalysis.git
+# Install Combine as per the documentation here: cms-analysis.github.io/HiggsAnalysis-CombinedLimit/
+git clone git@github.com:cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+
+# Compile external libraries
+cd HiggsAnalysis
+cmsenv
+scram b -j 9
+
 # Install Flashgg Final Fit packages
 git clone git@github.com:cms-analysis/flashggFinalFit.git
 cd ${CMSSW_BASE}/src
