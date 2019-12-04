@@ -149,7 +149,7 @@ RooDataSet * rvwvDataset(RooDataSet *data0, string rvwv){
     if (data0->get(i)->getRealValue("CMS_hgg_mass") > rangeLow && data0->get(i)->getRealValue("CMS_hgg_mass") < rangeHigh ){
       mass->setVal(data0->get(i)->getRealValue("CMS_hgg_mass"));
       weight0->setVal(data0->weight() ); // <--- is this correct?
-      dZ->setVal(data0->get(i)->getRealValue("dZ"));
+      dZ->setVal(fabs(data0->get(i)->getRealValue("dZ")));
       if (dZ->getVal() <1.){
 	dataRV->add( RooArgList(*mass, *dZ, *weight0), weight0->getVal() );
       } else{

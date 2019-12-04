@@ -411,7 +411,7 @@ RooDataSet * rvwvDataset(RooDataSet *data0, string rvwv){
       mass_->setVal(data0->get(i)->getRealValue("CMS_hgg_mass"));
       //      std::cout<<"rvwvDataset: entry "<<i<<", CMS_hgg_mass = "<<data0->get(i)->getRealValue("CMS_hgg_mass")<<std::endl;
       weight0->setVal(data0->weight() ); // <--- is this correct?
-      dZ_->setVal(data0->get(i)->getRealValue("dZ"));
+      dZ_->setVal(fabs(data0->get(i)->getRealValue("dZ")));
       procIndex_->setVal(data0->get(i)->getRealValue("processIndex"));
       if (dZ_->getVal() <1.){
 	dataRV->add( RooArgList(*mass_, *dZ_, *procIndex_, *weight0), weight0->getVal() );
