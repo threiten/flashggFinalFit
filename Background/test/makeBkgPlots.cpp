@@ -728,7 +728,6 @@ int main(int argc, char* argv[]){
     ("useBinnedData",																															 			"Data binned")
     ("makeCrossCheckProfPlots",																													"Make some cross check plots -- very slow!")
 		("massStep,m", po::value<double>(&massStep)->default_value(0.5),						   			"Mass step for calculating bands. Use a large number like 5 for quick running")
-<<<<<<< HEAD
     ("nllTolerance,n", po::value<double>(&nllTolerance)->default_value(0.05),			 			"Tolerance for nll calc in %")
     ("mhLow,L", po::value<int>(&mhLow)->default_value(100),															"Starting point for scan")
     ("mhHigh,H", po::value<int>(&mhHigh)->default_value(180),														"End point for scan")
@@ -738,7 +737,7 @@ int main(int argc, char* argv[]){
     ("sqrts,S", po::value<int>(&sqrts)->default_value(8),																"Which centre of mass is this data from?")
     ("isFlashgg",  po::value<int>(&isFlashgg_)->default_value(1),  								    	        "Use Flashgg output ")
     ("flashggCats,f", po::value<string>(&flashggCatsStr_)->default_value("UntaggedTag_0,UntaggedTag_1,UntaggedTag_2,UntaggedTag_3,VBFTag_0,VBFTag_1,VBFTag_2,TTHHadronicTag,TTHLeptonicTag,VHHadronicTag,VHTightTag,VHLooseTag,VHEtTag"),       "Flashgg category names to consider")
-    ("verbose,v", 																																			"Verbose");
+    ("verbose,v","Verbose");
   ;
   po::variables_map vm;
   po::store(po::parse_command_line(argc,argv,desc),vm);
