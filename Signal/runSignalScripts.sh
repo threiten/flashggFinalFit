@@ -9,6 +9,12 @@ SCALES="HighR9EE,LowR9EE,HighR9EB,LowR9EB"
 SCALESCORR="MaterialCentral,MaterialForward"
 SCALESGLOBAL="NonLinearity,Geant4,LightYield,Absolute"
 SMEARS="HighR9EE,LowR9EE,HighR9EB,LowR9EB" #DRY RUN
+<<<<<<< HEAD
+=======
+MASSLIST="120,125,130"
+ANALYSIS="hig-16-040"
+YEAR="2016"
+>>>>>>> 558de8f... Background compatible with HTCondor submission
 FTESTONLY=0
 CALCPHOSYSTONLY=0
 SKIPCALCPHOSYST=0
@@ -47,6 +53,7 @@ usage(){
 		echo "--sigFitOnly) "
 		echo "--sigPlotsOnly) "
 		echo "--intLumi) specified in fb^-{1} (default $INTLUMI)) "
+		echo "--year) Dataset year (default $YEAR)) "
 		echo "--batch) which batch system to use (None (''),LSF,IC) (default '$BATCH')) "
 		echo "--MHref)  reference mh for xsec ) "
 		echo "--keepCurrentFits)  keep existing results from fit jobs, if there ) "
@@ -99,6 +106,7 @@ case $1 in
 --noSkip) NOSKIP=1;;
 --sigPlotsOnly) SIGPLOTSONLY=1;;
 --intLumi) INTLUMI=$2; shift ;;
+--year) YEAR=$2; shift ;;
 --batch) BATCH=$2; shift;;
 --MHref) MHREF=$2; shift;;
 --refProc) REFPROC=$2; shift;;
@@ -344,6 +352,7 @@ if [ $SIGFITONLY == 1 ]; then
       done
     fi
     ls $PWD/$OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt
+
     echo "ls ../Signal/$OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt"
     counter=0
     while read p ; do
@@ -357,6 +366,59 @@ if [ $SIGFITONLY == 1 ]; then
     echo "SIGFILES $SIGFILES"
     echo "./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root"
     ./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root > package.out
+
+    #./makeSlides.sh $OUTDIR
+    #scp fullslides.pdf lcorpe@lxplus.cern.ch:www/scratch/fullslides.pdf
+    #exit 1
+    # if [ $DONTPACKAGE == 0 ]; then
+#       echo "./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root --year $YEAR"
+#       ./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root --year $YEAR > package.out
+#     fi
+#   fi
+
+# fi
+
+# if [ $PACKAGEONLY == 1 ]; then
+#   ls $OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt
+#   echo "ls ../Signal/$OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt"
+#   counter=0
+#   while read p ; do
+#     if (($counter==0)); then
+#       #SIGFILES="$PWD/$p"
+#       SIGFILES="$p"
+#     else
+#       #SIGFILES="$SIGFILES,$PWD/$p"
+#       SIGFILES="$SIGFILES,$p"
+#     fi
+#     ((counter=$counter+1))
+#   done < out.txt
+#   echo "SIGFILES $SIGFILES"
+#   echo ""
+#   if [[ $BATCH == "" ]]; then
+#     echo "./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root --year $YEAR"
+#     ./bin/PackageOutput -i $SIGFILES --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root --year $YEAR > package.out
+#   else
+#     echo "./python/submitPackager.py -i $SIGFILES --basepath $PWD --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root --batch $BATCH -q $QUEUE --year $YEAR"
+#     ./python/submitPackager.py -i $SIGFILES --basepath $PWD --procs $PROCS -l $INTLUMI -p $OUTDIR/sigfit -W wsig_13TeV -f $CATS -L 120 -H 130 -o $OUTDIR/CMS-HGG_sigfit_$EXT.root --batch $BATCH -q $QUEUE --year $YEAR
+
+#     PEND=`ls -l $OUTDIR/sigfit/PackagerJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
+#     echo "PEND $PEND"
+#     while (( $PEND > 0 )) ; do
+#       PEND=`ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
+#       RUN=`ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep "\.run" | wc -l`
+#       FAIL=`ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep "\.fail" | wc -l`
+#       DONE=`ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep "\.done" | wc -l`
+#       (( PEND=$PEND-$RUN-$FAIL-$DONE ))
+#       echo " PEND $PEND - RUN $RUN - DONE $DONE - FAIL $FAIL"
+#       if (( $RUN > 0 )) ; then PEND=1 ; fi
+#       if (( $FAIL > 0 )) ; then 
+#         echo "[ERROR] at least one job failed :"
+#         ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep "\.fail"
+#         exit 1
+#       fi
+#       sleep 10
+#     done
+
   fi
 fi
 
@@ -372,14 +434,14 @@ if [ $SIGPLOTSONLY == 1 ]; then
   echo "=============================="
   
   if [ -z $BATCH ]; then
-    echo " ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR -p $PROCS -f $CATS"
-    ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR/sigplots -p $PROCS -f $CATS > signumbers_${EXT}.txt
+    echo " ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR -p $PROCS -f $CATS --year $YEAR"
+    ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR/sigplots -p $PROCS -f $CATS --year $YEAR > signumbers_${EXT}.txt
     
     ./makeSlides.sh $OUTDIR
     mv fullslides.pdf $OUTDIR/fullslides_${EXT}.pdf
   else
-    echo "./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE"
-    ./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE
+    echo "./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE --year $YEAR"
+    ./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE --year $YEAR
 
     PEND=`ls -l $OUTDIR/sigplots/PlottingJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
     echo "PEND $PEND"

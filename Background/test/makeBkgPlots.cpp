@@ -728,6 +728,7 @@ int main(int argc, char* argv[]){
     ("useBinnedData",																															 			"Data binned")
     ("makeCrossCheckProfPlots",																													"Make some cross check plots -- very slow!")
 		("massStep,m", po::value<double>(&massStep)->default_value(0.5),						   			"Mass step for calculating bands. Use a large number like 5 for quick running")
+<<<<<<< HEAD
     ("nllTolerance,n", po::value<double>(&nllTolerance)->default_value(0.05),			 			"Tolerance for nll calc in %")
     ("mhLow,L", po::value<int>(&mhLow)->default_value(100),															"Starting point for scan")
     ("mhHigh,H", po::value<int>(&mhHigh)->default_value(180),														"End point for scan")
@@ -754,6 +755,7 @@ int main(int argc, char* argv[]){
   RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR);
   RooMsgService::instance().setSilentMode(true);
   split(flashggCats_,flashggCatsStr_,boost::is_any_of(","));
+
   lumi_13TeV =Form("%.1f fb^{-1}",intLumi);	
   system(Form("mkdir -p %s",outDir.c_str()));
   if (makeCrossCheckProfPlots) system(Form("mkdir -p %s/normProfs",outDir.c_str()));
