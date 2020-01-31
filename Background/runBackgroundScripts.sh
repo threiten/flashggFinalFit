@@ -124,6 +124,10 @@ DEFAULTQUEUE=all.q
 BATCHQUERY=qstat
 fi
 
+if [[ $BATCH == "HTCONDOR" ]]; then
+DEFAULTQUEUE=espresso
+fi
+
 ####################################################
 ################## PSEUDODATAONLY ###################
 ####################################################

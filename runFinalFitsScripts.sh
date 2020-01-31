@@ -183,6 +183,11 @@ if [[ $BATCH == "T3CH" ]]; then
 #DEFAULTQUEUE=hepmedium.q
     BATCHOPTION=" --batch $BATCH"
 fi
+if [[ $BATCH == "HTCONDOR" ]]; then
+    DEFAULTQUEUE=espresso
+#DEFAULTQUEUE=hepmedium.q
+    BATCHOPTION=" --batch $BATCH"
+fi
 
 if [[ $MHREF == "" ]]; then
 echo "NO MHREF SPECIFIED"

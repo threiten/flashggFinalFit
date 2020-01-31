@@ -187,14 +187,14 @@ else
       echo "./bin/signalFTest -i $FILE -d dat/newConfig_$EXT.dat -p $PROCS -f $CATS -o $OUTDIR"
       ./bin/signalFTest -i $FILE -d dat/newConfig_$EXT.dat -p $PROCS -f $CATS -o $OUTDIR
     else
-	echo "./python/submitSignaFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q '$QUEUE'"
-       ./python/submitSignaFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q "$QUEUE"
-
-      PEND=`ls -l $OUTDIR/fTestJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.log"  |wc -l`
-      TOTAL=`ls -l $OUTDIR/fTestJobs/sub*| grep "\.sh"  |wc -l`
+	echo "./python/submitSignalFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q '$QUEUE'"
+	./python/submitSignalFTest.py --procs $PROCS --flashggCats $CATS --outDir $OUTDIR --i $FILE --batch $BATCH -q "$QUEUE"
+	wait $!
+      PEND=`ls -l $OUTDIR/fTestJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.sh" |grep -v "\.sub" |wc -l`
+      TOTAL=`ls -l $OUTDIR/fTestJobs/sub*| grep "\.log"  |wc -l`
       echo "PEND $PEND"
       while (( $PEND > 0 )) ; do
-        PEND=`ls -l $OUTDIR/fTestJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
+        PEND=`ls -l $OUTDIR/fTestJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.sh" | grep -v "\.out" | grep -v "\.sub" | wc -l`
         RUN=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.run" | wc -l`
         FAIL=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.fail" | wc -l`
         DONE=`ls -l $OUTDIR/fTestJobs/sub* | grep "\.done" | wc -l`
@@ -260,7 +260,7 @@ if [ $SIGFITONLY == 1 ]; then
   DONE=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep "\.done" |wc -l`
   LOGS=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep "\.log" |wc -l`
   ERRS=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep "\.err" |wc -l`
-  if [ $DONE == $LOGS -a $LOGS == $ERRS -a $KEEPCURRENTFITS == 1]; then
+  if [ $DONE == $LOGS -a $LOGS == $ERRS -a $KEEPCURRENTFITS == 1 ]; then
       $KEEPCURRENTFITS == 1
   else
       $KEEPCURRENTFITS == 0
@@ -317,17 +317,17 @@ if [ $SIGFITONLY == 1 ]; then
 	fi
     else
 	if [[ $NOSYSTS == 0 ]]; then
-	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $DEFAULTQUEUE $BSOPT $SIGFITOPTS "
-	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$DEFAULTQUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
+	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $QUEUE $BSOPT $SIGFITOPTS "
+	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
 	else
-	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $DEFAULTQUEUE $BSOPT $SIGFITOPTS"
-	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$DEFAULTQUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
+	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $QUEUE $BSOPT $SIGFITOPTS"
+	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
 	fi
   
-      PEND=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.log"  |wc -l`
+      PEND=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.out" |grep -v "\.sub" |grep -v "\.sh" |wc -l`
       echo "PEND $PEND"
       while (( $PEND > 0 )) ;do
-        PEND=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.log" |wc -l`
+        PEND=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.out" | grep -v "\.err" |grep -v "\.sub" |grep -v "\.sh" |wc -l`
         RUN=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep "\.run" |wc -l`
         FAIL=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep "\.fail" |wc -l`
         DONE=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub* | grep "\.done" |wc -l`
@@ -343,7 +343,6 @@ if [ $SIGFITONLY == 1 ]; then
     
       done
     fi
-
     ls $PWD/$OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt
     echo "ls ../Signal/$OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt"
     counter=0

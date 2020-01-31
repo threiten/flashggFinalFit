@@ -115,7 +115,7 @@ def writePreamble(sub_file):
   sub_file.write('#!/bin/bash\n')
   if (opts.batch == "T3CH"):
       sub_file.write('set -x\n')
-  sub_file.write('touch %s.run\n'%os.path.abspath(sub_file.name))
+  sub_file.write('touch %s_${1}.run\n'%os.path.abspath(sub_file.name))
   sub_file.write('cd %s\n'%os.getcwd())
   if (opts.batch == "T3CH"):
       sub_file.write('source $VO_CMS_SW_DIR/cmsset_default.sh\n')
@@ -132,24 +132,27 @@ def writePreamble(sub_file):
   sub_file.write('mkdir -p scratch_$number\n')
   sub_file.write('cd scratch_$number\n')
 
-def writePostamble(sub_file, exec_line):
+def writePostamble(sub_file, exec_line, nJobs=None):
 
   #print "[INFO] writing to postamble"
-  sub_file.write('if ( %s ) then\n'%exec_line)
+  sub_file.write('%s\n'%exec_line)
+  sub_file.write('retval=$?\n')
   #sub_file.write('\t mv higgsCombine*.root %s\n'%os.path.abspath(opts.outDir))
-  sub_file.write('\t touch %s.done\n'%os.path.abspath(sub_file.name))
+  sub_file.write('if [[ $retval == 0 ]]; then\n')
+  sub_file.write('\t touch %s_${1}.done\n'%os.path.abspath(sub_file.name))
   sub_file.write('else\n')
-  sub_file.write('\t touch %s.fail\n'%os.path.abspath(sub_file.name))
+  sub_file.write('\t touch %s_${1}.fail\n'%os.path.abspath(sub_file.name))
   sub_file.write('fi\n')
-  sub_file.write('rm -f %s.run\n'%os.path.abspath(sub_file.name))
+  sub_file.write('rm -f %s_${1}.run\n'%os.path.abspath(sub_file.name))
   sub_file.write('rm -rf scratch_$number\n')
+  sub_file.write('exit $retval\n')
   sub_file.close()
   system('chmod +x %s'%os.path.abspath(sub_file.name))
   if opts.queue:
-    system('rm -f %s.done'%os.path.abspath(sub_file.name))
-    system('rm -f %s.fail'%os.path.abspath(sub_file.name))
-    system('rm -f %s.log'%os.path.abspath(sub_file.name))
-    system('rm -f %s.err'%os.path.abspath(sub_file.name))
+    system('rm -f %s*.done'%os.path.abspath(re.sub("\.sh","",os.path.abspath(sub_file.name))))
+    system('rm -f %s*.fail'%os.path.abspath(re.sub("\.sh","",os.path.abspath(sub_file.name))))
+    system('rm -f %s*.log'%os.path.abspath(re.sub("\.sh","",os.path.abspath(sub_file.name))))
+    system('rm -f %s*.err'%os.path.abspath(re.sub("\.sh","",os.path.abspath(sub_file.name))))
     if (opts.batch == "IC"):
         system('qsub -q %s -o %s.log -e %s.err %s > out.txt'%(opts.queue,os.path.abspath(sub_file.name),os.path.abspath(sub_file.name),os.path.abspath(sub_file.name)))
 
@@ -162,19 +165,22 @@ def writePostamble(sub_file, exec_line):
       HTCondorSubfile.write('+JobFlavour = "%s"\n'%(opts.queue))
       HTCondorSubfile.write('\n')
       HTCondorSubfile.write('executable  = %s.sh\n'%sub_file_name)
-      HTCondorSubfile.write('output  = %s.out\n'%sub_file_name)
-      HTCondorSubfile.write('error  = %s.err\n'%sub_file_name)
-      HTCondorSubfile.write('log  = %s.log\n'%sub_file_name)
+      HTCondorSubfile.write('output  = %s_$(ProcId).out\n'%sub_file_name)
+      HTCondorSubfile.write('error  = %s_$(ProcId).err\n'%sub_file_name)
+      HTCondorSubfile.write('log  = %s_$(ProcId).log\n'%sub_file_name)
+      HTCondorSubfile.write('arguments = $(ProcId)\n')
       HTCondorSubfile.write('\n')
       HTCondorSubfile.write('max_retries = 1\n')
-      HTCondorSubfile.write('queue 1\n')
-      subprocess.Popen("condor_submit "+HTCondorSubfile.name,
+      HTCondorSubfile.write('queue {}\n'.format(nJobs))
+      subP = subprocess.Popen("condor_submit "+HTCondorSubfile.name,
                              shell=True, # bufsize=bufsize,
-                             stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE,
+                             # stdin=subprocess.PIPE,
+                             # stdout=subprocess.PIPE,
+                             # stderr=subprocess.PIPE,
                              close_fds=True)
-
+      HTCondorSubfile.close()
+      subP.wait()
+      
   if opts.runLocal:
      system('bash %s'%os.path.abspath(sub_file.name))
 
@@ -183,13 +189,31 @@ def writePostamble(sub_file, exec_line):
   
 system('mkdir -p %s/fTestJobs/outputs'%opts.outDir)
 counter=0
-for proc in  opts.procs.split(","):
-  for cat in opts.flashggCats.split(","):
-    print "job ", counter , " - ", proc, " - ", cat
-    file = open('%s/fTestJobs/sub%d.sh'%(opts.outDir,counter),'w')
-    writePreamble(file)
-    counter =  counter+1
-    exec_line = "%s/bin/signalFTest -i %s  -p %s -f %s --considerOnly %s -o %s/%s --datfilename %s/%s/fTestJobs/outputs/config_%d.dat" %(os.getcwd(), opts.infile,proc,opts.flashggCats,cat,os.getcwd(),opts.outDir,os.getcwd(),opts.outDir, counter)
+if opts.batch != "HTCONDOR":
+    for proc in  opts.procs.split(","):
+        for cat in opts.flashggCats.split(","):
+            print "job ", counter , " - ", proc, " - ", cat
+            file = open('%s/fTestJobs/sub%d.sh'%(opts.outDir,counter),'w')
+            writePreamble(file)
+            counter += 1
+            exec_line = "%s/bin/signalFTest -i %s  -p %s -f %s --considerOnly %s -o %s/%s --datfilename %s/%s/fTestJobs/outputs/config_%d.dat" %(os.getcwd(), opts.infile,proc,opts.flashggCats,cat,os.getcwd(),opts.outDir,os.getcwd(),opts.outDir, counter)
 
-    writePostamble(file,exec_line) #includes submission
+            writePostamble(file,exec_line) #includes submission
+            file.close()
+            
+elif opts.batch == "HTCONDOR":
+    mapp = ''
+    for proc in  opts.procs.split(","):
+        for cat in opts.flashggCats.split(","):
+            mapp += '{} '.format(proc)
+            mapp += '{} '.format(cat)
+            counter += 1
 
+    jobFile = open('%s/fTestJobs/subCondor.sh'%(opts.outDir),'w')
+    writePreamble(jobFile)
+    jobFile.write('declare -a jobMap=({})\n'.format(mapp))
+    jobFile.write('let "PROCID = 2*${1}"\n')
+    jobFile.write('let "CATID = 2*${1} + 1"\n')
+    exec_line = "%s/bin/signalFTest -i %s  -p ${jobMap[${PROCID}]} -f %s --considerOnly ${jobMap[${CATID}]} -o %s/%s --datfilename %s/%s/fTestJobs/outputs/config_${1}.dat" %(os.getcwd(), opts.infile,opts.flashggCats,os.getcwd(),opts.outDir,os.getcwd(),opts.outDir)
+    writePostamble(jobFile, exec_line, counter)
+    jobFile.close()

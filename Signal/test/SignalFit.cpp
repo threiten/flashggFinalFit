@@ -656,7 +656,7 @@ int main(int argc, char *argv[]){
   higgsDecayWidth->setConstant(true);
   
   //prepare teh output file!
-  if (verbose_) std::cout << "[INFO] preparing outfile "<< outfilename_<< std::endl;
+  if (verbose_) std::cout << "[INFO] preparing outfile "<< outfilename_ << std::endl;
   TFile *outFile = new TFile(outfilename_.c_str(),"RECREATE");
   RooWorkspace *outWS;
   
@@ -692,7 +692,7 @@ int main(int argc, char *argv[]){
     exit(1);
   }
   
-  if (verbose_) std::cout << "[INFO] openign dat file "<< datfile<< std::endl;
+  if (verbose_) std::cout << "[INFO] opening dat file "<< datfilename_ << std::endl;
   //loop over it 
   while (datfile.good()){
     string line;
