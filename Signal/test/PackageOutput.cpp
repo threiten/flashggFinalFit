@@ -133,7 +133,7 @@ int main (int argc, char *argv[]){
   
   RooRealVar *intLumi = new RooRealVar("IntLumi","IntLumi",lumi_*1000,0.,10.e5);
   
-  WSTFileWrapper * inWS = new WSTFileWrapper(infilename_,"wsig_13TeV");
+  WSTFileWrapper * inWS = new WSTFileWrapper(infilename_,"wsig_13TeV", basePathStr_);
   RooWorkspace *saveWS = new RooWorkspace();
   RooWorkspace *tmpWS = new RooWorkspace();
   //saveWS->import((inWS->allVars()),RecycleConflictNodes());
