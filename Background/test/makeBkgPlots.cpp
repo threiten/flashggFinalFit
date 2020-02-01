@@ -750,6 +750,8 @@ int main(int argc, char* argv[]){
   if (vm.count("useBinnedData")) useBinnedData=true;
   if (vm.count("sigFileName")) doSignal=true;
   if (vm.count("verbose")) verbose_=true;
+
+  std::cout << "doSignal: " << doSignal << std::endl;
   
   RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR);
   RooMsgService::instance().setSilentMode(true);
@@ -1011,6 +1013,8 @@ int main(int argc, char* argv[]){
     oneSigmaBand_r->SetFillColor(kGreen);
     oneSigmaBand_r->SetMarkerColor(kGreen);
   }
+  
+  std::cout << "doSignal: " << doSignal << std::endl;
   
   if (doSignal){
     int SignalType=0;

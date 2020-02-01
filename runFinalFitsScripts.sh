@@ -17,6 +17,7 @@ SMEARS="HighR9EE,LowR9EE,HighR9EB,LowR9EB" #DRY RUN
 PSEUDODATADAT=""
 SIGFILE=""
 SIGONLY=1
+PACKAGEONLY=0
 BKGONLY=1
 DATACARDONLY=1
 COMBINEONLY=1
@@ -64,6 +65,7 @@ usage(){
     echo "--combinePlotsOnly) "
     echo "--superloop) Used to loop over the whole process N times (default $SUPERLOOP)"
     echo "--signalOnly)"
+    echo "--packageOnly) "
     echo "--backgroundOnly) "
     echo "--datacardOnly)"
     echo "--continueLoop) specify which iteration to start loop at (default $COUNTER)"
@@ -100,7 +102,7 @@ usage(){
 
 
 # options may be followed by one colon to indicate they have a required argument
-if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,flashggCats:,ext:,smears:,scales:,pseudoDataDat:,sigFile:,combine,combineOnly,combinePlotsOnly,signalOnly,backgroundOnly,datacardOnly,superloop:,continueLoop:,intLumi:,unblind,noBkgPlots,noSysts,shiftOffDiag,noSkip,skipSecondaryModels,isData,isFakeData,dataFile:,batch:,verbose,MHref:,keepCurrentFits,datacardDifferential,multiPdf,isToSkip,toSkip:,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,useFtest,monitorDataPlots,skipCalcPhoSyst -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,flashggCats:,ext:,smears:,scales:,pseudoDataDat:,sigFile:,combine,combineOnly,combinePlotsOnly,signalOnly,packageOnly,backgroundOnly,datacardOnly,superloop:,continueLoop:,intLumi:,unblind,noBkgPlots,noSysts,shiftOffDiag,noSkip,skipSecondaryModels,isData,isFakeData,dataFile:,batch:,verbose,MHref:,keepCurrentFits,datacardDifferential,multiPdf,isToSkip,toSkip:,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,useFtest,monitorDataPlots,skipCalcPhoSyst -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
     exit 1
@@ -123,6 +125,7 @@ do
 	--dataFile) DATAFILE=$2; shift;;
 	--batch) BATCH=$2; echo " BATCH $BATCH " ; shift;;
 	--signalOnly) COMBINEONLY=0;BKGONLY=0;SIGONLY=1;DATACARDONLY=0;;
+	--packageOnly) PACKAGEONLY=1;;
 	--backgroundOnly) COMBINEONLY=0;BKGONLY=1;SIGONLY=0;DATACARDONLY=0;;
 	--datacardOnly) COMBINEONLY=0;BKGONLY=0;SIGONLY=0;DATACARDONLY=1;;
 	--combine) COMBINEONLY=1;;#;BKGONLY=0;SIGONLY=0;DATACARDONLY=0;;
@@ -248,6 +251,9 @@ if [ $CONTINUELOOP == 0 ]; then
 	fi
 	if [ $SKIPCALCPHOSYST == 1 ]; then
 	    RUNSIGOPT="${RUNSIGOPT} --skipCalcPhoSyst"
+	fi
+	if [ $PACKAGEONLY == 1 ]; then
+	    RUNSIGOPT="${RUNSIGOPT} --packageOnly"
 	fi
 
 	echo "runsigopt is $RUNSIGOPT"
