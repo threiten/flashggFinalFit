@@ -398,6 +398,7 @@ if [[ $PACKAGEONLY == 1 ]]; then
       RUN=`ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep "\.run" | wc -l`
       FAIL=`ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep "\.fail" | wc -l`
       DONE=`ls -l $OUTDIR/sigfit/PackagerJobs/sub* | grep "\.done" | wc -l`
+
       (( PEND=$PEND-$RUN-$FAIL-$DONE ))
       echo " PEND $PEND - RUN $RUN - DONE $DONE - FAIL $FAIL"
       if (( $RUN > 0 )) ; then PEND=1 ; fi

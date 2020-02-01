@@ -12,6 +12,7 @@
 class WSTFileWrapper  {
   public:
     WSTFileWrapper(std::string, std::string);
+    WSTFileWrapper(std::string, std::string, std::string);
     WSTFileWrapper( TFile*, RooWorkspace *);
     WSTFileWrapper( RooWorkspace *);
   //    TObject * Get(std::string);
