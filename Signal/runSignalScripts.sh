@@ -140,6 +140,7 @@ SIGFITONLY=1
 SIGPLOTSONLY=1
 PACKAGEONLY=1
 fi
+
 if [ $SKIPCALCPHOSYST == 1  ];then
 CALCPHOSYSTONLY=0
 fi
@@ -150,7 +151,7 @@ echo "[INFO] Batch = $BATCH, using QUEUE = $QUEUE"
 fi
 if [[ $BATCH == "HTCONDOR" ]]; then
   if [[ $QUEUE == "" ]]; then
-    QUEUE=espresso
+    QUEUE=microcentury
     echo "[INFO] Batch = $BATCH, QUEUE not specified. Using QUEUE = $QUEUE"
   fi
   else
@@ -324,10 +325,10 @@ if [ $SIGFITONLY == 1 ]; then
     else
 	if [[ $NOSYSTS == 0 ]]; then
 	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $QUEUE $BSOPT $SIGFITOPTS "
-	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
+	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
 	else
 	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $QUEUE $BSOPT $SIGFITOPTS"
-	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
+	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
 	fi
   
       PEND=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.out" |grep -v "\.sub" |grep -v "\.sh" |wc -l`
@@ -369,8 +370,8 @@ fi
 
 
 if [[ $PACKAGEONLY == 1 ]]; then
-  ls $OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt
-  echo "ls ../Signal/$OUTDIR/CMS-HGG_sigfit_${EXT}_*.root > out.txt"
+  ls $OUTDIR/CMS-HGG_sigfit_*.root > out.txt
+  echo "ls ../Signal/$OUTDIR/CMS-HGG_sigfit_*.root > out.txt"
   counter=0
   while read p ; do
     if (($counter==0)); then
@@ -423,14 +424,14 @@ if [ $SIGPLOTSONLY == 1 ]; then
   echo "=============================="
   
   if [ -z $BATCH ]; then
-    echo " ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR -p $PROCS -f $CATS --year $YEAR"
-    ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR/sigplots -p $PROCS -f $CATS --year $YEAR > signumbers_${EXT}.txt
+    echo " ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR -p $PROCS -f $CATS "
+    ./bin/makeParametricSignalModelPlots -i $OUTDIR/CMS-HGG_sigfit_$EXT.root  -o $OUTDIR/sigplots -p $PROCS -f $CATS > signumbers_${EXT}.txt
     
     ./makeSlides.sh $OUTDIR
     mv fullslides.pdf $OUTDIR/fullslides_${EXT}.pdf
   else
-    echo "./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE --year $YEAR"
-    ./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE --year $YEAR
+    echo "./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE"
+    ./python/submitSignalPlots.py -i $OUTDIR/CMS-HGG_sigfit_$EXT.root -o $OUTDIR/sigplots -p $PROCS -f $CATS --batch $BATCH -q $QUEUE
 
     PEND=`ls -l $OUTDIR/sigplots/PlottingJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" |grep -v "\.log" | grep -v "\.out" | grep -v "\.sub" | wc -l`
     echo "PEND $PEND"

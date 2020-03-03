@@ -167,15 +167,21 @@ RooDataSet * rvwvDataset(RooDataSet *data0, string rvwv){
   }
 }
 
+// double NConc(RooAddPdf *pdf, RooRealVar* x){
+
+//   RooAbsReal* dpdfdx2 = pdf->derivative(x, 2);
+  
+// }
+
 int main(int argc, char *argv[]){
 
   // Criteria to choose #gauss
   int   minNevts    = 500; // if below minNevts #gauss = -1  
   //  float myThresholdDist = 0.8; // how much better n+1 has to be wrt n
-  float myThresholdDist = 1.0; // how much better n+1 has to be wrt n
+  float myThresholdDist = 0.8; // how much better n+1 has to be wrt n
   //  float myThresholdChi2 = 0.5; // how much better n+1 has to be wrt n
-  float myThresholdChi2 = 1.0; // how much better n+1 has to be wrt n
-  float itsOK       = 0.3; // if  myDistance < itsOK suggest the #gauss that fulfill this condition
+  float myThresholdChi2 = 0.8; // how much better n+1 has to be wrt n
+  float itsOK       = 0.1; // if  myDistance < itsOK suggest the #gauss that fulfill this condition
 
   OptionParser(argc,argv);
   verbose_=true;

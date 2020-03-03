@@ -205,7 +205,7 @@ TGraph * Normalization_8TeV::GetBrGraph()
 double Normalization_8TeV::GetBR(double mass) {
 
 	for (std::map<double, double>::const_iterator iter = BranchingRatioMap.begin();  iter != BranchingRatioMap.end(); ++iter) {
-		if (mass==iter->first) return iter->second;
+	  if (abs(mass-iter->first)<0.001) return iter->second;
 		if (mass>iter->first) {
 			double lowmass = iter->first;
 			double lowbr = iter->second;
@@ -259,7 +259,7 @@ double Normalization_8TeV::GetXsection(double mass, TString HistName) {
 	}
 
 	for (std::map<double, double>::const_iterator iter = XSectionMap->begin();  iter != XSectionMap->end(); ++iter) {
-		if (mass==iter->first) return iter->second;
+		if (abs(mass-iter->first)<0.001) return iter->second;
 		if (mass>iter->first) {
 			double lowmass = iter->first;
 			double lowxsec = iter->second;

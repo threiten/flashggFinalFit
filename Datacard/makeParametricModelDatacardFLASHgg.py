@@ -101,6 +101,9 @@ parser.add_option("--quadInterpolate",type="int",default=0,help="Do a quadratic 
 parser.add_option("--mass",type="int",default=125,help="Mass at which to calculate the systematic variations (default: %default)")
 parser.add_option("--ext",type="string",default="mva",help="file extension")
 parser.add_option("--intLumi",type="float",default=-1.,help="lumi")
+parser.add_option("--intLumi16",type="float",help="lumi")
+parser.add_option("--intLumi17",type="float",help="lumi")
+parser.add_option("--intLumi18",type="float",help="lumi")
 parser.add_option("--differential",action="store_true",dest="differential",help="differential settings")
 parser.add_option("--statonly",action="store_true",dest="statonly",help="ignore systematics")
 parser.add_option("--debugcats",action="store_true",dest="debugcats",help="hack to redefine and debug categories")
@@ -242,6 +245,22 @@ inWS = WSTFileWrapper(options.infilename,"cms_hgg_%sTeV"%sqrts)
 #inWS = inFile.Get('wsig_13TeV')
 if (inWS==None) : inWS = inFile.Get('tagsDumper/cms_hgg_%sTeV'%sqrts)
 intL = inWS.var('IntLumi').getVal() if options.intLumi <=0 else options.intLumi*1000.
+
+if options.intLumi16:
+   intL16 = options.intLumi16*1000
+else:
+   intL16 = None
+   
+if options.intLumi17:
+   intL17 = options.intLumi17*1000
+else:
+   intL17 = None
+   
+if options.intLumi18:
+   intL18 = options.intLumi18*1000
+else:
+   intL18 = None
+   
 #intL=1290
 #intL = 2690
 #sqrts = inWS.var('IntLumi').getVal() #FIXME
@@ -931,7 +950,15 @@ def printObsProcBinLines():
         if c in tthCats:
           if c in tthLepCat: scale *= tthLepRateScale
           else: scale *= tthHadRateScale
-        outFile.write('%7.1f '%(intL*scale))
+          
+        if intL16 is not None and '_16'in c:
+           outFile.write('%7.1f '%(intL16*scale))
+        elif intL17 is not None and '_17' in c:
+           outFile.write('%7.1f '%(intL17*scale))
+        elif intL18 is not None and '_18' in c:
+           outFile.write('%7.1f '%(intL18*scale))
+        else:
+           outFile.write('%7.1f '%(intL*scale))
   outFile.write('\n')
   outFile.write('\n')
 ###############################################################################

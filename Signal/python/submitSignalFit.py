@@ -79,14 +79,6 @@ parser.add_option("--changeIntLumi",default="1.")
 parser.add_option("-o","--outfilename",default=None)
 parser.add_option("-p","--outDir",default="./")
 parser.add_option("--procs",default=None)
-<<<<<<< HEAD
-=======
-parser.add_option("--useDCB_1G",default="0")
-parser.add_option("--useSSF",default="0")
-parser.add_option("--analysis",default="hig-16-040")
-parser.add_option("--year",default="2016")
-parser.add_option("--massList",default="120,125,130")
->>>>>>> 558de8f... Background compatible with HTCondor submission
 parser.add_option("-f","--flashggCats",default=None)
 parser.add_option("--bs",default=5.14)
 parser.add_option("--shiftOffDiag",default=False,action="store_true")
