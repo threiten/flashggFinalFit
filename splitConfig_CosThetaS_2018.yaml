@@ -1,0 +1,45 @@
+splits: 
+  genCosThetaS: [0.0,0.07,0.15,0.22,0.35,0.45,0.55,0.75,1.00]
+  recoCosThetaS: [0.0,0.07,0.15,0.22,0.35,0.45,0.55,0.75,1.00]
+  sigmaMoM_decorr: [0.0, 0.01076, 0.0165, 0.0332]
+  # absdZ: [0.0,1.0,100.]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+  centralObjectWeight: [-1000, 1000]
+  NNLOPSweight: [-inf, inf]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.46 and subleadmva>0.46'
+
+weight: 'weight*NNLOPSweight'
+
+systVars: []
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0']
+
+filenames:
+  IA_125: 'reducedCosThetaSIA_genCosThetaS_nominal.root'
+  OA_125: 'reducedCosThetaSOA__nominal.root'
+  IA_120: 'reducedCosThetaSIA_genCosThetaS_nominal.root'
+  OA_120: 'reducedCosThetaSOA__nominal.root'
+  IA_130: 'reducedCosThetaSIA_genCosThetaS_nominal.root'
+  OA_130: 'reducedCosThetaSOA__nominal.root'
+  Data: 'reducedCosThetaSData__nominal.root'
+  
+treepath: 'tagsDumper/trees'
+
+formulas: 
+ genCosThetaS: 'abs(((genLeadEnergy + genLeadPz)*(genSubleadEnergy - genSubleadPz) - (genLeadEnergy - genLeadPz)*(genSubleadEnergy + genSubleadPz))/( genMass*sqrt(genMass*genMass + genPt*genPt)))'
+ recoCosThetaS: 'abs(((recoLeadEnergy + recoLeadPz)*(recoSubleadEnergy - recoSubleadPz) - (recoLeadEnergy - recoLeadPz)*(recoSubleadEnergy + recoSubleadPz))/( recoMass*sqrt(recoMass*recoMass + recoPt*recoPt)))'

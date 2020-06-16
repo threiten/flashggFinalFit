@@ -52,6 +52,7 @@ void Packager::packageOutput(bool split, string process , string tag){
 
   vector<string> expectedObjectsNotFound;
   bool split_=split;
+  std::cout << split_ << std::endl;
   // sum datasets first
   for (int mh=mhLow_; mh<=mhHigh_; mh+=5){
     if (skipMass(mh)) continue;
@@ -77,7 +78,7 @@ void Packager::packageOutput(bool split, string process , string tag){
 	  continue;
 	}
 	if (!split_){
-	  if ( cat==0 && proc==procs_.begin()) allDataThisMass = (RooDataSet*)tempData->Clone(Form("sig_mass_m%d_AllCats",mh));
+	  if (!allDataThisMass) allDataThisMass = (RooDataSet*)tempData->Clone(Form("sig_mass_m%d_AllCats",mh));
 	  else allDataThisMass->append(*tempData);
         }
 				//if (proc==procs_.begin()) allDataThisCat = (RooDataSet*)tempData->Clone(Form("sig_mass_m%d_%s",mh,catname.c_str()));
@@ -96,7 +97,7 @@ void Packager::packageOutput(bool split, string process , string tag){
     }
     saveWS->import(*allDataThisMass);
   }
-  
+  std::cout << "Importing Datasets done!" << std::endl;
   RooRealVar *MH = (RooRealVar*)WS->var("MH");
   // now create pdf sums (these don't the relative amounts as just used for plotting so can use ThisLum versions)
   RooArgList *sumPdfs = new RooArgList();

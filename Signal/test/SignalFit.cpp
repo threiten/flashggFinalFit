@@ -265,9 +265,9 @@ unsigned int getIndexOfReferenceDataset(string proc, string cat){
   std::cout<<"cat sought "<<cat<<std::endl;
   for(unsigned int i =0 ; i < map_proc_.size() ; i++){
     string this_process = map_proc_[i];
-    std::cout<<"this process "<<this_process<<std::endl;
+    // std::cout<<"this process "<<this_process<<std::endl;
     string this_cat = map_cat_[i];
-    std::cout<<"this cat "<<this_cat<<std::endl;
+    // std::cout<<"this cat "<<this_cat<<std::endl;
     if (this_process.compare(proc) ==0 ){
       if ( this_cat.compare(cat)==0 ){ 
         iLine=i;
@@ -731,7 +731,7 @@ int main(int argc, char *argv[]){
     } else if (els.size()==8){
       cout << " MDDB REPLACEMENT TAG ! : proc = " << proc << " cat =  " << cat  << endl;
       replaceWith_rv_ = make_pair(els[4],els[5]); // proc, cat
-      replaceWith_wv_ = make_pair(els[4],els[5]); // proc, cat
+      replaceWith_wv_ = make_pair(els[6],els[7]); // proc, cat
       cout << " MDDB REPLACE WITH : proc = " << els[4] << " cat =  " << els[5]  << endl;
       replace_ = true;
       map_replacement_proc_rv_.push_back(els[4]);
@@ -1174,7 +1174,7 @@ int main(int argc, char *argv[]){
       // if there are few atcual entries or if there is an  overall negative sum of weights...
       // or if it was specified that one should use the replacement dataset, then need to replace!
       //      if (nEntriesWV < minNevts || sEntriesWV < 0 || (userSkipWV)){
-      if (tooFewEntriesWV || negSumEntriesWV || (userSkipWV) || offDiagonal){ //the flags for entries make sure the replacement happens for all mass points if only one falls below threshold
+      if (tooFewEntriesWV || negSumEntriesWV || (userSkipWV)){ //the flags for entries make sure the replacement happens for all mass points if only one falls below threshold \\ || offDiagonal
 	std::cout << "[INFO] too few entries to use for fits in WV! nEntries " << nEntriesWV << " sumEntries " << sEntriesWV << "userSkipWV " << userSkipWV << std::endl;
         
 	//things are simpler this time, since almost all WV are bad aside from ggh-UntaggedTag3
@@ -1461,9 +1461,15 @@ int main(int argc, char *argv[]){
     Packager packager(outWSWrapper, outWS,procs_,nCats_,mhLow_,mhHigh_,skipMasses_,sqrts_,skipPlots_,plotDir_,mergeWS,cats_,flashggCats_);
     
     // if we are doing jobs for each proc/tag, want to do the split.
-    bool split =0;
-    if (split_.size() > 0) split=1; 
-    packager.packageOutput(/*split*/split, /*proc*/split_[0], /*tag*/ split_[1] );
+    bool split = 0;
+    std::cout << "Split size " << split_.size() << std::endl;
+    std::cout << "split_ " << split_[0] << std::endl;
+    if (split_.size() == 2){
+      split=1;
+      packager.packageOutput(/*split*/split, /*proc*/split_[0], /*tag*/ split_[1] );
+    } else {
+      packager.packageOutput(/*split*/split, /*proc*/procs_[0], /*tag*/ flashggCats_[0] );
+    }
     sw.Stop();
     cout << "[INFO] Combination complete." << endl;
     cout << "[INFO] Whole process took..." << endl;

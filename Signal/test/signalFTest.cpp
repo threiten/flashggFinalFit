@@ -346,6 +346,7 @@ int main(int argc, char *argv[]){
 
     cout << "[TEX] \\documentclass[11pt]{article}" << endl;
     cout << "[TEX] \\usepackage{graphicx}" << endl;
+    cout << "[TEX] \\usepackage{xcolor}" << endl;
     cout << "[TEX] \\begin{document}" << endl;
     cout << "[TEX] " << endl;
     cout << "[TEX] \\title{}" << endl;
@@ -488,14 +489,17 @@ int main(int argc, char *argv[]){
 		  << " Exit." << std::endl;
         exit(1);
       }
+
+      if (dataRV->numEntries() > minNevts){
+	  catForTex = boost::replace_all_copy(flashggCats_[cat], "_", "\\_");
+	  auto procForTex = boost::replace_all_copy(proc, "_", "\\_");
+	  cout << catForTex << endl;
+	  cout <<  Form("[TEX] \\section{RV proc %s cat %s}", procForTex.c_str(), catForTex.c_str()) << endl;
+	  cout << "[TEX] \\begin{tabular}{ l l l l l l l }" << endl;
+	  cout << "[TEX] \\hline" << endl;
+	  cout << "[TEX]   Order & Mean & Sigma & Dist & chi2 & entries & dist/entrie\\\\" << endl;
+	}
       
-      catForTex = boost::replace_all_copy(flashggCats_[cat], "_", "\\_");
-      auto procForTex = boost::replace_all_copy(proc, "_", "\\_");
-      cout << catForTex << endl;
-      cout <<  Form("[TEX] \\section{RV proc %s cat %s}", procForTex.c_str(), catForTex.c_str()) << endl;
-      cout << "[TEX] \\begin{tabular}{ l l l l l l l }" << endl;
-      cout << "[TEX] \\hline" << endl;
-      cout << "[TEX]   Order & Mean & Sigma & Dist & chi2 & entries & dist/entrie\\\\" << endl;
       // which nGaussians do we want to choose?
       int rvChoice=0;
       int wvChoice=0;
@@ -620,7 +624,9 @@ int main(int argc, char *argv[]){
 	float myDistance = sqrt(f->GetParameter(1)*f->GetParameter(1) + (f->GetParameter(2)-1)*(f->GetParameter(2)-1));
 
 	cout << "proc RV: " << proc << " cat " << flashggCats_[cat] << " order " << order << " --> Mean = " << f->GetParameter(1) << " Sigma = " << f->GetParameter(2) << " myDist = " << myDistance << " chi2 = " << fitchi2 <<  endl;
-	cout << "[TEX]  " << order << " &" << f->GetParameter(1) << " & " << f->GetParameter(2) << " & " << myDistance << " & " << fitchi2 <<  " & " << dataRVbinned->numEntries() <<  " & " << myDistance/dataRVbinned->numEntries() << "\\\\" << endl;
+	if (dataRV->numEntries() > minNevts){
+	  cout << "[TEX]  " << order << " &" << f->GetParameter(1) << " & " << f->GetParameter(2) << " & " << myDistance << " & " << fitchi2 <<  " & " << dataRVbinned->numEntries() <<  " & " << myDistance/dataRVbinned->numEntries() << "\\\\" << endl;
+	}
 
 
 
@@ -680,22 +686,23 @@ int main(int argc, char *argv[]){
       ccpPullRV->Print(Form("%s/fTest/ppull_%s_cat_%s_rv.png", outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()));	
       ccpPullRV->Print(Form("%s/fTest/ppull_%s_cat_%s_rv.pdf", outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()));	
       delete ccpPullRV;
-
-      cout << "[TEX] \\end{tabular}" << endl;
-      cout << "[TEX] "<< endl;
-      cout << "[TEX] \\begin{figure}[htbp]" << endl;
-      cout << "[TEX] \\begin{center}" << endl;
-      cout << Form("[TEX] \\includegraphics[width=15.0cm]{{%s/sigfTest/rv_%s_%s}.pdf}"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << "[TEX] \\end{center}" << endl;
-      cout << "[TEX] \\end{figure}" << endl;
-      cout << "[TEX] \\begin{figure}[htbp]" << endl;
-      cout << "[TEX] \\begin{center}" << endl;
-      cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/res_%s_cat_%s_rv}.pdf}\\\\"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/pull_%s_cat_%s_rv}.pdf}" , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/ppull_%s_cat_%s_rv}.pdf}", outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << "[TEX] \\end{center}" << endl;
-      cout << "[TEX] \\end{figure}" << endl;
-
+      
+      if (dataRV->numEntries() > minNevts){
+	cout << "[TEX] \\end{tabular}" << endl;
+	cout << "[TEX] "<< endl;
+	cout << "[TEX] \\begin{figure}[htbp]" << endl;
+	cout << "[TEX] \\begin{center}" << endl;
+	cout << Form("[TEX] \\includegraphics[width=12.0cm]{{%s/sigfTest/rv_%s_%s}.pdf}"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << "[TEX] \\end{center}" << endl;
+	cout << "[TEX] \\end{figure}" << endl;
+	cout << "[TEX] \\begin{figure}[htbp]" << endl;
+	cout << "[TEX] \\begin{center}" << endl;
+	cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/res_%s_cat_%s_rv}.pdf}\\\\"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/pull_%s_cat_%s_rv}.pdf}" , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/ppull_%s_cat_%s_rv}.pdf}", outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << "[TEX] \\end{center}" << endl;
+	cout << "[TEX] \\end{figure}" << endl;
+      }
 
       // original snippet of code for the choice
       // if (prob <rv_prob_limit){
@@ -713,35 +720,51 @@ int main(int argc, char *argv[]){
       // Choose the #gaussians RV
       float minDist = 9999999;
       float minchi2 = 9999999;
+      unsigned int indChoice = 0;
       rvChoice = 1;
       if (dataRV->numEntries() > minNevts){
       	for(unsigned int i =0; i<rv_results.size(); i++){
 	  // if distance is small enough just use this #gauss, where enough is set by itsOK
 	  if (rv_results[i].second < itsOK){
-	    rvChoice = rv_results[i].first;	  
+	    rvChoice = rv_results[i].first;
+	    indChoice = i;
 	    break;
 	  }
 	  // look for the "significantly" smaller distance, where significantly is set by myThresholdDist 
       	  if (rv_results[i].second < minDist*myThresholdDist){
       	    minDist  = rv_results[i].second;
 	    minchi2  = rv_chi2[i].second;
-      	    rvChoice = rv_results[i].first;	  
+      	    rvChoice = rv_results[i].first;
+	    indChoice = i;
       	  } 
 	  else // look for the "significantly" smaller chi2, where significantly is set by myThresholdChi2
 	    if (rv_chi2[i].second < minchi2*myThresholdChi2){
 	    minDist  = rv_results[i].second;
 	    minchi2  = rv_chi2[i].second;
-      	    rvChoice = rv_results[i].first;	  	    
+      	    rvChoice = rv_results[i].first;
+	    indChoice = i;
 	  }
       	}
       } else {
       	rvChoice = -1;
       }
 
-      cout <<  "[TEX] Suggested number of gaussians: " << rvChoice << endl;
+      if (dataRV->numEntries() > minNevts){
+	if (rvChoice > 2){
+	  cout <<  "[TEX] {\\Large\\color{red}\\textbf{Suggested number of gaussians: " << rvChoice << "}}" << endl;
+	}
+	else{
+	  cout <<  "[TEX] Suggested number of gaussians: " << rvChoice << endl;
+	}
+	if ((rvChoice > -1) && (rv_results[indChoice].second > 0.5 || rv_chi2[indChoice].second > 25.)){
+	  cout << "[TEX] \\newline {\\Huge\\color{red}\\textbf{DANGER!!!}}" << endl;
+	}
+      }
       cout <<  "MDDB RV parameters of the " << rvChoice << " gaussians " << Form("proc_cat=%s_%s", proc.c_str(), flashggCats_[cat].c_str()) << endl;
       if (rvChoice != -1) rv_args[rvChoice-1].second->Print("s");
-      cout << "[TEX] \\newpage" << endl;
+      if (dataWV->numEntries() > minNevts){
+	cout << "[TEX] \\newpage" << endl;
+      }
 
     
       // wrong vertex
@@ -760,14 +783,16 @@ int main(int argc, char *argv[]){
 
       dataWV->plotOn(plotsWV[proc][cat]);
 
-      catForTex = boost::replace_all_copy(flashggCats_[cat], "_", "\\_");
-      procForTex = boost::replace_all_copy(proc, "_", "\\_");
-      cout << catForTex << endl;
-      cout <<  Form("[TEX] \\section{WV proc %s cat %s}", procForTex.c_str(), catForTex.c_str()) << endl;
-      cout << "[TEX] \\begin{tabular}{ l l l l l l l }" << endl;
-      cout << "[TEX] \\hline" << endl;
-      cout << "[TEX]   Order & Mean & Sigma & Dist & chi2 & entries & dist/entries\\\\" << endl;
-    
+      if (dataWV->numEntries() > minNevts){
+	catForTex = boost::replace_all_copy(flashggCats_[cat], "_", "\\_");
+	auto procForTex = boost::replace_all_copy(proc, "_", "\\_");
+	cout << catForTex << endl;
+	cout <<  Form("[TEX] \\section{WV proc %s cat %s}", procForTex.c_str(), catForTex.c_str()) << endl;
+	cout << "[TEX] \\begin{tabular}{ l l l l l l l }" << endl;
+	cout << "[TEX] \\hline" << endl;
+	cout << "[TEX]   Order & Mean & Sigma & Dist & chi2 & entries & dist/entries\\\\" << endl;
+      }
+      
       TCanvas *ccResWV  = new TCanvas("ccResWV","Residuals",600,600);
       TCanvas *ccPullWV = new TCanvas("ccPullWV","Pulls",600,600);
       TCanvas *ccpPullWV = new TCanvas("ccpPullWV","PullsProjections",600,600);
@@ -868,7 +893,9 @@ int main(int argc, char *argv[]){
 	float myDistance = sqrt(f->GetParameter(1)*f->GetParameter(1) + (f->GetParameter(2)-1)*(f->GetParameter(2)-1));
 
 	cout << "proc WV: " << proc << " cat " << flashggCats_[cat] << " order " << order << " --> Mean = " << f->GetParameter(1) << " Sigma = " << f->GetParameter(2) << " myDist = " << myDistance << " chi2 = " << fitchi2 <<  endl;
-	cout << "[TEX]  " << order << " &" << f->GetParameter(1) << " & " << f->GetParameter(2) << " & " << myDistance << " & " << fitchi2 <<  " & " << dataWVbinned->numEntries() <<  " & " << myDistance/dataWVbinned->numEntries()  << "\\\\" << endl;
+	if (dataWV->numEntries() > minNevts){
+	  cout << "[TEX]  " << order << " &" << f->GetParameter(1) << " & " << f->GetParameter(2) << " & " << myDistance << " & " << fitchi2 <<  " & " << dataWVbinned->numEntries() <<  " & " << myDistance/dataWVbinned->numEntries()  << "\\\\" << endl;
+	}
 
 
       
@@ -929,21 +956,22 @@ int main(int argc, char *argv[]){
       ccpPullWV->Print(Form("%s/fTest/ppull_%s_cat_%s_wv.pdf", outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()));	
       delete ccpPullWV;
 
-      cout << "[TEX] \\end{tabular}" << endl;
-      cout << "[TEX] "<< endl;
-      cout << "[TEX] \\begin{figure}[htbp]" << endl;
-      cout << "[TEX] \\begin{center}" << endl;
-      cout << Form("[TEX] \\includegraphics[width=15.0cm]{{%s/sigfTest/wv_%s_%s}.pdf}"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << "[TEX] \\end{center}" << endl;
-      cout << "[TEX] \\end{figure}" << endl;
-      cout << "[TEX] \\begin{figure}[htbp]" << endl;
-      cout << "[TEX] \\begin{center}" << endl;
-      cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/res_%s_cat_%s_wv}.pdf}\\\\"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/pull_%s_cat_%s_wv}.pdf}" , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/ppull_%s_cat_%s_wv}.pdf}", outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
-      cout << "[TEX] \\end{center}" << endl;
-      cout << "[TEX] \\end{figure}" << endl;
-
+      if (dataWV->numEntries() > minNevts){
+	cout << "[TEX] \\end{tabular}" << endl;
+	cout << "[TEX] "<< endl;
+	cout << "[TEX] \\begin{figure}[htbp]" << endl;
+	cout << "[TEX] \\begin{center}" << endl;
+	cout << Form("[TEX] \\includegraphics[width=12.0cm]{{%s/sigfTest/wv_%s_%s}.pdf}"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << "[TEX] \\end{center}" << endl;
+	cout << "[TEX] \\end{figure}" << endl;
+	cout << "[TEX] \\begin{figure}[htbp]" << endl;
+	cout << "[TEX] \\begin{center}" << endl;
+	cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/res_%s_cat_%s_wv}.pdf}\\\\"  , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/pull_%s_cat_%s_wv}.pdf}" , outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << Form("[TEX] \\includegraphics[width=5.0cm]{{%s/sigfTest/ppull_%s_cat_%s_wv}.pdf}", outdir_.c_str(),proc.c_str(), flashggCats_[cat].c_str()) << endl;
+	cout << "[TEX] \\end{center}" << endl;
+	cout << "[TEX] \\end{figure}" << endl;
+      }
 
       // original snippet of code for the choice
       // if (prob <wv_prob_limit){
@@ -986,7 +1014,17 @@ int main(int argc, char *argv[]){
 	wvChoice = -1;
       }
 
-      cout <<  "[TEX] Suggested number of gaussians: " << wvChoice << endl;
+      if (dataWV->numEntries() > minNevts){
+	if (wvChoice > 2){
+	  cout <<  "[TEX] {\\Large\\color{red}\\textbf{Suggested number of gaussians: " << wvChoice << "}}" << endl;
+	}
+	else{
+	  cout <<  "[TEX] Suggested number of gaussians: " << wvChoice << endl;
+	}
+	if ((wvChoice > -1) && (wv_results[indChoice].second > 0.5 || wv_chi2[indChoice].second > 25.)){
+	  cout << "[TEX] \\newline {\\Huge\\color{red}\\textbf{DANGER!!!}}" << endl;
+	}
+      }
       cout <<  "MDDB WV parameters of the " << wvChoice << " gaussians " << Form("proc_cat=%s_%s", proc.c_str(), flashggCats_[cat].c_str()) << endl;
       if (wvChoice != -1) wv_args[wvChoice-1].second->Print("s");
 

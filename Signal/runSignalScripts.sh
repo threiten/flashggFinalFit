@@ -151,7 +151,7 @@ echo "[INFO] Batch = $BATCH, using QUEUE = $QUEUE"
 fi
 if [[ $BATCH == "HTCONDOR" ]]; then
   if [[ $QUEUE == "" ]]; then
-    QUEUE=microcentury
+    QUEUE=espresso
     echo "[INFO] Batch = $BATCH, QUEUE not specified. Using QUEUE = $QUEUE"
   fi
   else
@@ -324,11 +324,11 @@ if [ $SIGFITONLY == 1 ]; then
 	fi
     else
 	if [[ $NOSYSTS == 0 ]]; then
-	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $QUEUE $BSOPT $SIGFITOPTS "
-	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
+	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q longlunch $BSOPT $SIGFITOPTS "
+	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q longlunch $BSOPT $MHREFOPT $SIGFITOPTS
 	else
-	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q $QUEUE $BSOPT $SIGFITOPTS"
-	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q "$QUEUE" $BSOPT $MHREFOPT $SIGFITOPTS
+	    echo " ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit_$EXT.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q longlunch $BSOPT $SIGFITOPTS"
+	    ./python/submitSignalFit.py -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI --batch $BATCH -q longlunch $BSOPT $MHREFOPT $SIGFITOPTS
 	fi
   
       PEND=`ls -l $OUTDIR/sigfit/SignalFitJobs/sub*| grep -v "\.run" | grep -v "\.done" | grep -v "\.fail" | grep -v "\.err" | grep -v "\.out" |grep -v "\.sub" |grep -v "\.sh" |wc -l`

@@ -1,0 +1,45 @@
+splits: 
+  genJet2p5AbsRapidity0: [0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
+  recoJet2p5AbsRapidity0: [0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
+  sigmaMoM_decorr: [0.0, 0.0116, 0.0161, 0.0306]
+  # absdZ: [0.0,1.0,100.]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+  centralObjectWeight: [-1000, 1000]
+  NNLOPSweight: [-inf, inf]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.46 and subleadmva>0.46'
+
+weight: 'weight*NNLOPSweight'
+
+systVars: []
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0']
+
+filenames:
+  IA_125: 'reducedJet2p5AbsRapidity0IA_genJet2p5AbsRapidity0_nominal.root'
+  OA_125: 'reducedJet2p5AbsRapidity0OA__nominal.root'
+  IA_120: 'reducedJet2p5AbsRapidity0IA_genJet2p5AbsRapidity0_nominal.root'
+  OA_120: 'reducedJet2p5AbsRapidity0OA__nominal.root'
+  IA_130: 'reducedJet2p5AbsRapidity0IA_genJet2p5AbsRapidity0_nominal.root'
+  OA_130: 'reducedJet2p5AbsRapidity0OA__nominal.root'
+  Data: 'reducedJet2p5AbsRapidity0Data__nominal.root'
+  
+treepath: 'tagsDumper/trees'
+
+formulas: 
+  genJet2p5AbsRapidity0: 'abs(genJet2p5Rapidity0)'
+  recoJet2p5AbsRapidity0: 'abs(recoJet2p5Rapidity0)'

@@ -185,7 +185,32 @@ def writePostamble(sub_file, exec_line, nJobs=None):
   if opts.runLocal:
      system('bash %s'%os.path.abspath(sub_file.name))
 
+def writeTempDatFile(cwd, datfile, proc, ind, outDir, globalRepl):
+    f = open('{}/{}'.format(cwd, datfile))
+    lns = f.readlines()
+    if not os.path.exists('{}/{}/dat/temp'.format(cwd, outDir)):
+        os.makedirs('{}/{}/dat/temp'.format(cwd, outDir))
+    tempDatFilePath = '{}/{}/dat/temp/datfile_temp_{}.dat'.format(cwd, outDir, ind)
+    fo = open(tempDatFilePath, 'w')
+    addProcCat = []
+    for l in lns:
+        spL = l.split(' ')
+        if spL[0] == proc:
+            fo.write(l)
+            if len(spL) > 4:
+                addProcCat.append('{} {}'.format(spL[4], spL[5].replace('\n','')))
+            if len(spL) > 6:
+                addProcCat.append('{} {}'.format(spL[6], spL[7].replace('\n','')))
+        elif '{} {}'.format(spL[0], spL[1]) in globalRepl:
+            fo.write(l)
+    print(globalRepl)
+    for l in lns:
+        spL = l.split(' ')
+        if '{} {}'.format(spL[0], spL[1]) in addProcCat:
+            fo.write(l)
 
+    return tempDatFilePath
+            
 #######################################
 
   
@@ -235,35 +260,39 @@ if opts.batch != "HTCONDOR":
             else:
                 bsRW=1
             if opts.systdatfile:
-                exec_line = "%s/bin/SignalFit --verbose 3 -i %s -d %s/%s  --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt)
+                exec_line = "%s/bin/SignalFit -i %s -d %s/%s  --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt) #--verbose 3
             else:
-                exec_line = "%s/bin/SignalFit --verbose 3 -i %s -d %s/%s  --mhLow=%s --mhHigh=%s  --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt)
+                exec_line = "%s/bin/SignalFit -i %s -d %s/%s  --mhLow=%s --mhHigh=%s  --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt) #--verbose 3
                 #exec_line = "%s/bin/SignalFit -i %s  -p %s -f %s --considerOnly %s -o %s/%s --datfilename %s/%s/SignalFitJobs/outputs/config_%d.dat" %(os.getcwd(), opts.infile,proc,opts.flashggCats,cat,os.getcwd(),opts.outDir,os.getcwd(),opts.outDir, counter)
                 #print exec_line
             writePostamble(file,exec_line) #includes submission
 
 elif opts.batch == "HTCONDOR":
-    mapp = ''
+    procMapp = ''
+    datMapp = ''
+    replacements = [
+        '{} {}'.format(opts.refProcDiff, opts.refTagDiff),
+        '{} {}'.format(opts.refProcWV, opts.refTagWV)
+    ]
     for proc in  opts.procs.split(","):
-        for cat in opts.flashggCats.split(","):
-            mapp += '{} '.format(proc)
-            mapp += '{} '.format(cat)
-            counter += 1
+        datMapp += '{} '.format(writeTempDatFile(os.getcwd(), opts.datfile, proc, counter, opts.outDir, replacements))
+        procMapp += '{} '.format(proc)
+        counter += 1
 
     jobFile = open('%s/SignalFitJobs/subCondor.sh'%(opts.outDir),'w')
     writePreamble(jobFile)
-    jobFile.write('declare -a jobMap=({})\n'.format(mapp))
-    jobFile.write('let "PROCID = 2*${1}"\n')
-    jobFile.write('let "CATID = 2*${1} + 1"\n')
+    jobFile.write('declare -a procMap=({})\n'.format(procMapp))
+    jobFile.write('declare -a datMap=({})\n'.format(datMapp))
+    jobFile.write('PROCID=$1\n')
     bsRW=0
     if (float(opts.bs)==0):
         bsRW=0
     else:
         bsRW=1
     if opts.systdatfile:
-        exec_line = "%s/bin/SignalFit --verbose 3 -i %s -d %s/%s  --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o  %s/%s_${jobMap[${PROCID}]}_${jobMap[${CATID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split ${jobMap[${PROCID}]},${jobMap[${CATID}]} --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt)
+        exec_line = "%s/bin/SignalFit -i %s -d ${datMap[${PROCID}]} --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o %s/%s_${procMap[${PROCID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt) #--verbose 3
     else:
-        exec_line = "%s/bin/SignalFit --verbose 3 -i %s -d %s/%s  --mhLow=%s --mhHigh=%s  --procs %s -o %s/%s_${jobMap[${PROCID}]}_${jobMap[${CATID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split ${jobMap[${PROCID}]},${jobMap[${CATID}]} --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt)
+        exec_line = "%s/bin/SignalFit -i %s -d ${datMap[${PROCID}]} --mhLow=%s --mhHigh=%s  --procs %s -o %s/%s_${procMap[${PROCID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile, opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt) #--verbose 3
         #exec_line = "%s/bin/SignalFit -i %s  -p %s -f %s --considerOnly %s -o %s/%s --datfilename %s/%s/SignalFitJobs/outputs/config_%d.dat" %(os.getcwd(), opts.infile,proc,opts.flashggCats,cat,os.getcwd(),opts.outDir,os.getcwd(),opts.outDir, counter)
         #print exec_line
     writePostamble(jobFile, exec_line, counter) #includes submission

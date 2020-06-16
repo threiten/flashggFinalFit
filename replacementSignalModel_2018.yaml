@@ -1,0 +1,33 @@
+Pt:
+  tag: 'recoPt_35p0_45p0_sigmaMoM_decorr_0p01076_0p0165_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genPt_35p0_45p0'
+  
+Njets2p5:
+  tag: 'recoNjets2p5_0p5_1p5_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genNjets2p5_0p5_1p5'
+  tagWV: 'recoNjets2p5_m0p5_0p5_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  procWV: 'InsideAcceptance_genNjets2p5_m0p5_0p5'
+  
+CosThetaS:
+  tag: 'recoCosThetaS_0p55_0p75_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genCosThetaS_0p55_0p75'
+
+AbsRapidity:
+  tag: 'recoAbsRapidity_0p3_0p45_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsRapidity_0p3_0p45'
+
+Jet2p5Pt0:
+  tag: 'recoJet2p5Pt0_30p0_40p0_sigmaMoM_decorr_0p01076_0p0165_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genJet2p5Pt0_30p0_40p0'
+
+Jet2p5AbsRapidity0:
+  tag: 'recoJet2p5AbsRapidity0_2p0_3p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genJet2p5AbsRapidity0_2p0_3p0'
+
+AbsDeltaRapidityGgJet2p50:
+  tag: 'recoAbsDeltaRapidityGgJet2p50_2p5_100p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsDeltaRapidityGgJet2p50_2p5_100p0'
+
+AbsDeltaPhiGgJet2p50:
+  tag: 'recoAbsDeltaPhiGgJet2p50_0p0_2p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsDeltaPhiGgJet2p50_0p0_2p0'

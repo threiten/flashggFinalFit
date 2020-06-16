@@ -1,0 +1,41 @@
+splits: 
+  genJet4p7Pt1: [30.0,40.0,65.0,90.0,150.0,10000.0]
+  recoJet4p7Pt1: [30.0,40.0,65.0,90.0,150.0,10000.0]
+  sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
+  # absdZ: [0.0,1.0,100.]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+  centralObjectWeight: [-1000, 1000]
+  NNLOPSweight: [-inf, inf]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.397 and subleadmva>0.397'
+
+weight: 'weight*NNLOPSweight'
+
+systVars: []
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0']
+
+filenames:
+  IA_125: 'reducedJet4p7Pt1IA_genJet4p7Pt1_nominal.root'
+  OA_125: 'reducedJet4p7Pt1OA__nominal.root'
+  IA_120: 'reducedJet4p7Pt1IA_genJet4p7Pt1_nominal.root'
+  OA_120: 'reducedJet4p7Pt1OA__nominal.root'
+  IA_130: 'reducedJet4p7Pt1IA_genJet4p7Pt1_nominal.root'
+  OA_130: 'reducedJet4p7Pt1OA__nominal.root'
+  Data: 'reducedJet4p7Pt1Data__nominal.root'
+  
+treepath: 'tagsDumper/trees'
