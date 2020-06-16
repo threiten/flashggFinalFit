@@ -86,17 +86,17 @@ def main(options):
 
         for year in ['16', '17', '18']:
             ext = '{0}_{1}'.format(options.extension, year)
-            shl.copyfile('{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{}_temp.dat'.format(
-                ext, cmssw_path), '{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{}.dat'.format(ext, cmssw_base))
-            os.remove('{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{}_temp.dat'.format(ext, cmssw_base))
+            shl.copyfile('{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{0}_temp.dat'.format(
+                ext, cmssw_path), '{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{0}.dat'.format(ext, cmssw_path))
+            os.remove('{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{0}_temp.dat'.format(ext, cmssw_path))
             if os.path.exists('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}.dat'.format(
                     ext, cmssw_path)):
                 shl.copyfile('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}.dat'.format(
-                    ext, cmssw_path), '{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}_Old.dat'.format(ext, cmssw_base))
+                    ext, cmssw_path), '{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}_Old.dat'.format(ext, cmssw_path))
                 os.remove(
-                    '{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}.dat'.format(ext, cmssw_base))
-            os.symlink('{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{}.dat'.format(ext, cmssw_base),
-                       '{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}.dat'.format(ext, cmssw_base))
+                    '{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}.dat'.format(ext, cmssw_path))
+            os.symlink('{1}/src/flashggFinalFit/Signal/dat/newConfig_differential_{0}.dat'.format(ext, cmssw_path),
+                       '{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/dat/newConfig_differential_{0}.dat'.format(ext, cmssw_path))
 
     # ----------------------------Signal-------------------------------
     sFitsP = []
@@ -140,7 +140,7 @@ def main(options):
                               cwd='{0}/src/flashggFinalFit/Datacard'.format(cmssw_path), shell=True)
     mergeP.wait()
     if not os.path.exists('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path)):
-        os.mkdir('{1}/src/flashggFinalFit/Signal/outdir_differential_{}/sigfit'.format(options.extension, cmssw_path))
+        os.mkdir('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path))
     commands['Datacard_mergeW'] = mergeP.args
     skipF = subprocess.Popen(
         r'cat ./Signal/outdir_differential_{0}_16/sigfit/binsToSkipInDatacard.txt ./Signal/outdir_differential_{0}_17/sigfit/binsToSkipInDatacard.txt ./Signal/outdir_differential_{0}_18/sigfit/binsToSkipInDatacard.txt | tee ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard.txt'.format(options.extension), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
