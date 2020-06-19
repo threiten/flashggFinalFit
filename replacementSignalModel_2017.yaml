@@ -29,3 +29,7 @@ AbsDeltaRapidityGgJet2p50:
 AbsDeltaPhiGgJet2p50:
   tag: 'recoAbsDeltaPhiGgJet2p50_0p0_2p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
   proc: 'InsideAcceptance_genAbsDeltaPhiGgJet2p50_0p0_2p0'
+
+Jet4p7Pt1:
+  tag: 'recoJet4p7Pt1_40p0_65p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genJet4p7Pt1_40p0_65p0'

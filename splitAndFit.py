@@ -142,10 +142,11 @@ def main(options):
     if not os.path.exists('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path)):
         os.mkdir('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path))
     commands['Datacard_mergeW'] = mergeP.args
-    skipF = subprocess.Popen(
-        r'cat ./Signal/outdir_differential_{0}_16/sigfit/binsToSkipInDatacard.txt ./Signal/outdir_differential_{0}_17/sigfit/binsToSkipInDatacard.txt ./Signal/outdir_differential_{0}_18/sigfit/binsToSkipInDatacard.txt | tee ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard.txt'.format(options.extension), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
-    skipF.wait()
-    commands['Datacard_catSkipF'] = skipF.args
+    if not os.path.exists('{0}/src/flashggFinalFit/Signal/outdir_differential_{1}/sigfit/binsToSkipInDatacard.txt'.format(cmssw_path, options.extension)):
+        skipF = subprocess.Popen(
+            r'cat ./Signal/outdir_differential_{0}_16/sigfit/binsToSkipInDatacard.txt ./Signal/outdir_differential_{0}_17/sigfit/binsToSkipInDatacard.txt ./Signal/outdir_differential_{0}_18/sigfit/binsToSkipInDatacard.txt | tee ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard.txt'.format(options.extension), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
+        skipF.wait()
+        commands['Datacard_catSkipF'] = skipF.args
     dCardP = subprocess.Popen(r'./makeParametricModelDatacardFLASHgg.py -i ../Signal/outdir_differential_{0}/reduced{1}_IAOA_161718.root -o Datacard_13TeV_differential_{0}.txt --ext differential_{0} -p $(head -n1 ../Signal/m125_{0}_16/proc_cat_names_gen{1}.txt | tail -1),OutsideAcceptance -c $(head -n2 ../Signal/m125_{0}_16/proc_cat_names_gen{1}.txt | tail -1),$(head -n2 ../Signal/m125_{0}_17/proc_cat_names_gen{1}.txt | tail -1),$(head -n2 ../Signal/m125_{0}_18/proc_cat_names_gen{1}.txt | tail -1) --photonCatScales HighR9EB,HighR9EE,LowR9EB,LowR9EE,Gain6EB,Gain1EB --photonCatSmears HighR9EBPhi,HighR9EBRho,HighR9EEPhi,HighR9EERho,LowR9EBPhi,LowR9EBRho,LowR9EEPhi,LowR9EERho --mass 125 --intLumi16 35.9 --intLumi17 41.5 --intLumi18 58.7 --intLumi 35.9 --differential --statonly --isMultiPdf'.format(
         options.extension, options.variable), cwd='{0}/src/flashggFinalFit/Datacard'.format(cmssw_path), shell=True)
     commands['Datacard'] = dCardP.args
