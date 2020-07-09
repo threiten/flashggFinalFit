@@ -8,13 +8,16 @@ variables:
   CMS_hgg_mass: [100, 180]
   weight: [-inf, inf]
   centralObjectWeight: [-1000, 1000]
-  NNLOPSweight: [-inf, inf]
   dZ: [-inf, inf]
   processIndex: [0,100]
 
 cut: 'leadmva>0.46 and subleadmva>0.46'
 
-weight: 'weight*NNLOPSweight'
+phasespace:
+  gen: 'genJet2p5Pt0>-999 and genJet2p5Pt0>30 and abs(genJet2p5Eta0)<2.5'
+  reco: 'recoJet2p5Pt0>-999 and recoJet2p5Pt0>30 and abs(recoJet2p5Eta0)<2.5'
+
+weight: 'weight'
 
 systVars: []
 

@@ -1458,7 +1458,13 @@ int main(int argc, char *argv[]){
     cout << "[INFO] Starting to combine fits..." << endl;
     // this guy packages everything up
     WSTFileWrapper *outWSWrapper = new WSTFileWrapper(outFile, outWS);
-    Packager packager(outWSWrapper, outWS,procs_,nCats_,mhLow_,mhHigh_,skipMasses_,sqrts_,skipPlots_,plotDir_,mergeWS,cats_,flashggCats_);
+    string skipProc; 
+    if (map_proc_.size() > 2){
+      skipProc = map_proc_[2];
+    } else {
+      skipProc = map_proc_[0];
+    }
+    Packager packager(outWSWrapper, outWS,procs_,nCats_,mhLow_,mhHigh_,skipMasses_,sqrts_,skipPlots_,plotDir_,mergeWS,cats_,flashggCats_,skipProc);
     
     // if we are doing jobs for each proc/tag, want to do the split.
     bool split = 0;

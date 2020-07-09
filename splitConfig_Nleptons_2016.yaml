@@ -1,0 +1,44 @@
+splits: 
+  genNleptons: [-0.5,0.5,1.5,100]
+  recoNleptons: [-0.5,0.5,1.5,100]
+  sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
+  # absdZ: [0.0,1.0,100.]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+  centralObjectWeight: [-1000, 1000]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.397 and subleadmva>0.397'
+
+weight: 'weight'
+
+systVars: []
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0']
+
+filenames:
+  IA_125: 'reducedNleptonsIA_genNleptons_nominal.root'
+  OA_125: 'reducedNleptonsOA__nominal.root'
+  IA_120: 'reducedNleptonsIA_genNleptons_nominal.root'
+  OA_120: 'reducedNleptonsOA__nominal.root'
+  IA_130: 'reducedNleptonsIA_genNleptons_nominal.root'
+  OA_130: 'reducedNleptonsOA__nominal.root'
+  Data: 'reducedNleptonsData__nominal.root'
+  
+treepath: 'tagsDumper/trees'
+
+formulas: 
+  genNleptons: 'genNleptons2p4'
+  recoNleptons: '(recoNelectronsAll + recoNmuonsAll)'

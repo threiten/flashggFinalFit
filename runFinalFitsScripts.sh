@@ -76,6 +76,7 @@ usage(){
     echo "--noBkgPlots) skip background plots jobs) "
     echo "--dataFile) specified in fb^-{1} (default $DATAFILE)) "
     echo "--batch) which batch system to use (LSF,IC) (default $BATCH)) "
+    echo "--queue) which batch queue to use) "
     echo "--MHref)  reference mh for xsec ) "
     echo "--noSysts)  no systs in signal model ) "
     echo "--shiftOffDiag)  shift scale in off-diag elements of diff analysis ) "
@@ -102,7 +103,7 @@ usage(){
 
 
 # options may be followed by one colon to indicate they have a required argument
-if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,flashggCats:,ext:,smears:,scales:,pseudoDataDat:,sigFile:,combine,combineOnly,combinePlotsOnly,signalOnly,packageOnly,backgroundOnly,datacardOnly,superloop:,continueLoop:,intLumi:,unblind,noBkgPlots,noSysts,shiftOffDiag,noSkip,skipSecondaryModels,isData,isFakeData,dataFile:,batch:,verbose,MHref:,keepCurrentFits,datacardDifferential,multiPdf,isToSkip,toSkip:,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,useFtest,monitorDataPlots,skipCalcPhoSyst -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,flashggCats:,ext:,smears:,scales:,pseudoDataDat:,sigFile:,combine,combineOnly,combinePlotsOnly,signalOnly,packageOnly,backgroundOnly,datacardOnly,superloop:,continueLoop:,intLumi:,unblind,noBkgPlots,noSysts,shiftOffDiag,noSkip,skipSecondaryModels,isData,isFakeData,dataFile:,batch:,queue:,verbose,MHref:,keepCurrentFits,datacardDifferential,multiPdf,isToSkip,toSkip:,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,useFtest,monitorDataPlots,skipCalcPhoSyst -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
     exit 1
@@ -124,6 +125,7 @@ do
 	--pseudoDataDat) PSEUDODATADAT=$2; shift;;
 	--dataFile) DATAFILE=$2; shift;;
 	--batch) BATCH=$2; echo " BATCH $BATCH " ; shift;;
+	--queue) QUEUE=$2; echo " QUEUE $QUEUE " ; shift;;
 	--signalOnly) COMBINEONLY=0;BKGONLY=0;SIGONLY=1;DATACARDONLY=0;;
 	--packageOnly) PACKAGEONLY=1;;
 	--backgroundOnly) COMBINEONLY=0;BKGONLY=1;SIGONLY=0;DATACARDONLY=0;;
@@ -254,6 +256,9 @@ if [ $CONTINUELOOP == 0 ]; then
 	fi
 	if [ $PACKAGEONLY == 1 ]; then
 	    RUNSIGOPT="${RUNSIGOPT} --packageOnly"
+	fi
+	if [[ $QUEUE ]]; then
+	    RUNSIGOPT="${RUNSIGOPT} --queue $QUEUE"
 	fi
 
 	echo "runsigopt is $RUNSIGOPT"

@@ -35,3 +35,39 @@ AbsDeltaPhiGgJet2p50:
 Jet4p7Pt1:
   tag: 'recoJet4p7Pt1_40p0_65p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
   proc: 'InsideAcceptance_genJet4p7Pt1_40p0_65p0'
+
+Jet4p7AbsRapidity1:
+  tag: 'recoJet4p7AbsRapidity1_3p5_5p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genJet4p7AbsRapidity1_3p5_5p0'
+
+AbsDeltaPhiGgJjJets4p7:
+  tag: 'recoAbsDeltaPhiGgJjJets4p7_3p07_3p2_sigmaMoM_decorr_0p01076_0p0165_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsDeltaPhiGgJjJets4p7_3p07_3p2'
+
+AbsDeltaPhiJ1J2Jets4p7:
+  tag: 'recoAbsDeltaPhiJ1J2Jets4p7_1p7_2p5_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsDeltaPhiJ1J2Jets4p7_1p7_2p5'
+
+AbsZeppenfeldEtaJets4p7:
+  tag: 'recoAbsZeppenfeldEtaJets4p7_1p7_10p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsZeppenfeldEtaJets4p7_1p7_10p0'
+
+MjjJets4p7:
+  tag: 'recoMjjJets4p7_1000p0_13000p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genMjjJets4p7_1000p0_13000p0'
+
+AbsDeltaEtaJ1J2Jets4p7:
+  tag: 'recoAbsDeltaEtaJ1J2Jets4p7_5p0_100p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsDeltaEtaJ1J2Jets4p7_5p0_100p0'
+
+Nleptons:
+  tag: 'recoNleptons_m0p5_0p5_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genNleptons_m0p5_0p5'
+
+NBjets2p5:
+  tag: 'recoNBjets2p5_m0p5_0p5_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genNBjets2p5_m0p5_0p5'
+
+PtMiss:
+  tag: 'recoPtMiss_0p0_30p0_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genPtMiss_0p0_30p0'

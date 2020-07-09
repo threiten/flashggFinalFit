@@ -27,11 +27,12 @@ usage(){
     echo "--runSignalOnly, only produce signal models )" 
     echo "--runBackgroundOnly, only run bkg )" 
     echo "--unblind, unblind mass plots )" 
-
+    echo "--queue, queue to use for batch submission )"
+    
 
 }
 
-if ! options=$(getopt -u -o hi:p:f: -l help,obs:,ext:,inputDir:,procs:,cats:,range:,npoints:,shiftOffDiag:,noSkip:,refTagDiff:,refTagWV:,refProc:,refProcDiff:,refProcWV:,sigModOpt::,bkgModOpt::,DatacardOpt::,runCombineOnly:,runDatacardOnly:,runSignalOnly:,runBackgroundOnly:,unblind: -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,obs:,ext:,inputDir:,procs:,cats:,range:,npoints:,shiftOffDiag:,noSkip:,refTagDiff:,refTagWV:,refProc:,refProcDiff:,refProcWV:,sigModOpt::,bkgModOpt::,DatacardOpt::,runCombineOnly:,runDatacardOnly:,runSignalOnly:,runBackgroundOnly:,unblind:,queue: -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
     exit 1
@@ -87,6 +88,7 @@ do
 	--runSignalOnly) SIGNALONLY=$2; shift;;
 	--runBackgroundOnly) BKGONLY=$2; shift;;
 	--unblind) UNBLIND=$2; shift;;
+	--queue) QUEUE=$2; shift;;
 
 	(--) shift; break;;
 	(-*) usage; echo "$0: error - unrecognized option $1" 1>&2; usage >> /dev/stderr; exit 1;;
@@ -185,6 +187,9 @@ if [ $NOSKIP == 1 ]; then
     SIGMODOPT="${SIGMODOPT} --noSkip"
 fi
 
+if [[ $QUEUE ]]; then
+    SIGMODOPT="${SIGMODOPT} --queue $QUEUE"
+fi
 ##signal model preparation
 #The first tiem you run this command, it will run the signal f-test to determine the number of gaussians to use for each tag/process. You'll be prompted to use the output of this to fill in the required config file. Then re-run to build the signal model.
 ##./runFinalFitsScripts.sh -i $FILE -p $PROCS -f $CATS --ext $EXT --batch $BATCH --intLumi $INTLUMI --smears $SMEARS --scales $SCALES --signalOnly --bs 3.5 --shiftOffDiag --refTagDiff $5 --refTagWV $6 --refProcWV $7 --refProcDiff $8 --refProc $9 ## --normalisationCut "processIndex==11"

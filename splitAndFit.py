@@ -8,19 +8,19 @@ cmssw_path = os.environ['CMSSW_BASE']
 
 rootDir = {
     '16': {
-        'IA': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_withJets_puTarget_decorr_r9Cut_signal_IA_16/',
-        'OA': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_withJets_puTarget_decorr_r9Cut_signal_OA_16/',
-        'Data': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wJ_wBJMet_dcr_HLTFilter_r9Cut_data_16/'
+        'IA': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wJMET_reRunSum20_signal_IA_16/',
+        'OA': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wJMET_reRunSum20_signal_OA_16/',
+        'Data': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wJMET_reRunSum20_data_16/'
     },
     '17': {
-        'IA': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_withJets_puTarget_decorr_r9Cut_signal_IA_17/',
-        'OA': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_withJets_puTarget_decorr_r9Cut_signal_OA_17/',
-        'Data': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wJ_wBJMet_dcr_HLTFilter_r9Cut_data_17/'
+        'IA': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wJMET_reRunSum20_signal_IA_17/',
+        'OA': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wJMET_reRunSum20_signal_OA_17/',
+        'Data': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wJMET_reRunSum20_data_17/'
     },
     '18': {
-        'IA': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_withJets_puTarget_decorr_r9Cut_signal_IA_18/',
-        'OA': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_withJets_puTarget_decorr_r9Cut_signal_OA_18/',
-        'Data': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wJ_wBJMet_dcr_HLTFilter_r9Cut_data_18/'
+        'IA': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wJMET_reRunSum20_signal_IA_18/',
+        'OA': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wJMET_reRunSum20_signal_OA_18/',
+        'Data': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wJMET_reRunSum20_data_18/'
     }}
 
 replacementDic = {
@@ -46,21 +46,21 @@ def main(options):
     if not options.noSplit:
         subPs = []
         for year in ['16', '17', '18']:
-            subPs.append(subprocess.Popen('python {4}/src/flashggFinalFit/splitTree.py -c {4}/src/flashggFinalFit/splitConfig_{3}_20{0}.yaml -i {2}/allData.root -o {4}/src/flashggFinalFit/Signal/data_{1}_{0} -l {0} -p Data'.format(
+            subPs.append(subprocess.Popen('python {4}/src/flashggFinalFit/splitTree.py -c {4}/src/flashggFinalFit/splitConfig_{1}_20{0}.yaml -i {2}/allData.root -o {4}/src/flashggFinalFit/Signal/data_{1}_{0} -l {0} -p Data'.format(
                 year, options.extension, rootDir[year]['Data'], options.variable, cmssw_path), shell=True))
             commands['split_{}_Data'.format(year)] = subPs[-1].args
             subPs[-1].wait()
-            for proc in ['IA', 'OA']:
-                retCodesL = []
-                for mass in ['120', '125', '130']:
-                    subPs.append(subprocess.Popen('python {7}/src/flashggFinalFit/splitTree.py -c {7}/src/flashggFinalFit/splitConfig_{6}_20{0}.yaml -i {2}/allSig_{3}{4}.root -o {7}/src/flashggFinalFit/Signal/m{3}{4}_{1}_{0} -l {0} -p {5}_{3}'.format(
-                        year, options.extension, rootDir[year][proc], mass, getIAOA(proc), proc, options.variable, cmssw_path), shell=True))
-                    commands['split_{}_{}_{}'.format(
-                        year, proc, mass)] = subPs[-1].args
-                    if not options.parallel:
-                        subPs[-1].wait()
-                if options.parallel:
-                    retCodesL = [subp.wait() for subp in subPs]
+            # for proc in ['IA', 'OA']:
+            retCodesL = []
+            for mass in ['120', '125', '130']:
+                subPs.append(subprocess.Popen('python {6}/src/flashggFinalFit/splitTree.py -c {6}/src/flashggFinalFit/splitConfig_{1}_20{0}.yaml -i {2}/allSig_{3}{4}.root -o {6}/src/flashggFinalFit/Signal/m{3}{4}_{1}_{0} -l {0} --infileOA {8}/allSig_{3}{7}.root --outfolderOA {6}/src/flashggFinalFit/Signal/m{3}{7}_{1}_{0} -p SIG_{3}'.format(
+                    year, options.extension, rootDir[year]['IA'], mass, getIAOA('IA'), options.variable, cmssw_path, getIAOA('OA'), rootDir[year]['OA']), shell=True))
+                commands['split_{}_SIG_{}'.format(
+                    year, mass)] = subPs[-1].args
+                if not options.parallel:
+                    subPs[-1].wait()
+            if options.parallel:
+                retCodesL = [subp.wait() for subp in subPs]
                     
 
         yaml.dump(commands, open(
@@ -72,10 +72,12 @@ def main(options):
         sFitsP = []
         for year in ['16', '17', '18']:
             ext = '{0}_{1}'.format(options.extension, year)
-            replStr = '--refTagDiff={0} --refTagWV={0} --refProcWV={1} --refProcDiff={1} --refProc={1}'.format(
-                replacementDic[year][options.variable]['tag'], replacementDic[year][options.variable]['proc'])
+            refTagWV = replacementDic[year][options.variable]['tagWV'] if 'tagWV' in replacementDic[year][options.variable].keys() else replacementDic[year][options.variable]['tag']
+            refProcWV = replacementDic[year][options.variable]['procWV'] if 'procWV' in replacementDic[year][options.variable].keys() else replacementDic[year][options.variable]['proc']
+            replStr = '--refTagDiff={0} --refTagWV={2} --refProcWV={3} --refProcDiff={1} --refProc={1}'.format(
+                replacementDic[year][options.variable]['tag'], replacementDic[year][options.variable]['proc'], refTagWV, refProcWV)
             sFitsP.append(subprocess.Popen(r'bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 Signal/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 Signal/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runSignalOnly=1 --DatacardOpt=--noSysts --bkgModOpt=--noSysts --sigModOpt=--noSysts --inputDir={4}/src/flashggFinalFit/Signal'.format(
-                year, ext, options.variable, replStr, cmssw_path), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True))
+                year, ext, options.variable, replStr, cmssw_path, options.queue), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True))
             commands['fTest_{}'.format(year)] = sFitsP[-1].args
             if not options.parallel:
                 sFitsP[-1].wait()
@@ -102,10 +104,12 @@ def main(options):
     sFitsP = []
     for year in ['16', '17', '18']:
         ext = '{0}_{1}'.format(options.extension, year)
-        replStr = '--refTagDiff={0} --refTagWV={0} --refProcWV={1} --refProcDiff={1} --refProc={1}'.format(
-            replacementDic[year][options.variable]['tag'], replacementDic[year][options.variable]['proc'])
-        sFitsP.append(subprocess.Popen(r'bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 Signal/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 Signal/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runSignalOnly=1 --DatacardOpt=--noSysts --bkgModOpt=--noSysts --sigModOpt=--noSysts --inputDir={4}/src/flashggFinalFit/Signal'.format(
-            year, ext, options.variable, replStr, cmssw_path), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True))
+        refTagWV = replacementDic[year][options.variable]['tagWV'] if 'tagWV' in replacementDic[year][options.variable].keys() else replacementDic[year][options.variable]['tag']
+        refProcWV = replacementDic[year][options.variable]['procWV'] if 'procWV' in replacementDic[year][options.variable].keys() else replacementDic[year][options.variable]['proc']
+        replStr = '--refTagDiff={0} --refTagWV={2} --refProcWV={3} --refProcDiff={1} --refProc={1}'.format(
+            replacementDic[year][options.variable]['tag'], replacementDic[year][options.variable]['proc'], refTagWV, refProcWV)
+        sFitsP.append(subprocess.Popen(r'bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 Signal/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 Signal/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runSignalOnly=1 --DatacardOpt=--noSysts --bkgModOpt=--noSysts --sigModOpt=--noSysts --inputDir={4}/src/flashggFinalFit/Signal --queue={5}'.format(
+            year, ext, options.variable, replStr, cmssw_path, options.queue), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True))
         commands['Signal_{}'.format(year)] = sFitsP[-1].args
         if not options.parallel:
             sFitsP[-1].wait()
@@ -170,5 +174,7 @@ if __name__ == "__main__":
         '--ftest', '-t', action='store_true', default=False)
     optionalArgs.add_argument(
         '--noSplit', '-n', action='store_true', default=False)
+    optionalArgs.add_argument(
+        '--queue', '-q', action='store', type=str, default='longlunch')
     options = parser.parse_args()
     main(options)

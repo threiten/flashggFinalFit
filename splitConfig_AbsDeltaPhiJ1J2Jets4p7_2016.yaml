@@ -1,0 +1,51 @@
+splits: 
+  genAbsDeltaPhiJ1J2Jets4p7: [0.0,0.5,0.9,1.3,1.7,2.5,3.2]
+  recoAbsDeltaPhiJ1J2Jets4p7: [0.0,0.5,0.9,1.3,1.7,2.5,3.2]
+  sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
+  # absdZ: [0.0,1.0,100.]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+  centralObjectWeight: [-1000, 1000]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.397 and subleadmva>0.397'
+
+weight: 'weight'
+
+phasespace:
+  gen: 'genJet4p7Phi0>-999 and genJet4p7Phi1>-999 and genJet4p7Pt0>30 and abs(genJet4p7Eta0)<4.7 and genJet4p7Pt1>30 and abs(genJet4p7Eta1)<4.7'
+  reco: 'recoJet4p7Phi0>-999 and recoJet4p7Phi1>-999 and recoJet4p7Pt0>30 and abs(recoJet4p7Eta0)<4.7 and recoJet4p7Pt1>30 and abs(recoJet4p7Eta1)<4.7'
+
+systVars: []
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0']
+
+filenames:
+  IA_125: 'reducedAbsDeltaPhiJ1J2Jets4p7IA_genAbsDeltaPhiJ1J2Jets4p7_nominal.root'
+  OA_125: 'reducedAbsDeltaPhiJ1J2Jets4p7OA__nominal.root'
+  IA_120: 'reducedAbsDeltaPhiJ1J2Jets4p7IA_genAbsDeltaPhiJ1J2Jets4p7_nominal.root'
+  OA_120: 'reducedAbsDeltaPhiJ1J2Jets4p7OA__nominal.root'
+  IA_130: 'reducedAbsDeltaPhiJ1J2Jets4p7IA_genAbsDeltaPhiJ1J2Jets4p7_nominal.root'
+  OA_130: 'reducedAbsDeltaPhiJ1J2Jets4p7OA__nominal.root'
+  Data: 'reducedAbsDeltaPhiJ1J2Jets4p7Data__nominal.root'
+  
+treepath: 'tagsDumper/trees'
+
+formulas: 
+  recoAbsDeltaPhiJ1J2Jets4p7: 'abs(@deltaPhi(recoJet4p7Phi0, recoJet4p7Phi1))'
+  genAbsDeltaPhiJ1J2Jets4p7: 'abs(@deltaPhi(genJet4p7Phi0, genJet4p7Phi1))'
+
+functions:
+  deltaPhi: "def deltaPhi(phi1, phi2):\n\t ret = phi1 - phi2\n\t ret[ret >= np.pi] = ret[ret >= np.pi] - 2*np.pi\n\t ret[ret < -np.pi] = ret[ret < -np.pi] + 2*np.pi\n\t return ret"

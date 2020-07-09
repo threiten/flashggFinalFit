@@ -20,7 +20,7 @@ using namespace std;
 using namespace RooFit;
 
 Packager::Packager(WSTFileWrapper *ws, RooWorkspace *wsSave  , vector<string> procs, int nCats, int mhLow, int mhHigh, vector<int> skipMasses, int sqrts, bool skipPlots, string outDir, 
-		   RooWorkspace *wsMerge, const vector<int>& cats, const vector<string>& flashggCats):
+		   RooWorkspace *wsMerge, const vector<int>& cats, const vector<string>& flashggCats, string skipProc):
   WS(ws),
   mergeWS(wsMerge),
   saveWS(wsSave),
@@ -33,7 +33,8 @@ Packager::Packager(WSTFileWrapper *ws, RooWorkspace *wsSave  , vector<string> pr
 	skipPlots_(skipPlots),
   outDir_(outDir),
   sqrts_(sqrts),
-  skipMasses_(skipMasses)
+  skipMasses_(skipMasses),
+  skipProc_(skipProc)
 {
 	normalization = new Normalization_8TeV();
 	normalization->Init(sqrts_);
@@ -105,7 +106,7 @@ void Packager::packageOutput(bool split, string process , string tag){
   double runningNormSumVal=0;
   double runningNormSumVal_2 =0.;
   std::ofstream binsToSkip;
-  binsToSkip.open ( Form( "%s/binsToSkipInDatacard.txt",outDir_.c_str() ) );
+  binsToSkip.open ( Form( "%s/binsToSkipInDatacard_%s.txt",outDir_.c_str(),skipProc_.c_str() ) );
   std::ofstream fractionsPerCat;
   fractionsPerCat.open ( Form( "%s/processFractionsPerCategory.txt",outDir_.c_str() ) );
   for (int cat=0; cat<nCats_; cat++){

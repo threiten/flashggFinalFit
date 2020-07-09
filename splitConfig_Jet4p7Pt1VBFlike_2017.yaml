@@ -1,0 +1,48 @@
+splits: 
+  genJet4p7Pt1: [30.0,40.0,65.0,90.0,150.0,10000.0]
+  recoJet4p7Pt1: [30.0,40.0,65.0,90.0,150.0,10000.0]
+  sigmaMoM_decorr: [0.0, 0.0116, 0.0161, 0.0306]
+  # absdZ: [0.0,1.0,100.]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+  centralObjectWeight: [-1000, 1000]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.46 and subleadmva>0.46'
+
+phasespace:
+  gen: 'genJet4p7Pt1>-999 and genJet4p7Pt1>30 and abs(genJet4p7Eta1)<4.7 and (abs(genJet4p7Eta0 - genJet4p7Eta1) > 3.5) and genMjjJets4p7>200'
+  reco: 'recoJet4p7Pt1>-999 and recoJet4p7Pt1>30 and abs(recoJet4p7Eta1)<4.7 and (abs(recoJet4p7Eta0 - recoJet4p7Eta1) > 3.5) and recoMjjJets4p7>200'
+
+weight: 'weight'
+
+systVars: []
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0']
+
+filenames:
+  IA_125: 'reducedJet4p7Pt1IA_genJet4p7Pt1_nominal.root'
+  OA_125: 'reducedJet4p7Pt1OA__nominal.root'
+  IA_120: 'reducedJet4p7Pt1IA_genJet4p7Pt1_nominal.root'
+  OA_120: 'reducedJet4p7Pt1OA__nominal.root'
+  IA_130: 'reducedJet4p7Pt1IA_genJet4p7Pt1_nominal.root'
+  OA_130: 'reducedJet4p7Pt1OA__nominal.root'
+  Data: 'reducedJet4p7Pt1Data__nominal.root'
+  
+treepath: 'tagsDumper/trees'
+
+formulas:
+  recoMjjJets4p7: 'sqrt((recoJet4p7Energy0 + recoJet4p7Energy1)**2 - (recoJet4p7Px0 + recoJet4p7Px1)**2  - (recoJet4p7Py0 + recoJet4p7Py1)**2  - (recoJet4p7Pz0 + recoJet4p7Pz1)**2)'
+  genMjjJets4p7: 'sqrt((genJet4p7Energy0 + genJet4p7Energy1)**2 - (genJet4p7Px0 + genJet4p7Px1)**2  - (genJet4p7Py0 + genJet4p7Py1)**2  - (genJet4p7Pz0 + genJet4p7Pz1)**2)'

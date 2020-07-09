@@ -26,12 +26,13 @@ usage(){
     echo "--runDatacardOnly, only produce the datacard, assuming inputs are there )" 
     echo "--runSignalOnly, only produce signal models )" 
     echo "--runBackgroundOnly, only run bkg )" 
-    echo "--unblind, unblind mass plots )" 
+    echo "--unblind, unblind mass plots )"
+    echo "--queue, queue to use for batch submission )" 
 
 
 }
 
-if ! options=$(getopt -u -o hi:p:f: -l help,obs:,ext:,inputDir:,procs:,cats:,range:,npoints:,shiftOffDiag:,noSkip:,refTagDiff:,refTagWV:,refProc:,refProcDiff:,refProcWV:,sigModOpt::,bkgModOpt::,DatacardOpt::,runCombineOnly:,runDatacardOnly:,runSignalOnly:,runBackgroundOnly:,unblind: -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,obs:,ext:,inputDir:,procs:,cats:,range:,npoints:,shiftOffDiag:,noSkip:,refTagDiff:,refTagWV:,refProc:,refProcDiff:,refProcWV:,sigModOpt::,bkgModOpt::,DatacardOpt::,runCombineOnly:,runDatacardOnly:,runSignalOnly:,runBackgroundOnly:,unblind:,queue: -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
     exit 1
@@ -87,6 +88,7 @@ do
 	--runSignalOnly) SIGNALONLY=$2; shift;;
 	--runBackgroundOnly) BKGONLY=$2; shift;;
 	--unblind) UNBLIND=$2; shift;;
+	--queue) QUEUE=$2; shift;;
 
 	(--) shift; break;;
 	(-*) usage; echo "$0: error - unrecognized option $1" 1>&2; usage >> /dev/stderr; exit 1;;
@@ -172,7 +174,7 @@ SCALES="HighR9EB,HighR9EE,LowR9EB,LowR9EE,Gain6EB,Gain1EB"
 SMEARS="HighR9EBPhi,HighR9EBRho,HighR9EEPhi,HighR9EERho,LowR9EBPhi,LowR9EBRho,LowR9EEPhi,LowR9EERho"
 
 #amount of data
-INTLUMI=58.7 #FIXME
+INTLUMI=59.35 #FIXME
 BATCH=HTCONDOR
 BS=3.5
 
@@ -183,6 +185,10 @@ fi
 
 if [ $NOSKIP == 1 ]; then
     SIGMODOPT="${SIGMODOPT} --noSkip"
+fi
+
+if [[ $QUEUE ]]; then
+    SIGMODOPT="${SIGMODOPT} --queue $QUEUE"
 fi
 
 ##signal model preparation
