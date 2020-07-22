@@ -71,3 +71,83 @@ NBjets2p5:
 PtMiss:
   tag: 'recoPtMiss_0p0_30p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
   proc: 'InsideAcceptance_genPtMiss_0p0_30p0'
+
+AbsDeltaPhiGgJjJets4p7VBFlike:
+  tag: 'recoAbsDeltaPhiGgJjJets4p7_3p07_3p2_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genAbsDeltaPhiGgJjJets4p7_3p07_3p2'
+  tagWV: 'recoAbsDeltaPhiGgJjJets4p7_2p7_2p95_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  procWV: 'OutsideAcceptance'
+
+AbsDeltaPhiJ1J2Jets4p7VBFlike:
+  tag: 'recoAbsDeltaPhiJ1J2Jets4p7_1p7_2p5_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genAbsDeltaPhiJ1J2Jets4p7_1p7_2p5'
+
+Jet4p7Pt1VBFlike:
+  tag: 'recoJet4p7Pt1_40p0_65p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genJet4p7Pt1_40p0_65p0'
+
+PtVBFlike:
+  tag: 'recoPt_30p0_60p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_30p0_60p0'
+
+Pt0Jets:
+  tag: 'recoPt_35p0_45p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_35p0_45p0'
+
+Pt1Jets:
+  tag: 'recoPt_60p0_100p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_60p0_100p0'
+
+Pt1PJets:
+  tag: 'recoPt_170p0_250p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_170p0_250p0'
+  tagWV: 'recoPt_0p0_100p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  procWV: 'OutsideAcceptance'
+
+TauCJet2p50:
+  tag: 'recoTauCJet2p50_15p0_25p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genTauCJet2p50_15p0_25p0'
+  tagWV: 'recoTauCJet2p50_0p0_5p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  procWV: 'InsideAcceptance_genTauCJet2p50_0p0_5p0'
+
+AbsPhiS:
+  tag: 'recoAbsPhiS_1p0_1p5_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genAbsPhiS_1p0_1p5'
+
+PtTauC0:
+  tag: 'recoPt_45p0_120p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_45p0_120p0'
+
+PtTauC1:
+  tag: 'recoPt_120p0_350p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_120p0_350p0'
+  tagWV: 'recoPt_0p0_45p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  procWV: 'OutsideAcceptance'
+
+PtTauC2:
+  tag: 'recoPt_120p0_350p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_120p0_350p0'
+  tagWV: 'recoPt_0p0_120p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  procWV: 'OutsideAcceptance'
+
+PtTauC3:
+  tag: 'recoPt_200p0_350p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_200p0_350p0'
+  tagWV: 'recoPt_0p0_200p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
+  procWV: 'OutsideAcceptance'
+
+PtInclusive:
+  tag: 'recoPt_0p0_10000p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_0p0_10000p0'
+
+PtInclusive1L1B:
+  tag: 'recoPt_0p0_10000p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_0p0_10000p0'
+
+PtInclusive1LHPtM:
+  tag: 'recoPt_0p0_10000p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_0p0_10000p0'
+
+PtInclusive1LLPtM:
+  tag: 'recoPt_0p0_10000p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genPt_0p0_10000p0'

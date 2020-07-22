@@ -1,0 +1,47 @@
+splits: 
+  genPt: [0.0,200.0,350.0,10000.0]
+  recoPt: [0.0,200.0,350.0,10000.0]
+  sigmaMoM_decorr: [0.0, 0.0116, 0.0161, 0.0306]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+  centralObjectWeight: [-1000, 1000]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.46 and subleadmva>0.46'
+
+phasespace:
+  gen: 'genTauCJet2p50>=40. and genJet2p5Energy0>-999 and genJet2p5Pz0>-999 and genJet2p5Pt0>30. and abs(genJet2p5Eta0)<2.5'
+  reco: 'recoTauCJet2p50>=40. and recoJet2p5Energy0>-999 and recoJet2p5Pz0>-999 and recoJet2p5Pt0>30. and abs(recoJet2p5Eta0)<2.5'
+
+weight: 'weight'
+
+systVars: []
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0']
+
+filenames:
+  IA_125: 'reducedPtIA_genPt_nominal.root'
+  OA_125: 'reducedPtOA__nominal.root'
+  IA_120: 'reducedPtIA_genPt_nominal.root'
+  OA_120: 'reducedPtOA__nominal.root'
+  IA_130: 'reducedPtIA_genPt_nominal.root'
+  OA_130: 'reducedPtOA__nominal.root'
+  Data: 'reducedPtData__nominal.root'
+  
+treepath: 'tagsDumper/trees'
+
+formulas: 
+  recoTauCJet2p50: 'sqrt(recoJet2p5Energy0**2-recoJet2p5Pz0**2)/(2*cosh(recoJet2p5Rapidity0-recoRapidity))'
+  genTauCJet2p50: 'sqrt(genJet2p5Energy0**2-genJet2p5Pz0**2)/(2*cosh(genJet2p5Rapidity0-genRapidity))'

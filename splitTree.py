@@ -39,12 +39,13 @@ def parseVariablesFromFormulas(formulas, addRep):
 
     return ret
 
-def parseVariablesFromFormula(formula, addRep):
-    reps = ['(', ')', '@', ',', 'abs', '+', '-', '*', '/', 'cos', 'sin', 'cosh', 'sinh', 'sqrt']
+def parseVariablesFromFormula(formula, addRep=[]):
+    reps = ['(', ')', '@', ',', '+', '-', '*', '/', ' and ', ' or ', ' not ', '=', '<', '>', 'cosh', 'sinh', 'sqrt', 'cos', 'sin', 'abs']
     reps += addRep
 
     for rep in reps:
-        formula = formula.replace(rep, ' ')
+        while rep in formula:
+            formula = formula.replace(rep, ' ')
 
     ret = []
     for part in formula.split():
@@ -55,20 +56,20 @@ def parseVariablesFromFormula(formula, addRep):
 
     return ret
 
-def parseVariablesFromCut(cut):
-    reps = ['(', ')', 'and', 'or', 'not', '=', '+', '-', '<', '>', 'abs', 'sqrt']
+# def parseVariablesFromCut(cut):
+#     reps = ['(', ')', 'and', 'or', 'not', '=', '+', '-', '<', '>', 'cosh', 'abs', 'sqrt']
 
-    for rep in reps:
-        cut = cut.replace(rep, ' ')
+#     for rep in reps:
+#         cut = cut.replace(rep, ' ')
 
-    ret = []
-    for part in cut.split():
-        try:
-            float(part)
-        except ValueError:
-            ret.append(part)
+#     ret = []
+#     for part in cut.split():
+#         try:
+#             float(part)
+#         except ValueError:
+#             ret.append(part)
 
-    return ret
+#     return ret
 
 
 def main(options):
@@ -141,13 +142,13 @@ def main(options):
             variables.append(('{}{}'.format(var, dirr), -1000, 1000))
 
     varList = [var[0] for var in variables]
-    varList += parseVariablesFromCut(cut)
+    addRep = list(config['functions'].keys()) if ('functions' in config.keys()) else []
+    addRep += list(config['formulas'].keys()) if ('formulas' in config.keys()) else []
+    print(addRep)
+    varList += parseVariablesFromFormula(cut, addRep)
     if genPSCut is not None and 'SIG' in options.process:
-        varList += parseVariablesFromCut(genPSCut)
+        varList += parseVariablesFromFormula(genPSCut, addRep)
     if 'formulas' in config.keys():
-        addRep = list(config['functions'].keys()) if ('functions' in config.keys()) else []
-        print(addRep)
-        print(config['formulas'])
         varList += parseVariablesFromFormulas(config['formulas'], addRep)
 
     print(varList)
@@ -165,10 +166,11 @@ def main(options):
             procOA = config['procs'][processOA]
             
         splitCols = list(splitDic.keys())
+        columns = splitCols + varList
         if 'formulas' in config.keys():
             for key in config['formulas'].keys():
-                splitCols.remove(key)
-        columns = splitCols + varList
+                if key in columns:
+                    columns.remove(key)
 
         df = root_pandas.read_root(
             options.infile, '{}/{}_{}'.format(config['treepath'], proc, cat), columns=columns)
@@ -234,7 +236,7 @@ def main(options):
 
     for mass in ['120', '125', '130']:
         try:
-            procs[0].index(mass)
+            procs[0].index('Acceptance_{}_13TeV'.format(mass))
             procs = [pro.replace(mass, '') for pro in procs]
         except ValueError:
             pass
