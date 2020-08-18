@@ -16,6 +16,10 @@ AbsRapidity:
   tag: 'recoAbsRapidity_0p3_0p45_sigmaMoM_decorr_0p0165_0p0332_SigmaMpTTag_0_18'
   proc: 'InsideAcceptance_genAbsRapidity_0p3_0p45'
 
+AbsRapidityFine:
+  tag: 'recoAbsRapidity_0p3_0p45_sigmaMoM_decorr_0p01076_0p0165_SigmaMpTTag_0_18'
+  proc: 'InsideAcceptance_genAbsRapidity_0p3_0p45'
+
 Jet2p5Pt0:
   tag: 'recoJet2p5Pt0_30p0_40p0_sigmaMoM_decorr_0p01076_0p0165_SigmaMpTTag_0_18'
   proc: 'InsideAcceptance_genJet2p5Pt0_30p0_40p0'

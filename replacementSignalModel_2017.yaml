@@ -14,6 +14,10 @@ AbsRapidity:
   tag: 'recoAbsRapidity_0p3_0p45_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
   proc: 'InsideAcceptance_genAbsRapidity_0p3_0p45'
 
+AbsRapidityFine:
+  tag: 'recoAbsRapidity_0p3_0p45_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
+  proc: 'InsideAcceptance_genAbsRapidity_0p3_0p45'
+
 Jet2p5Pt0:
   tag: 'recoJet2p5Pt0_30p0_40p0_sigmaMoM_decorr_0p0161_0p0306_SigmaMpTTag_0_17'
   proc: 'InsideAcceptance_genJet2p5Pt0_30p0_40p0'
@@ -146,7 +150,7 @@ PtInclusive1L1B:
 
 PtInclusive1LHPtM:
   tag: 'recoPt_0p0_10000p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
-  proc: 'InsideAcceptance_genPt_0p0_10000p0'
+  proc: 'OutsideAcceptance'
 
 PtInclusive1LLPtM:
   tag: 'recoPt_0p0_10000p0_sigmaMoM_decorr_0p0116_0p0161_SigmaMpTTag_0_17'
