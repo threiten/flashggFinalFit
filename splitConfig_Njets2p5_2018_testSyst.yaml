@@ -1,0 +1,47 @@
+splits: 
+  genNjets2p5: [-0.5,0.5,1.5,2.5,3.5,100]
+  recoNjets2p5: [-0.5,0.5,1.5,2.5,3.5,100]
+  sigmaMoM_decorr: [0.0, 0.01076, 0.0165, 0.0332]
+  # absdZ: [0.0,1.0,100.]
+ 
+variables: 
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+
+nominalVariables:
+   dZ: [-inf, inf]
+   centralObjectWeight: [-1000., 1000.]
+   processIndex: [0,100]
+
+cut: 'leadmva>0.46 and subleadmva>0.46'
+
+weight: 'weight'
+
+systVars: ['LooseMvaSF','PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','ElectronIDWeight','ElectronRecoWeight','JetBTagCutWeight']
+
+# 'MuonIDWeight' e.metaConditions["MUON_ID"]),direction))
+# 'MuonIsoWeight'            ize.metaConditions['MUON_ISO']),direction))
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0', 'SigmaMpTTag_0_FNUFEBDown01sigma', 'SigmaMpTTag_0_FNUFEBUp01sigma', 'SigmaMpTTag_0_FNUFEEDown01sigma', 'SigmaMpTTag_0_FNUFEEUp01sigma', 'SigmaMpTTag_0_JECDown01sigma', 'SigmaMpTTag_0_JECUp01sigma', 'SigmaMpTTag_0_JERDown01sigma', 'SigmaMpTTag_0_JERUp01sigma', 'SigmaMpTTag_0_MCScaleGain1EBDown01sigma', 'SigmaMpTTag_0_MCScaleGain1EBUp01sigma', 'SigmaMpTTag_0_MCScaleGain6EBDown01sigma', 'SigmaMpTTag_0_MCScaleGain6EBUp01sigma', 'SigmaMpTTag_0_MCScaleHighR9EBDown01sigma', 'SigmaMpTTag_0_MCScaleHighR9EBUp01sigma', 'SigmaMpTTag_0_MCScaleHighR9EEDown01sigma', 'SigmaMpTTag_0_MCScaleHighR9EEUp01sigma', 'SigmaMpTTag_0_MCScaleLowR9EBDown01sigma', 'SigmaMpTTag_0_MCScaleLowR9EBUp01sigma', 'SigmaMpTTag_0_MCScaleLowR9EEDown01sigma', 'SigmaMpTTag_0_MCScaleLowR9EEUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBPhiDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBPhiUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBRhoDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBRhoUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EEPhiDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EEPhiUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EERhoDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EERhoUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBPhiDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBPhiUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBRhoDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBRhoUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EEPhiDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EEPhiUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EERhoDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EERhoUp01sigma', 'SigmaMpTTag_0_MaterialCentralBarrelDown01sigma', 'SigmaMpTTag_0_MaterialCentralBarrelUp01sigma', 'SigmaMpTTag_0_MaterialForwardDown01sigma', 'SigmaMpTTag_0_MaterialForwardUp01sigma', 'SigmaMpTTag_0_MaterialOuterBarrelDown01sigma', 'SigmaMpTTag_0_MaterialOuterBarrelUp01sigma', 'SigmaMpTTag_0_MvaShiftDown01sigma', 'SigmaMpTTag_0_MvaShiftUp01sigma', 'SigmaMpTTag_0_PUJIDShiftDown01sigma', 'SigmaMpTTag_0_PUJIDShiftUp01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EBDown01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EBUp01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EEDown01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EEUp01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EBDown01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EBUp01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EEDown01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EEUp01sigma', 'SigmaMpTTag_0_SigmaEOverEShiftDown01sigma', 'SigmaMpTTag_0_SigmaEOverEShiftUp01sigma', 'SigmaMpTTag_0_metJecUncertaintyDown01sigma', 'SigmaMpTTag_0_metJecUncertaintyUp01sigma', 'SigmaMpTTag_0_metJerUncertaintyDown01sigma', 'SigmaMpTTag_0_metJerUncertaintyUp01sigma', 'SigmaMpTTag_0_metPhoUncertaintyDown01sigma', 'SigmaMpTTag_0_metPhoUncertaintyUp01sigma', 'SigmaMpTTag_0_metUncUncertaintyDown01sigma', 'SigmaMpTTag_0_metUncUncertaintyUp01sigma']
+
+filenames:
+  IA_125: 'reducedNjets2p5IA_genNjets2p5_nominal.root'
+  OA_125: 'reducedNjets2p5OA__nominal.root'
+  IA_120: 'reducedNjets2p5IA_genNjets2p5_nominal.root'
+  OA_120: 'reducedNjets2p5OA__nominal.root'
+  IA_130: 'reducedNjets2p5IA_genNjets2p5_nominal.root'
+  OA_130: 'reducedNjets2p5OA__nominal.root'
+  Data: 'reducedNjets2p5Data__nominal.root'
+  
+treepath: 'tagsDumper/trees'
+
+# formulas: 
+#  absdZ: 'abs(dZ)'

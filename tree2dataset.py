@@ -18,6 +18,11 @@ class RooDatasetFromDataframe(object):
         if 'weight' not in self.variables:
             self.variables.append('weight')
 
+    def __del__(self):
+
+        del self.df
+        del self.dataSet
+
     def prepareTTree(self):
 
         self.df['weight'] = self.df.eval(self.weight)
@@ -60,10 +65,21 @@ class RooWorkspaceFromDataframe(object):
 
         if workspace is not None and isinstance(workspace, ROOT.RooWorkspace):
             self.workspace = workspace
+            self.createdDS = False
         elif workspace is not None:
             print("Object passed to workspace variable has to be a RooWorkspace. Object you passed is not and will not be read, a new RooWorkspace will be created")
+            self.workspace = ROOT.RooWorkspace(self.name)
+            self.createdDS = True
+        elif workspace is None:
+            self.workspace = ROOT.RooWorkspace(self.name)
+            self.createdDS = True
 
-        self.splitTree(df.loc[:, [var[0] for var in variables] + splitDic.keys()])
+        self.splitTree(df.loc[:, [var[0] for var in variables] + list(splitDic.keys())])
+
+    def __del__(self):
+
+        del self.workspace
+        del self.gb
 
     def splitTree(self, df):
 
@@ -87,9 +103,6 @@ class RooWorkspaceFromDataframe(object):
         self.categories = list(itertools.product(*self.labels))
         
     def makeWorkspace(self):
-
-        if not hasattr(self, 'workspace'):
-            self.workspace = ROOT.RooWorkspace(self.name)
             
         dummyDf = pd.DataFrame(columns=[var[0] for var in self.variables], dtype=np.float32)
         
@@ -108,7 +121,8 @@ class RooWorkspaceFromDataframe(object):
                 dsetFrDf = RooDatasetFromDataframe(dummyDf, self.variables, self.weight, dsetlabel)
 
             dset = dsetFrDf.getDataset()
-            getattr(self.workspace, 'import')(dset, ROOT.RooFit.Rename(dset.GetName()))
+            if not self.createdDS:
+                getattr(self.workspace, 'import')(dset, ROOT.RooFit.Rename(dset.GetName()))
 
     def getWorkspace(self):
 

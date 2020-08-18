@@ -346,24 +346,26 @@ vector<TH1F*> getHistograms(vector<TFile*> files, string name, string syst){
 			TH1F *up =  new TH1F(Form("%s_%sUp01sigma",name.c_str(),syst.c_str()),Form("%s_%sUp01sigma",name.c_str(),syst.c_str()),80,100,180);
 			TH1F *down = new TH1F(Form("%s_%sDown01sigma",name.c_str(),syst.c_str()),Form("%s_%sDown01sigma",name.c_str(),syst.c_str()),80,100,180);
 			TH1F *nominal = new TH1F((Form("%s_%s",name.c_str(),syst.c_str())),(Form("%s%s",name.c_str(),syst.c_str())),80,100,180);
+			std::cout << "Name: " << name.c_str() << " syst: " << syst.c_str() << std::endl;
 			RooDataSet *rds_up = (RooDataSet*) inWS_->data((Form("%s_%sUp01sigma",name.c_str(),syst.c_str())));
 			RooDataSet *rds_down = (RooDataSet*) inWS_->data((Form("%s_%sDown01sigma",name.c_str(),syst.c_str())));
 			RooDataSet *rds_nom = (RooDataSet*) inWS_->data((Form("%s",name.c_str())));
-				
-			RooDataHist *rds_up_h = (RooDataHist*) inWS_->data((Form("%s_%sUp01sigma",name.c_str(),syst.c_str())));
-			RooDataHist *rds_down_h = (RooDataHist*) inWS_->data((Form("%s_%sDown01sigma",name.c_str(),syst.c_str())));
+			
+			// RooDataHist *rds_up_h = (RooDataHist*) inWS_->data((Form("%s_%sUp01sigma",name.c_str(),syst.c_str())));
+			// RooDataHist *rds_down_h = (RooDataHist*) inWS_->data((Form("%s_%sDown01sigma",name.c_str(),syst.c_str())));
 
-			if(rds_up){
-				rds_up->fillHistogram(up,RooArgList(*mass_));
-			} else {
-				rds_up_h->fillHistogram(up,RooArgList(*mass_));
-			}
-			if(rds_down){
-				rds_down->fillHistogram(down,RooArgList(*mass_));
-			} else {
-				rds_down_h->fillHistogram(down,RooArgList(*mass_));
-			}
-
+			// if(rds_up){
+			// 	rds_up->fillHistogram(up,RooArgList(*mass_));
+			// } else {
+			//         rds_up_h->fillHistogram(up,RooArgList(*mass_));
+			// }
+			// if(rds_down){
+			// 	rds_down->fillHistogram(down,RooArgList(*mass_));
+			// } else {
+			// 	rds_down_h->fillHistogram(down,RooArgList(*mass_));
+			// }
+			rds_down->fillHistogram(down,RooArgList(*mass_));
+			rds_up->fillHistogram(up,RooArgList(*mass_));
 			rds_nom->fillHistogram(nominal,RooArgList(*mass_));
 
 			if(verbosity_)	{
@@ -489,7 +491,8 @@ int main(int argc, char *argv[]){
 	  // this is to ensure nominal comes from the right file
 	  vector<TH1F*> hists;
 	  if (isFlashgg_){
-	    string flashggCat = flashggCats_[cat]; 
+	    string flashggCat = flashggCats_[cat];
+	    std::cout << flashggCat.c_str() << std::endl;
 	    //VRT 16.05.17: attempt to adapt to differentials naming convenction
 	    string proctemp = *proc;
 	    string procWmassAndE;

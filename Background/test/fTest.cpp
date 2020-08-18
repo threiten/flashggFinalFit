@@ -515,10 +515,10 @@ int getBestFitFunction(RooMultiPdf *bkg, RooDataSet *data, RooCategory *cat, boo
     	cat->setIndex(best_index);
 	params->assignValueOnly(snap);
 	
-	if (!silent) {
-		std::cout << "[INFO] Best fit Function -- " << bkg->getCurrentPdf()->GetName() << " " << cat->getIndex() <<std::endl;
-		//bkg->getCurrentPdf()->getParameters(*data)->Print("v");
-	}
+	// if (!silent) {
+	// 	std::cout << "[INFO] Best fit Function -- " << bkg->getCurrentPdf()->GetName() << " " << cat->getIndex() <<std::endl;
+	// 	//bkg->getCurrentPdf()->getParameters(*data)->Print("v");
+	// }
 	return best_index;
 }
 
@@ -714,6 +714,7 @@ vector<string> flashggCats_;
 		RooDataHist thisdataBinned(thisdataBinned_name.c_str(),"data",*mass,*dataFull);
 		data = (RooDataSet*)&thisdataBinned;
 
+		if (data->sumEntries()==0.) continue;
 		RooArgList storedPdfs("store");
 
 		fprintf(resFile,"\\multicolumn{4}{|c|}{\\textbf{Category %d}} \\\\\n",cat);
@@ -875,12 +876,12 @@ vector<string> flashggCats_;
 			//double check the best pdf!
 			int bestFitPdfIndex = getBestFitFunction(pdf,data,&catIndex,!verbose);
 			catIndex.setIndex(bestFitPdfIndex);
-			std::cout << "// ------------------------------------------------------------------------- //" <<std::endl; 
-			std::cout << "[INFO] Created MultiPdf " << pdf->GetName() << ", in Category " << cat << " with a total of " << catIndex.numTypes() << " pdfs"<< std::endl;
-			storedPdfs.Print();
-			std::cout << "[INFO] Best Fit Pdf = " << bestFitPdfIndex << ", " << storedPdfs.at(bestFitPdfIndex)->GetName() << std::endl;
-			std::cout << "// ------------------------------------------------------------------------- //" <<std::endl;
-			std::cout << "[INFO] Simple check of index "<< simplebestFitPdfIndex <<std::endl;
+			// std::cout << "// ------------------------------------------------------------------------- //" <<std::endl; 
+			// std::cout << "[INFO] Created MultiPdf " << pdf->GetName() << ", in Category " << cat << " with a total of " << catIndex.numTypes() << " pdfs"<< std::endl;
+			// storedPdfs.Print();
+			// std::cout << "[INFO] Best Fit Pdf = " << bestFitPdfIndex << ", " << storedPdfs.at(bestFitPdfIndex)->GetName() << std::endl;
+			// std::cout << "// ------------------------------------------------------------------------- //" <<std::endl;
+			// std::cout << "[INFO] Simple check of index "<< simplebestFitPdfIndex <<std::endl;
 
 			mass->setBins(nBinsForMass);
 			RooDataHist dataBinned(Form("roohist_data_mass_%s",catname.c_str()),"data",*mass,*dataFull);

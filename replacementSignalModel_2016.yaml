@@ -14,6 +14,10 @@ AbsRapidity:
   tag: 'recoAbsRapidity_0p3_0p45_sigmaMoM_decorr_0p0146_0p0396_SigmaMpTTag_0_16'
   proc: 'InsideAcceptance_genAbsRapidity_0p3_0p45'
 
+AbsRapidityFine:
+  tag: 'recoAbsRapidity_0p3_0p45_sigmaMoM_decorr_0p0146_0p0396_SigmaMpTTag_0_16'
+  proc: 'InsideAcceptance_genAbsRapidity_0p3_0p45'
+
 Jet2p5Pt0:
   tag: 'recoJet2p5Pt0_30p0_40p0_sigmaMoM_decorr_0p0146_0p0396_SigmaMpTTag_0_16'
   proc: 'InsideAcceptance_genJet2p5Pt0_30p0_40p0'
@@ -77,8 +81,10 @@ Jet4p7Pt1VBFlike:
   proc: 'InsideAcceptance_genJet4p7Pt1_40p0_65p0'
 
 AbsDeltaPhiGgJjJets4p7VBFlike:
-  tag: 'recoAbsDeltaPhiGgJjJets4p7_3p07_3p2_sigmaMoM_decorr_0p0146_0p0396_SigmaMpTTag_0_16'
-  proc: 'InsideAcceptance_genAbsDeltaPhiGgJjJets4p7_3p07_3p2'
+  tag: 'recoAbsDeltaPhiGgJjJets4p7_2p95_3p07_sigmaMoM_decorr_0p0106_0p0146_SigmaMpTTag_0_16'
+  proc: 'InsideAcceptance_genAbsDeltaPhiGgJjJets4p7_2p95_3p07'
+  tagWV: 'recoAbsDeltaPhiGgJjJets4p7_2p95_3p07_sigmaMoM_decorr_0p0_0p0106_SigmaMpTTag_0_16'
+  procWV: 'InsideAcceptance_genAbsDeltaPhiGgJjJets4p7_2p95_3p07'
 
 AbsDeltaPhiJ1J2Jets4p7VBFlike:
   tag: 'recoAbsDeltaPhiJ1J2Jets4p7_1p7_2p5_sigmaMoM_decorr_0p0146_0p0396_SigmaMpTTag_0_16'

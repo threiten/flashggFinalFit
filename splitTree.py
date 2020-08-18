@@ -27,7 +27,6 @@ def write_cat_procs_file(path, procs, cats):
         fil.write(proc_str)
         fil.write(cat_str)
 
-
 def evaluate_formulas(df, form_dic):
     for form in form_dic.keys():
         df[form] = df.eval(form_dic[form], engine='python')
@@ -111,10 +110,17 @@ def main(options):
     if process == 'Data':
         varDic = {'CMS_hgg_mass': [100, 180],
                   'weight': ['-inf', 'inf'], 'lumi': ['-inf', 'inf']}
+        config['categories'] = [config['categories'][0]]
+    elif process in ['SIG_120', 'SIG_130']:
+        config['categories'] = [config['categories'][0]]
+        varDic = config['variables']
     else:
         varDic = config['variables']
+        
     print(varDic)
     variables = parse_variables(varDic)
+    if 'SIG' in options.process:
+        nomVariables = parse_variables(config['nominalVariables'])
         
     cut = config['cut']
 
@@ -137,13 +143,17 @@ def main(options):
         replace = None
 
     systVars = config['systVars']
+    systematicVariables = []
     for var in systVars:
         for dirr in ['Up01sigma', 'Down01sigma']:
-            variables.append(('{}{}'.format(var, dirr), -1000, 1000))
+            systematicVariables.append(('{}{}'.format(var, dirr), -999999., 999999.))
 
     varList = [var[0] for var in variables]
+    if 'SIG' in options.process:
+        nomVarList = [var[0] for var in nomVariables]
+        systVarList = [var[0] for var in systematicVariables]
     addRep = list(config['functions'].keys()) if ('functions' in config.keys()) else []
-    addRep += list(config['formulas'].keys()) if ('formulas' in config.keys()) else []
+    # addRep += list(config['formulas'].keys()) if ('formulas' in config.keys()) else []
     print(addRep)
     varList += parseVariablesFromFormula(cut, addRep)
     if genPSCut is not None and 'SIG' in options.process:
@@ -154,22 +164,46 @@ def main(options):
     print(varList)
     procs = []
     cats = []
-    ws = ROOT.RooWorkspace('cms_hgg_13TeV')
+    ws = ROOT.RooWorkspace("cms_hgg_13TeV")
 
     if 'SIG' in options.process:
-        wsOA = ROOT.RooWorkspace('cms_hgg_13TeV')
-    
-    for cat in config['categories']:
+        wsOA = ROOT.RooWorkspace("cms_hgg_13TeV")
 
+    if os.path.exists('{}/{}'.format(outfolder, outfile)):
+        os.remove('{}/{}'.format(outfolder, outfile))
+    
+    if 'SIG' in options.process:
+        if os.path.exists('{}/{}'.format(outfolderOA, outfileOA)):
+            os.remove('{}/{}'.format(outfolderOA, outfileOA))
+    
+    for catR in config['categories']:
+
+        cat = catR
+        print('-------------------------------------------------------------')
+        print(cat)
+        print('-------------------------------------------------------------')
+
+        currVariables = copy.deepcopy(variables)
+        if 'SIG_125' in options.process:
+            if catR == config['categories'][0]:
+                currVariables += systematicVariables + nomVariables
+        elif 'SIG' in options.process:
+            if catR == config['categories'][0]:
+                currVariables += nomVariables
         proc = config['procs'][process]
         if 'SIG' in options.process:
             procOA = config['procs'][processOA]
             
         splitCols = list(splitDic.keys())
         columns = splitCols + varList
+        if 'SIG' in options.process:
+            if catR == config['categories'][0]:
+                columns += nomVarList
+                if 'SIG_125' in options.process:
+                    columns += systVarList
         if 'formulas' in config.keys():
             for key in config['formulas'].keys():
-                if key in columns:
+                while key in columns:
                     columns.remove(key)
 
         df = root_pandas.read_root(
@@ -196,22 +230,45 @@ def main(options):
             print('Shifting Events to OOA')
             dfOA = pd.concat([dfOA, df.query('not ({})'.format(genPSCut), engine='python')], ignore_index=True)
             df.query(genPSCut, engine='python', inplace=True)
-        
+
         if label is not None:
-            cat += '_{}'.format(label)
+            if catR == config['categories'][0]:
+                cat += '_{}'.format(label)
+            else:
+                cat = config['categories'][0] + '_{}_'.format(label) + catR.split('_')[-1]
         if replace is not None:
             proc = proc.replace(replace[0], replace[1])
 
+        if os.path.exists('{}/{}'.format(outfolder, outfile)):
+            existingWS = True
+        else:
+            existingWS = False
+        f = ROOT.TFile('{}/{}'.format(outfolder, outfile), "UPDATE")
+        if existingWS:
+            ws = f.Get("cms_hgg_13TeV")
+
         w = t2d.RooWorkspaceFromDataframe(
-            df, splitDic, variables, weight, "cms_hgg_13TeV", (proc, cat), ws)
+            df, splitDic, currVariables, weight, "cms_hgg_13TeV", (proc, cat), ws)
         w.makeCategories()
         w.makeWorkspace()
+        ws.Write("cms_hgg_13TeV", ROOT.TObject.kOverwrite)
+        f.Close()
 
         if 'SIG' in options.process:
+            if os.path.exists('{}/{}'.format(outfolderOA, outfileOA)):
+                existingWSOA = True
+            else:
+                existingWSOA = False
+            fOA = ROOT.TFile('{}/{}'.format(outfolderOA, outfileOA), "UPDATE")
+            if existingWSOA:
+                wsOA = fOA.Get("cms_hgg_13TeV")
+            
             wOA = t2d.RooWorkspaceFromDataframe(
-                dfOA, splitDicOA, variables, weight, "cms_hgg_13TeV", (procOA, cat), wsOA)
+                dfOA, splitDicOA, currVariables, weight, "cms_hgg_13TeV", (procOA, cat), wsOA)
             wOA.makeCategories()
             wOA.makeWorkspace()
+            wsOA.Write("cms_hgg_13TeV", ROOT.TObject.kOverwrite)
+            fOA.Close()
             
         if len(w.labels) > 1 and all('gen' in la for la in w.labels[0]):
             procs_temp = ['{}_{}'.format(proc, lab) for lab in w.labels[0]]
@@ -227,13 +284,28 @@ def main(options):
             procs_temp = ['{}'.format(proc)]
             cats_temp = ['{}_{}'.format(lab, cat) for lab in w.labels[0]]
 
-        procs.extend([x for x in procs_temp if x not in procs])
-        cats.extend([x for x in cats_temp if x not in cats])
+        if catR == config['categories'][0]:
+            procs.extend([x for x in procs_temp if x not in procs])
+            cats.extend([x for x in cats_temp if x not in cats])
 
-        del w
+        # workS = w.getWorkspace()
+        # f = ROOT.TFile('{}/{}'.format(outfolder, outfile), "UPDATE")
+        # workS.Write("cms_hgg_13TeV")
+        # f.Write()
+        # f.Close()
+        # if 'SIG' in options.process:
+        #     workSOA = wOA.getWorkspace()
+        #     fOA = ROOT.TFile('{}/{}'.format(outfolderOA, outfileOA), "UPDATE")
+        #     workSOA.Write("cms_hgg_13TeV")
+        #     fOA.Write()
+        #     fOA.Close()
+            
+        del w, ws, df 
         if 'SIG' in options.process:
-            del wOA
+            del wOA, wsOA, dfOA
 
+    print(procs, cats)
+    
     for mass in ['120', '125', '130']:
         try:
             procs[0].index('Acceptance_{}_13TeV'.format(mass))
@@ -245,16 +317,20 @@ def main(options):
     write_cat_procs_file(
         '{}/proc_cat_names_{}.txt'.format(outfolder, splitDic.keys()[0]), procs, cats)
 
-    f = ROOT.TFile('{}/{}'.format(outfolder, outfile), "RECREATE")
-    ws.Write("cms_hgg_13TeV")
-    f.Write()
-    f.Close()
+    # f = ROOT.TFile('{}/{}'.format(outfolder, outfile), "RECREATE")
+    # ws.Write("cms_hgg_13TeV")
+    # print('IA workspace written!')
+    # f.Write()
+    # f.Close()
+    # print('IA File written!')
     
-    if 'SIG' in options.process:
-        fOA = ROOT.TFile('{}/{}'.format(outfolderOA, outfileOA), "RECREATE")
-        wsOA.Write("cms_hgg_13TeV")
-        fOA.Write()
-        fOA.Close()
+    # if 'SIG' in options.process:
+    #     fOA = ROOT.TFile('{}/{}'.format(outfolderOA, outfileOA), "RECREATE")
+    #     wsOA.Write("cms_hgg_13TeV")
+    #     print('OA workspace written!')
+    #     fOA.Write()
+    #     fOA.Close()
+    #     print('OA file written!')
 
 
 if __name__ == "__main__":

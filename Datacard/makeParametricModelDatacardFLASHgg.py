@@ -362,6 +362,7 @@ def printTheorySysts():
         print options.cats
         for c in options.cats:
           for p in options.procs:
+            if '%s:%s'%(p,c) in options.toSkip: continue
 ###            if "bkg" in flashggProc[p] : 
             if "bkg" in p : 
               outFile.write('- ')
@@ -373,7 +374,6 @@ def printTheorySysts():
                print tbw
 ###              outFile.write(getFlashggLineTheoryWeights(p,c,systName,i,asymmetric))
                outFile.write(tbw)
-        if '%s:%s'%(p,c) in options.toSkip: continue
         outFile.write('\n')
       outFile.write('\n')
   
