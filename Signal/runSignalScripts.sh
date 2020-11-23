@@ -137,8 +137,8 @@ if [ $FTESTONLY == 0 -a $CALCPHOSYSTONLY == 0 -a $SIGFITONLY == 0 -a $SIGPLOTSON
 FTESTONLY=1
 CALCPHOSYSTONLY=1
 SIGFITONLY=1
-SIGPLOTSONLY=1
-PACKAGEONLY=1
+SIGPLOTSONLY=0
+PACKAGEONLY=0
 fi
 
 if [ $SKIPCALCPHOSYST == 1  ];then
@@ -317,7 +317,7 @@ if [ $SIGFITONLY == 1 ]; then
     if [[ $BATCH == "" ]]; then
 	if [[ $NOSYSTS == 0 ]]; then
 	    echo "./bin/SignalFit -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_mva_13TeV_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI $MHREFOPT $SIGFITOPTS"
-	    ./bin/SignalFit -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_mva_13TeV_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI $MHREFOPT $SIGFITOPTS#--pdfWeights 26 
+	    ./bin/SignalFit -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130 -s dat/photonCatSyst_$EXT.dat --procs $PROCS -o $OUTDIR/CMS-HGG_mva_13TeV_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI $MHREFOPT $SIGFITOPTS #--pdfWeights 26 
 	else
 	    echo "./bin/SignalFit -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_mva_13TeV_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI $MHREFOPT $SIGFITOPTS"
 	    ./bin/SignalFit -i $FILE -d dat/newConfig_$EXT.dat  --mhLow=120 --mhHigh=130  --procs $PROCS -o $OUTDIR/CMS-HGG_mva_13TeV_sigfit.root -p $OUTDIR/sigfit -f $CATS --changeIntLumi $INTLUMI $MHREFOPT $SIGFITOPTS #--pdfWeights 26

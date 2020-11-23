@@ -1,0 +1,91 @@
+#proc cat nGausRV nGausWV
+smH_NJ_1 hgg_NJ_1_cat1_18 3 3
+smH_NJ_1 hgg_NJ_1_cat2_18 2 3
+smH_NJ_1 hgg_NJ_1_cat0_18 3 1
+smH_NJ_1 hgg_NJ_2_cat1_18 2 4
+smH_NJ_1 hgg_NJ_2_cat2_18 2 -1
+smH_NJ_1 hgg_NJ_2_cat0_18 4 2
+smH_NJ_1 hgg_NJ_3_cat1_18 1 -1
+smH_NJ_1 hgg_NJ_3_cat2_18 1 -1 smH_NJ_3 hgg_NJ_3_cat2_18 smH_NJ_0 hgg_NJ_1_cat2_18
+smH_NJ_1 hgg_NJ_3_cat0_18 1 -1
+smH_NJ_1 hgg_NJ_GE4_cat1_18 -1 -1 smH_NJ_GE4 hgg_NJ_GE4_cat1_18 smH_NJ_1 hgg_NJ_1_cat0_18
+smH_NJ_1 hgg_NJ_GE4_cat2_18 -1 -1 smH_NJ_GE4 hgg_NJ_GE4_cat2_18 smH_NJ_1 hgg_NJ_1_cat0_18
+smH_NJ_1 hgg_NJ_GE4_cat0_18 -1 -1 smH_NJ_GE4 hgg_NJ_GE4_cat0_18 smH_NJ_1 hgg_NJ_0_cat0_18
+smH_NJ_1 hgg_NJ_0_cat1_18 2 1
+smH_NJ_1 hgg_NJ_0_cat2_18 1 1
+smH_NJ_1 hgg_NJ_0_cat0_18 3 2
+smH_NJ_2 hgg_NJ_1_cat1_18 2 -1
+smH_NJ_2 hgg_NJ_1_cat2_18 1 -1
+smH_NJ_2 hgg_NJ_1_cat0_18 3 -1
+smH_NJ_2 hgg_NJ_2_cat1_18 4 -1
+smH_NJ_2 hgg_NJ_2_cat2_18 3 -1
+smH_NJ_2 hgg_NJ_2_cat0_18 4 -1
+smH_NJ_2 hgg_NJ_3_cat1_18 2 -1
+smH_NJ_2 hgg_NJ_3_cat2_18 2 -1
+smH_NJ_2 hgg_NJ_3_cat0_18 4 -1
+smH_NJ_2 hgg_NJ_GE4_cat1_18 2 -1
+smH_NJ_2 hgg_NJ_GE4_cat2_18 1 -1
+smH_NJ_2 hgg_NJ_GE4_cat0_18 1 -1
+smH_NJ_2 hgg_NJ_0_cat1_18 1 1
+smH_NJ_2 hgg_NJ_0_cat2_18 2 -1
+smH_NJ_2 hgg_NJ_0_cat0_18 1 1
+smH_NJ_3 hgg_NJ_1_cat1_18 -1 -1
+smH_NJ_3 hgg_NJ_1_cat2_18 -1 -1 smH_NJ_1 hgg_NJ_1_cat2_18 smH_NJ_1 hgg_NJ_1_cat0_18
+smH_NJ_3 hgg_NJ_1_cat0_18 -1 -1
+smH_NJ_3 hgg_NJ_2_cat1_18 2 -1
+smH_NJ_3 hgg_NJ_2_cat2_18 2 -1
+smH_NJ_3 hgg_NJ_2_cat0_18 2 -1
+smH_NJ_3 hgg_NJ_3_cat1_18 4 -1
+smH_NJ_3 hgg_NJ_3_cat2_18 1 -1
+smH_NJ_3 hgg_NJ_3_cat0_18 3 -1
+smH_NJ_3 hgg_NJ_GE4_cat1_18 1 -1
+smH_NJ_3 hgg_NJ_GE4_cat2_18 2 -1
+smH_NJ_3 hgg_NJ_GE4_cat0_18 2 -1
+smH_NJ_3 hgg_NJ_0_cat1_18 -1 -1
+smH_NJ_3 hgg_NJ_0_cat2_18 -1 -1 smH_NJ_0 hgg_NJ_0_cat2_18
+smH_NJ_3 hgg_NJ_0_cat0_18 -1 -1 smH_NJ_0 hgg_NJ_0_cat0_18
+smH_NJ_GE4 hgg_NJ_1_cat1_18 -1 -1 smH_NJ_1 hgg_NJ_0_cat1_18 smH_NJ_1 hgg_NJ_1_cat0_18
+smH_NJ_GE4 hgg_NJ_1_cat2_18 -1 -1 smH_NJ_1 hgg_NJ_1_cat2_18
+smH_NJ_GE4 hgg_NJ_1_cat0_18 -1 -1 smH_NJ_1 hgg_NJ_1_cat1_18
+smH_NJ_GE4 hgg_NJ_2_cat1_18 -1 -1 smH_NJ_2 hgg_NJ_2_cat1_18 smH_NJ_1 hgg_NJ_1_cat1_18
+smH_NJ_GE4 hgg_NJ_2_cat2_18 -1 -1 smH_NJ_2 hgg_NJ_2_cat2_18 smH_NJ_1 hgg_NJ_1_cat2_18
+smH_NJ_GE4 hgg_NJ_2_cat0_18 -1 -1
+smH_NJ_GE4 hgg_NJ_3_cat1_18 1 -1
+smH_NJ_GE4 hgg_NJ_3_cat2_18 1 -1
+smH_NJ_GE4 hgg_NJ_3_cat0_18 1 -1
+smH_NJ_GE4 hgg_NJ_GE4_cat1_18 4 -1
+smH_NJ_GE4 hgg_NJ_GE4_cat2_18 2 -1
+smH_NJ_GE4 hgg_NJ_GE4_cat0_18 3 -1
+smH_NJ_GE4 hgg_NJ_0_cat1_18 -1 -1
+smH_NJ_GE4 hgg_NJ_0_cat2_18 -1 -1
+smH_NJ_GE4 hgg_NJ_0_cat0_18 -1 -1
+smH_NJ_0 hgg_NJ_1_cat1_18 4 1
+smH_NJ_0 hgg_NJ_1_cat2_18 2 2
+smH_NJ_0 hgg_NJ_1_cat0_18 3 1
+smH_NJ_0 hgg_NJ_2_cat1_18 1 1
+smH_NJ_0 hgg_NJ_2_cat2_18 1 -1
+smH_NJ_0 hgg_NJ_2_cat0_18 3 1
+smH_NJ_0 hgg_NJ_3_cat1_18 -1 -1 smH_NJ_0 hgg_NJ_1_cat1_18 smH_NJ_1 hgg_NJ_1_cat0_18
+smH_NJ_0 hgg_NJ_3_cat2_18 -1 -1 smH_NJ_0 hgg_NJ_1_cat2_18 smH_NJ_1 hgg_NJ_1_cat0_18
+smH_NJ_0 hgg_NJ_3_cat0_18 -1 -1 smH_NJ_3 hgg_NJ_3_cat0_18 smH_NJ_1 hgg_NJ_1_cat0_18
+smH_NJ_0 hgg_NJ_GE4_cat1_18 -1 -1
+smH_NJ_0 hgg_NJ_GE4_cat2_18 -1 -1
+smH_NJ_0 hgg_NJ_GE4_cat0_18 -1 -1
+smH_NJ_0 hgg_NJ_0_cat1_18 4 2
+smH_NJ_0 hgg_NJ_0_cat2_18 4 2
+smH_NJ_0 hgg_NJ_0_cat0_18 4 3
+OutsideAcceptance hgg_NJ_1_cat1_18 1 -1
+OutsideAcceptance hgg_NJ_1_cat2_18 2 -1
+OutsideAcceptance hgg_NJ_1_cat0_18 4 -1
+OutsideAcceptance hgg_NJ_2_cat1_18 4 -1
+OutsideAcceptance hgg_NJ_2_cat2_18 4 -1
+OutsideAcceptance hgg_NJ_2_cat0_18 2 -1
+OutsideAcceptance hgg_NJ_3_cat1_18 -1 -1
+OutsideAcceptance hgg_NJ_3_cat2_18 -1 -1
+OutsideAcceptance hgg_NJ_3_cat0_18 -1 -1
+OutsideAcceptance hgg_NJ_GE4_cat1_18 1 -1
+OutsideAcceptance hgg_NJ_GE4_cat2_18 1 -1
+OutsideAcceptance hgg_NJ_GE4_cat0_18 3 -1
+OutsideAcceptance hgg_NJ_0_cat1_18 1 2
+OutsideAcceptance hgg_NJ_0_cat2_18 1 1
+OutsideAcceptance hgg_NJ_0_cat0_18 -1 -1 smH_NJ_0 hgg_NJ_0_cat0_18

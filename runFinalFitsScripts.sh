@@ -8,8 +8,8 @@ CATS="UntaggedTag_0,UntaggedTag_1,UntaggedTag_2,UntaggedTag_3,UntaggedTag_4,VBFT
 #CATS="UntaggedTag_0,UntaggedTag_1,UntaggedTag_2,UntaggedTag_3,UntaggedTag_4,VBFTag_0,VBFTag_1,VBFTag_2,VHHadronicTag,VHTightTag,VHLooseTag"
 
 ##SCALESCORR="MaterialCentral,MaterialForward"
-SCALESCORR="MaterialForward"
-SCALESGLOBAL="NonLinearity,Geant4,LightYield,Absolute"
+SCALESCORR="MaterialForward,MaterialCentralBarrel,MaterialOuterBarrel"
+SCALESGLOBAL="NonLinearity,Geant4,LightYield,Absolute,ShowerShapeHighR9EB,ShowerShapeLowR9EB,ShowerShapeHighR9EE,ShowerShapeLowR9EE"
 
 SCALES="HighR9EE,LowR9EE,HighR9EB,LowR9EB,Gain1EB,Gain6EB"
 #SMEARS="HighR9EE,LowR9EE,HighR9EBRho,LowR9EBRho,HighR9EBPhi,LowR9EBPhi"

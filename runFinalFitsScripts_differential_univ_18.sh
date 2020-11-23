@@ -140,8 +140,14 @@ fi
 #shortcut for path where the files are stored
 ###INPUTPATH=/mnt/t3nfs01/data01/shome/vtavolar/FinalFits_74_wip/CMSSW_7_4_7/src/flashggFinalFit/Signal/
 
-#files usef for teh signal model: each process has three mass points 120, 125 and 130 geV.  
-FILE=$INPUTPATH/m120_${EXT}/reduced${OBS}IA_gen${OBS}_nominal.root,$INPUTPATH/m125_${EXT}/reduced${OBS}IA_gen${OBS}_nominal.root,$INPUTPATH/m130_${EXT}/reduced${OBS}IA_gen${OBS}_nominal.root,$INPUTPATH/m120_OA_${EXT}/reduced${OBS}OA__nominal.root,$INPUTPATH/m125_OA_${EXT}/reduced${OBS}OA__nominal.root,$INPUTPATH/m130_OA_${EXT}/reduced${OBS}OA__nominal.root
+#files usef for teh signal model: each process has three mass points 120, 125 and 130 geV.
+NOMFILESIA=$(ls ${INPUTPATH}/m125_${EXT}/reduced${OBS}IA_gen${OBS}_nominal*.root | tr "\n" ",")
+NOMFILESOA=$(ls ${INPUTPATH}/m125_OA_${EXT}/reduced${OBS}OA__nominal*.root | tr "\n" ",")
+NOMFILESIA=${NOMFILESIA::-1}
+NOMFILESOA=${NOMFILESOA::-1}
+
+
+FILE=$INPUTPATH/m120_${EXT}/reduced${OBS}IA_gen${OBS}_nominal.root,$NOMFILESIA,$INPUTPATH/m130_${EXT}/reduced${OBS}IA_gen${OBS}_nominal.root,$INPUTPATH/m120_OA_${EXT}/reduced${OBS}OA__nominal.root,$NOMFILESOA,$INPUTPATH/m130_OA_${EXT}/reduced${OBS}OA__nominal.root
 
 #the real data, for background model and final results
 DATA=$INPUTPATH/data_${EXT}/reduced${OBS}Data__nominal.root

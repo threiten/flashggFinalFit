@@ -153,7 +153,7 @@ TGraph * Normalization_8TeV::GetSigmaGraph(TString process)
 	  std::cout<<"matching proc "<<process<<" to hx"<<std::endl;
 	  XSectionMap = &XSectionMap_hx;
 	}
-	else if( ( process.Contains("outsideacceptance") || process.Contains("insideacceptance")  || process.Contains("OutsideAcceptance") || process.Contains("InsideAcceptance") ) && ! process.Contains("ggh") && ! process.Contains("hx")   ){
+	else if( ( process.Contains("outsideacceptance") || process.Contains("insideacceptance")  || process.Contains("OutsideAcceptance") || process.Contains("InsideAcceptance") || process.Contains("smH") || process.Contains("smh")) && ! process.Contains("ggh") && ! process.Contains("hx")   ){
 	  std::cout<<"matching proc "<<process<<" to all"<<std::endl;
 	  XSectionMap = &XSectionMap_all;
 	}
@@ -237,7 +237,7 @@ double Normalization_8TeV::GetXsection(double mass, TString HistName) {
 	else if (HistName.Contains("hx") || HistName.Contains("hx")) {
 		XSectionMap = &XSectionMap_hx;
 	}
-	else if( ( HistName.Contains("outsideacceptance") || HistName.Contains("insideacceptance")  || HistName.Contains("OutsideAcceptance") || HistName.Contains("InsideAcceptance") ) && ! HistName.Contains("ggh") && ! HistName.Contains("hx")   ){
+	else if( ( HistName.Contains("outsideacceptance") || HistName.Contains("insideacceptance")  || HistName.Contains("OutsideAcceptance") || HistName.Contains("InsideAcceptance")  || HistName.Contains("smH") || HistName.Contains("smh")) && ! HistName.Contains("ggh") && ! HistName.Contains("hx")   ){
 	  XSectionMap = &XSectionMap_all;
 	} else if (HistName.Contains("vbf") && !HistName.Contains("vbfold")) {
 		XSectionMap = &XSectionMap_vbf;
@@ -284,7 +284,7 @@ double Normalization_8TeV::GetVBFCorrection(double mass) {
 	return GetXsection(mass,"vbf")/GetXsection(mass,"vbfold");
 }
 
-// Simple accessors
+// Simple accesors
 TString Normalization_8TeV::GetProcess(int ty){
 	if (ty < -7999){  // We dont go below 80 GeV and Spin samples in the 100 range 
 		int process = -ty % 1000;

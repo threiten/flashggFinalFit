@@ -1268,11 +1268,11 @@ int main(int argc, char *argv[]){
 	
 	//	check = name.ReplaceAll(TString(Form("%d",it->first)),TString(""));
 	//	b.Replace(b.Index("125",3),3,"",0)
-	check = name.Replace(name.Index( Form("%d_",it->first), 5 ), 3, "", 0  );
+	check = name.Replace(name.Index( Form("%d_",it->first), 3 ), 3, "", 0  );
 	cout << "MDDB check RV == null " << check << endl; 
       } else {
 	TString name=it->second->GetName();
-	TString bareName = name.Replace(name.Index( Form("%d_",it->first), 5 ), 3, "", 0  );
+	TString bareName = name.Replace(name.Index( Form("%d_",it->first), 3 ), 3, "", 0  );
 	cout << "MDDB check RV else check = " << check << "   name = " << name << "    replaceAll = " << bareName // << "    replaceAll2 = " << name.Replace(name.Index( Form("%d_",it->first), 5 ), 3, "", 0  )
 	     << endl; 
 	assert (check == bareName );
@@ -1283,11 +1283,11 @@ int main(int argc, char *argv[]){
       if (check=="") {
 	TString name=it->second->GetName();
 	cout << "MDDB check WV name " << name << endl; 
-        check = name.Replace(name.Index( Form("%d_",it->first), 5 ), 3, "", 0  );
+        check = name.Replace(name.Index( Form("%d_",it->first), 3 ), 3, "", 0  );
 	cout << "MDDB check WV == null " << check << endl; 
       } else {
 	TString name=it->second->GetName();
-	TString bareName = name.Replace(name.Index( Form("%d_",it->first), 5 ), 3, "", 0  );
+	TString bareName = name.Replace(name.Index( Form("%d_",it->first), 3 ), 3, "", 0  );
 	cout << "MDDB check WV else check = " << check << "   name = " << name << "    replaceAll = " << bareName // << "    replaceAll2 = " << name.Replace(name.Index( Form("%d_",it->first), 5 ), 3, "", 0  )
 	     << endl; 
 	assert (check == bareName );
