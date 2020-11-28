@@ -171,12 +171,15 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
 
         return df
 
-    def getFilenameIn(outfolder, outfile, catLabel=None, label=None):
+    def getFilenameIn(outfolder, outfile, catLabel=None, label=None, procLabel=None):
 
         outfilenRT = outfile.split('.')[0]
 
         ret = '{}/{}'.format(outfolder, outfilenRT)
-            
+
+        if procLabel is not None:
+            ret += '_{}'.format(procLabel)
+        
         if catLabel is not None:
             ret += '_{}'.format(catLabel)
 
@@ -184,6 +187,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
             ret += '_{}'.format(label)
 
         ret += '.root'
+        print(ret)
         
         return ret
 
@@ -329,7 +333,8 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
 
     actLabels = []
     for procO in procOut:
-        f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere), "RECREATE")
+        print(procO)
+        f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere, procO), "RECREATE")
         w = t2din.RooWorkspaceFromDataframe(
             df, splitDic, currVariables, weight, "cms_hgg_13TeV", (procO, catOut), ws, useHists=useHists, replacementNames=replacements)
         w.makeCategories()
@@ -341,7 +346,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     if 'SIG' in options.process:
         procOAOut, _, _ = getProcCatOutIn(procOA, cat)
         for procOOA in procOAOut:
-            fOA = rt.TFile(getFilenameIn(outfolderOA, outfileOA, catLabel, labelHere), "RECREATE")
+            fOA = rt.TFile(getFilenameIn(outfolderOA, outfileOA, catLabel, labelHere, procOOA), "RECREATE")
         
             wOA = t2din.RooWorkspaceFromDataframe(
                 dfOA, splitDicOA, currVariables, weight, "cms_hgg_13TeV", (procOOA, catOut), wsOA, useHists=useHists, replacementNames=replacements)
