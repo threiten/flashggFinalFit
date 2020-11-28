@@ -402,7 +402,8 @@ def printTheorySysts():
             else:
 ###              outFile.write(getFlashggLineTheoryWeights(flashggProc[p],c,systName,i,asymmetric))
                # tbw = getFlashggLineTheoryWeights(p,c,systName,i,asymmetric,asymInds)
-               tbw = getTheoryWeightsLineFast(p,c,systName,i,asymmetric,asymInds)
+               normalizeAccrProc = True if systName in ['scaleWeights', 'alphaSWeights'] else False
+               tbw = getTheoryWeightsLineFast(p,c,systName,i,asymmetric,asymInds,normalizeAccrProc)
                print "This is what we get back from getFlashggLineTheoryWeights"
                print tbw
 ###              outFile.write(getFlashggLineTheoryWeights(p,c,systName,i,asymmetric))
@@ -441,7 +442,7 @@ def printTheorySysts():
                   outFile.write("%1.3f "%(value))
     outFile.write('\n')
 
-def getTheoryWeightsLineFast(proc,cat,name,i,asymmetric,asymInds=None):
+def getTheoryWeightsLineFast(proc,cat,name,i,asymmetric,asymInds=None,normalizeAccrProc=False):
 
    datasetname = "%s_%d_13TeV_%s_%s"%(proc.split("_",1)[0],options.mass,proc.split("_",1)[1],cat) if "_" in proc else "%s_%d_13TeV_%s"%(proc,options.mass,cat)
    df = nominalDFDict[datasetname]
@@ -452,24 +453,31 @@ def getTheoryWeightsLineFast(proc,cat,name,i,asymmetric,asymInds=None):
       downS = 1+((wDown.sum() - df['weight'].sum())/df['weight'].sum())
       upS = 1+((wUp.sum() - df['weight'].sum())/df['weight'].sum()) 
       shifts = np.array([downS, upS])
+      if normalizeAccrProc:
+         procWeightsShiftDown = np.concatenate([nominalDFDict["%s_%d_13TeV_%s_%s"%(proc.split("_",1)[0],options.mass,proc.split("_",1)[1],catH) if "_" in proc else "%s_%d_13TeV_%s"%(proc,options.mass,catH)].eval('{}{}*(weight/{})'.format(name, asymInds[0], centralWStr)).values for catH in options.cats]).sum()
+         procWeightsShiftUp = np.concatenate([nominalDFDict["%s_%d_13TeV_%s_%s"%(proc.split("_",1)[0],options.mass,proc.split("_",1)[1],catH) if "_" in proc else "%s_%d_13TeV_%s"%(proc,options.mass,catH)].eval('{}{}*(weight/{})'.format(name, asymInds[1], centralWStr)).values for catH in options.cats]).sum()
+         procWeightsNominal = np.concatenate([nominalDFDict["%s_%d_13TeV_%s_%s"%(proc.split("_",1)[0],options.mass,proc.split("_",1)[1],catH) if "_" in proc else "%s_%d_13TeV_%s"%(proc,options.mass,catH)]['weight'].values for catH in options.cats]).sum()
+         print 'procWeightsNom ', procWeightsNominal, 'procweightsDown ', procWeightsShiftDown, 'procWeightsUp ', procWeightsShiftUp
+         shifts *= np.array([(procWeightsNominal/procWeightsShiftDown),(procWeightsNominal/procWeightsShiftUp)])
+         print 'scaleWeights norma ', shifts
    else:
       wShift = df.eval('{}{}*(weight/{})'.format(name, i, centralWStr))
       sShift = 1+((wShift.sum() - df['weight'].sum())/df['weight'].sum()) 
       shifts = np.array([sShift, sShift])
-
+      if normalizeAccrProc:
+         procWeightsShift = np.concatenate([nominalDFDict["%s_%d_13TeV_%s_%s"%(procH.split("_",1)[0],options.mass,procH.split("_",1)[1],cat) if "_" in procH else "%s_%d_13TeV_%s"%(procH,options.mass,cat)].eval('{}{}*(weight/{})'.format(name, i, centralWStr)) for procH in procsH]).sum()
+         procWeightsNominal =  np.concatenate([nominalDFDict["%s_%d_13TeV_%s_%s"%(procH.split("_",1)[0],options.mass,procH.split("_",1)[1],cat) if "_" in procH else "%s_%d_13TeV_%s"%(procH,options.mass,cat)]['weight'] for procH in procsH]).sum()
+         shifts *= (procWeightsNominal/procWeightsShift)
    if any(shifts>10.) or any(shifts<0.1) or any(np.isnan(shifts)):
       print('Systematic shifts for dataset {} dont make sense: {}'.format(datasetname, shifts))
       return '- '
    
    if shifts[0] == shifts[1] and shifts[0] != 1.:
       ret = '{0:.3f} '.format(shifts[0])
-   elif shifts[0] < 1. and shifts[1] > 1.: 
-      ret = '{0:.3f}/{1:.3f} '.format(shifts[0],shifts[1])
    elif shifts[0] == 1 and shifts[1] == 1:
       ret = '- '
    else:
-      ret = '- '
-      print('Systematic shifts for dataset {} dont make sense: {}'.format(datasetname, shifts))
+      ret = '{0:.3f}/{1:.3f} '.format(shifts[0],shifts[1])
       
    return ret
 
@@ -860,6 +868,8 @@ if not options.statonly:
       for dic in (flashggSysts17, flashggSysts18):
          flashggSysts.update(dic)
 
+      flashggSysts['JetHEM_18'] = 'JetHEM_18'
+         
       JECSysts = {
          'JECAbsolute' : 'Absolute',
          'JECRelativeBal' : 'RelativeBal',
@@ -1225,6 +1235,8 @@ def getFlashggLine(proc,cat,syst):
   print "systvals ", systVals 
   if systVals[0]==1 and systVals[1]==1:
       line = '- '
+  elif systVals[0] == systVals[1] and systVals[0] != 1.:
+     line = '%5.3f '%(systVals[0])
   else:
       line = '%5.3f/%5.3f '%(systVals[0],systVals[1])
   return line

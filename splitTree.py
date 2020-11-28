@@ -326,31 +326,32 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
 
     catLabel = None if extended else catR
     labelHere = None if extended else label
-    f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere), "RECREATE")
 
-    print('Getting Workspaces!')
-    print('Current Variables: {}'.format(currVariables))
-    print('splitDic: {}'.format(splitDic))
-    w = t2din.RooWorkspaceFromDataframe(
-        df, splitDic, currVariables, weight, "cms_hgg_13TeV", (procOut, catOut), ws, useHists=useHists, replacementNames=replacements)
-    w.makeCategories()
-    w.makeWorkspace()
-    ws.Write("cms_hgg_13TeV")
-    f.Close()
+    actLabels = []
+    for procO in procOut:
+        f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere), "RECREATE")
+        w = t2din.RooWorkspaceFromDataframe(
+            df, splitDic, currVariables, weight, "cms_hgg_13TeV", (procO, catOut), ws, useHists=useHists, replacementNames=replacements)
+        w.makeCategories()
+        w.makeWorkspace()
+        ws.Write("cms_hgg_13TeV")
+        f.Close()
+        actLabels.append(w.actualLabels[0])
 
     if 'SIG' in options.process:
         procOAOut, _, _ = getProcCatOutIn(procOA, cat)
-        fOA = rt.TFile(getFilenameIn(outfolderOA, outfileOA, catLabel, labelHere), "RECREATE")
+        for procOOA in procOAOut:
+            fOA = rt.TFile(getFilenameIn(outfolderOA, outfileOA, catLabel, labelHere), "RECREATE")
         
-        wOA = t2din.RooWorkspaceFromDataframe(
-            dfOA, splitDicOA, currVariables, weight, "cms_hgg_13TeV", (procOAOut, catOut), wsOA, useHists=useHists, replacementNames=replacements)
-        wOA.makeCategories()
-        wOA.makeWorkspace()
-        wsOA.Write("cms_hgg_13TeV")
-        fOA.Close()
+            wOA = t2din.RooWorkspaceFromDataframe(
+                dfOA, splitDicOA, currVariables, weight, "cms_hgg_13TeV", (procOOA, catOut), wsOA, useHists=useHists, replacementNames=replacements)
+            wOA.makeCategories()
+            wOA.makeWorkspace()
+            wsOA.Write("cms_hgg_13TeV")
+            fOA.Close()
 
     # print('Actual labels: ', w.actualLabels)
-    procs_temp = ['{}_{}'.format(procOut, lab) for lab in w.actualLabels[0]]
+    procs_temp = ['{}_{}'.format(procOut, lab) for lab in actLabels]
     cats_temp = []
     for labs in w.actualLabels[1:]:
         if len(cats_temp) == 0:
