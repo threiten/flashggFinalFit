@@ -330,33 +330,34 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
 
     catLabel = None if extended else catR
     labelHere = None if extended else label
-
-    actLabels = []
-    for procO in procOut:
-        print(procO)
-        f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere, procO), "RECREATE")
-        w = t2din.RooWorkspaceFromDataframe(
-            df, splitDic, currVariables, weight, "cms_hgg_13TeV", (procO, catOut), ws, useHists=useHists, replacementNames=replacements)
-        w.makeCategories()
-        w.makeWorkspace()
+    
+    w = t2din.RooWorkspaceFromDataframe(
+        df, splitDic, currVariables, weight, "cms_hgg_13TeV", (procOut, catOut), ws, useHists=useHists, replacementNames=replacements, splitByProc=options.splitByProc)
+    w.makeCategories()
+    w.makeWorkspace()
+    if options.splitByProc:
+        print(w.getWorkspace())
+        for i, workS in enumerate(w.getWorkspace()):
+            f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere, w.actualLabels[0][i]), "RECREATE")
+            workS.Write("cms_hgg_13TeV")
+            f.Close()
+    else:
+        f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere), "RECREATE")
         ws.Write("cms_hgg_13TeV")
         f.Close()
-        actLabels.append(w.actualLabels[0])
 
     if 'SIG' in options.process:
         procOAOut, _, _ = getProcCatOutIn(procOA, cat)
-        for procOOA in procOAOut:
-            fOA = rt.TFile(getFilenameIn(outfolderOA, outfileOA, catLabel, labelHere, procOOA), "RECREATE")
-        
-            wOA = t2din.RooWorkspaceFromDataframe(
-                dfOA, splitDicOA, currVariables, weight, "cms_hgg_13TeV", (procOOA, catOut), wsOA, useHists=useHists, replacementNames=replacements)
-            wOA.makeCategories()
-            wOA.makeWorkspace()
-            wsOA.Write("cms_hgg_13TeV")
-            fOA.Close()
+        wOA = t2din.RooWorkspaceFromDataframe(
+            dfOA, splitDicOA, currVariables, weight, "cms_hgg_13TeV", (procOAOut, catOut), wsOA, useHists=useHists, replacementNames=replacements)
+        wOA.makeCategories()
+        wOA.makeWorkspace()
+        fOA = rt.TFile(getFilenameIn(outfolderOA, outfileOA, catLabel, labelHere), "RECREATE")
+        wsOA.Write("cms_hgg_13TeV")
+        fOA.Close()
 
     # print('Actual labels: ', w.actualLabels)
-    procs_temp = ['{}_{}'.format(procOut, lab) for lab in actLabels]
+    procs_temp = ['{}_{}'.format(procOut, lab) for lab in w.actualLabels[0]]
     cats_temp = []
     for labs in w.actualLabels[1:]:
         if len(cats_temp) == 0:
@@ -592,6 +593,7 @@ if __name__ == "__main__":
     optionalArgs = parser.add_argument_group()
     optionalArgs.add_argument('--label', '-l', action='store', type=str)
     optionalArgs.add_argument('--simple', '-s', action='store_true', default=False)
+    optionalArgs.add_argument('--splitByProc', action='store_true', default=False)
     optionalArgs.add_argument('--outfolderOA', action='store', type=str)
     optionalArgs.add_argument('--cluster', action='store', type=str)
     requiredAgrs.add_argument('--infileOA', action='store', type=str)

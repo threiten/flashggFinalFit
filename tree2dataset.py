@@ -89,7 +89,7 @@ class RooHistogramFromDataframe(RooDatasetFromDataframe):
 
 class RooWorkspaceFromDataframe(object):
 
-    def __init__(self, df, splitDic, variables, weight, wsName, dsetPreSuffix=None, workspace=None, useHists=False, replacementNames=None):
+    def __init__(self, df, splitDic, variables, weight, wsName, dsetPreSuffix=None, workspace=None, useHists=False, replacementNames=None, splitByProc=False):
 
         ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.WARNING)
         self.splitDic = splitDic
@@ -97,6 +97,7 @@ class RooWorkspaceFromDataframe(object):
         self.weight = weight
         self.useHists = useHists
         self.name = wsName
+        self.splitByProc = splitByProc
         if dsetPreSuffix is not None:
             self.dsetPreSuffix = dsetPreSuffix
 
@@ -113,6 +114,9 @@ class RooWorkspaceFromDataframe(object):
         elif workspace is None:
             self.workspace = ROOT.RooWorkspace(self.name)
             self.createdDS = True
+
+        if self.splitByProc:
+            self.workspace = [self.workspace]
 
         self.splitTree(df.loc[:, [var[0] for var in variables] + list(splitDic.keys())])
 
@@ -150,10 +154,13 @@ class RooWorkspaceFromDataframe(object):
         self.categories = list(itertools.product(*self.labels))
 
     def makeWorkspace(self):
-            
+
         dummyDf = pd.DataFrame(columns=[var[0] for var in self.variables], dtype=np.float32)
-        
+
+        prevProc = self.categories[0][0]
         for cat in self.categories:
+            print(cat)
+            currProc = cat[0]
             dsetlabel = ''
             for varl in cat:
                 dsetlabel += '{}_'.format(varl)
@@ -180,8 +187,14 @@ class RooWorkspaceFromDataframe(object):
             else:
                 dset = dsetFrDf.getDataset()
             if not self.createdDS:
-                getattr(self.workspace, 'import')(dset, ROOT.RooFit.Rename(dset.GetName()))
+                if self.splitByProc:
+                    if currProc != prevProc:
+                        self.workspace.append(ROOT.RooWorkspace(self.name))
+                    getattr(self.workspace[-1], 'import')(dset, ROOT.RooFit.Rename(dset.GetName()))
+                else:
+                    getattr(self.workspace, 'import')(dset, ROOT.RooFit.Rename(dset.GetName()))
 
+            prevProc = cat[0]
             self.actualLabels = []
             for i, lls in enumerate(self.labels):
                 self.actualLabels.append([])
@@ -189,8 +202,5 @@ class RooWorkspaceFromDataframe(object):
                     self.actualLabels[i].append(self.updateDsetlabel(label))
 
     def getWorkspace(self):
-
-        self.makeCategories()
-        self.makeWorkspace()
         
         return self.workspace

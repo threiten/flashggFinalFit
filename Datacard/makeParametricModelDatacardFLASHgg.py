@@ -10,6 +10,7 @@ import os,sys,copy,math
 import root_numpy
 import pandas as pd
 import numpy as np
+import pickle as pkl
 ###############################################################################
 
 ###############################################################################
@@ -86,6 +87,7 @@ from argparse import ArgumentParser
 # parser = OptionParser()
 parser = ArgumentParser()
 parser.add_argument("-i","--infilename", nargs='+', help="Input file (binned signal from flashgg)")
+parser.add_argument("--rateFiles", nargs='+', help="Files for rescaling prediction btw years")
 parser.add_argument("-o","--outfilename",default="cms_hgg_datacard.txt",help="Name of card to print (default: %default)")
 parser.add_argument("-p","--procs",default="ggh,vbf,wh,zh,tth",help="String list of procs (default: %default)")
 parser.add_argument("-c","--cats",default="UntaggedTag_0,UntaggedTag_1,UntaggedTag_2,UntaggedTag_3,UntaggedTag_4,VBFTag_0,VBFTag_1,VBFTag_2",help="Flashgg Categories (default: %default)")
@@ -339,6 +341,7 @@ def getNominalDFs():
             continue
          
          datasetname = "%s_%d_13TeV_%s_%s"%(p.split("_",1)[0],options.mass,p.split("_",1)[1],c) if "_" in p else "%s_%d_13TeV_%s"%(p,options.mass,c)
+         print(datasetname)
          ds = inWS.data(datasetname).Clone()
          weightVec = []
          for i in range(ds.numEntries()):
@@ -1256,11 +1259,11 @@ def printFlashggSysts():
           if '%s:%s'%(p,c) in options.toSkip: continue
           if p in bkgProcs or ('pdfWeight' in flashggSyst and (p!='ggH' and p!='qqH')):
              outFile.write('- ')
-          elif options.fullRunII and '_16' in flashggSyst and not '_16' in c:
+          elif options.fullRunII and '_16' in flashggSyst and not c[-3:] == '_16':
              outFile.write('- ')
-          elif options.fullRunII and '_17' in flashggSyst and not '_17' in c:
+          elif options.fullRunII and '_17' in flashggSyst and not c[-3:] == '_17':
              outFile.write('- ')
-          elif options.fullRunII and '_18' in flashggSyst and not '_18' in c:
+          elif options.fullRunII and '_18' in flashggSyst and not c[-3:] == '_18':
              outFile.write('- ')
           else:
              outFile.write(getFlashggLine(p,c,flashggSyst))
@@ -1282,11 +1285,11 @@ def printJECSysts():
           if '%s:%s'%(p,c) in options.toSkip: continue
           if p in bkgProcs or ('pdfWeight' in JECSyst and (p!='ggH' and p!='qqH')):
              outFile.write('- ')
-          elif options.fullRunII and '2016' in JECSyst and not '_16' in c:
+          elif options.fullRunII and '2016' in JECSyst and not c[-3:] == '_16':
              outFile.write('- ')
-          elif options.fullRunII and '2017' in JECSyst and not '_17' in c:
+          elif options.fullRunII and '2017' in JECSyst and not c[-3:] == '_17':
              outFile.write('- ')
-          elif options.fullRunII and '2018' in JECSyst and not '_18' in c:
+          elif options.fullRunII and '2018' in JECSyst and not c[-3:] == '_18':
              outFile.write('- ')
           else:
              outFile.write(getFlashggLine(p,c,JECSyst))
@@ -1552,6 +1555,30 @@ def printMultiPdf():
   if options.isMultiPdf:
     for c in options.cats:
       outFile.write('pdfindex_%s_%dTeV  discrete\n'%(c,sqrts))
+
+def printRateParams():
+   yr = ['16', '17', '18']
+   xs = {}
+   for i,f in enumerate(options.rateFiles):
+      if yr[i] not in f:
+         raise ValueError("Wrong order of rate files")
+      xs[yr[i]] = pkl.load(open(f,'rb'))
+
+   rateParams = {}
+   for year in ['16', '17']:
+      rateParams[year] = xs['18'][:,1]/xs[year][:,1]
+   outFile.write('\n')
+   procsHere = [pr for pr in options.procs if pr != 'OutsideAcceptance' and pr != 'bkg_mass']
+   for j, p in enumerate(procsHere):
+      outFile.write('rate{0}_16 rateParam *_16_13TeV {0} {1}\n'.format(p, rateParams['16'][j]))
+      if rateParams['16'][j] > 1.3 or rateParams['16'][j] < 0.7:
+         print("WARNING: RateParam for process {0} in 2016 is far away from 1: {1}".format(p, rateParams['16'][j]))
+      outFile.write('nuisance edit freeze rate{0}_16\n'.format(p))
+      outFile.write('rate{0}_17 rateParam *_17_13TeV {0} {1}\n'.format(p, rateParams['17'][j]))
+      if rateParams['17'][j] > 1.3 or rateParams['17'][j] < 0.7:
+         print("WARNING: RateParam for process {0} in 2017 is far away from 1: {1}".format(p, rateParams['17'][j]))
+      outFile.write('nuisance edit freeze rate{0}_17\n'.format(p))
+   outFile.write('\n')
 ###############################################################################
 
 ###############################################################################
@@ -1583,6 +1610,8 @@ if not options.statonly:
    # lnN systematics
    printFlashggSysts()
    printJECSysts()
+   if options.differential and options.fullRunII:
+      printRateParams()
    #catgeory migrations
    #if (len(dijetCats) > 0 and len(tthCats)>0):  printVbfSysts()
    if (len(dijetCats) > 0 ):  printVbfSysts()
