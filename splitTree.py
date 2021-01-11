@@ -155,6 +155,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         import copy as cp
         import tree2dataset as t2din
         import pandas as pdin
+        from collections import OrderedDict
         # import numpy as npin
     else:
         rt = ROOT
@@ -255,7 +256,13 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     if 'SIG' in options.process:
         procOA = config['procs'][processOA]
 
-    splitCols = list(splitDic.keys())
+    if not isinstance(splitDic[list(splitDic.keys())[0]], OrderedDict):
+        splitCols = list(splitDic.keys())
+    else:
+        splitCols = []
+        for key, item in splitDic.items():
+            splitCols += list(item.keys())
+            
     columns = splitCols + varList
     if 'SIG' in options.process:
         if extended:
@@ -304,8 +311,12 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
 
     if 'SIG' in options.process and genPSCut is not None:
         # print('Shifting Events to OOA')
-        dfOA = pdin.concat([dfOA, df.query('not ({})'.format(genPSCut), engine='python')], ignore_index=True)
-        df.query(genPSCut, engine='python', inplace=True)
+        # dfOA = pdin.concat([dfOA, df.query('not ({})'.format(genPSCut), engine='python')], ignore_index=True)
+        # df.query(genPSCut, engine='python', inplace=True)
+        for key in splitDic.keys():
+            if 'gen' in key:
+                genLabel = str(key)
+        df.loc[df.eval('not ({})'.format(genPSCut), engine='python'), genLabel] = -999.
 
     if label is not None:
         if extended:
@@ -336,7 +347,6 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     w.makeCategories()
     w.makeWorkspace()
     if options.splitByProc:
-        print(w.getWorkspace())
         for i, workS in enumerate(w.getWorkspace()):
             f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere, w.actualLabels[0][i]), "RECREATE")
             workS.Write("cms_hgg_13TeV")
@@ -436,7 +446,7 @@ def main(options):
                 remKeys.append(key)
         for key in remKeys:
             del splitDicOA[key]
-    
+    print(splitDicOA)
     if process == 'Data':
         varDic = {'CMS_hgg_mass': [100, 180],
                   'weight': ['-inf', 'inf'], 'lumi': ['-inf', 'inf']}
