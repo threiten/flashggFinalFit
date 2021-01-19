@@ -147,7 +147,7 @@ def getCluster():
 #     return ret
 
 
-def runOneCat(catR, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut=None, outfolderOA=None, outfileOA=None, processOA=None, splitDicOA=None, extCat=None):
+def runOneCat(catR, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA=None, genPSCut=None, outfolderOA=None, outfileOA=None, processOA=None, splitDicOA=None, extCat=None):
 
     if options.cluster is not None:
         import ROOT as rt
@@ -227,9 +227,9 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         extended = False
     print('Out extended: {}'.format(extended))
     
-    rFile = ur.open(options.infile)
-    if 'SIG' in options.process:
-        rFileOA = ur.open(options.infileOA)
+    # rFile = ur.open(options.infile)
+    # if 'SIG' in options.process:
+    #     rFileOA = ur.open(options.infileOA)
         
     cat = catR
     print('-------------------------------------------------------------')
@@ -553,10 +553,10 @@ def main(options):
     #     if os.path.exists('{}/{}'.format(outfolderOA, outfileOA)):
     #         os.remove('{}/{}'.format(outfolderOA, outfileOA))
 
-    # rFile = uproot.open(options.infile)
-    # rFileOA = None
-    # if 'SIG' in options.process:
-    #     rFileOA = uproot.open(options.infileOA)
+    rFile = uproot.open(options.infile)
+    rFileOA = None
+    if 'SIG' in options.process:
+        rFileOA = uproot.open(options.infileOA)
 
     categs = config['categories'] if options.process == 'SIG_125' else [config['categories'][0]]
 
@@ -568,14 +568,14 @@ def main(options):
 
     if options.cluster is None:
         for cat in categs:
-            procs_temp, cats_temp = runOneCat(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat)
+            procs_temp, cats_temp = runOneCat(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat)
 
         if procs_temp is not None and cats_temp is not None:
             procs.extend([x for x in procs_temp if x not in procs])
             cats.extend([x for x in cats_temp if x not in cats])
     else:
         if options.cluster == 'joblib':
-            res = Parallel(n_jobs=10, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) for cat in categs)
+            res = Parallel(n_jobs=10, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) for cat in categs)
 
         elif options.cluster == 'dask':
             print('Getting Cluster')
@@ -584,7 +584,7 @@ def main(options):
             # procCatFutures = client.map(runOneCat, categs, **kwargs)
             procCatFutures = []
             for cat in categs:
-                procCatFutures.append(client.submit(runOneCat, cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat))
+                procCatFutures.append(client.submit(runOneCat, cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat))
     
             progress(procCatFutures)
             res = [future.result() for future in procCatFutures]
