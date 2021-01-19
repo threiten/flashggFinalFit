@@ -6,11 +6,12 @@ from collections import OrderedDict
 import argparse
 import os
 import copy
+import awkward
 import oyaml as yaml
 import numpy as np
 import pandas as pd
-from dask.distributed import Client, LocalCluster, progress
-from dask_jobqueue import HTCondorCluster
+# from dask.distributed import Client, LocalCluster, progress
+# from dask_jobqueue import HTCondorCluster
 from joblib import delayed, Parallel
 
 def parse_variables(variables):
@@ -147,7 +148,7 @@ def getCluster():
 #     return ret
 
 
-def runOneCat(catR, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA=None, genPSCut=None, outfolderOA=None, outfileOA=None, processOA=None, splitDicOA=None, extCat=None):
+def runOneCat(catR, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut=None, outfolderOA=None, outfileOA=None, processOA=None, splitDicOA=None, extCat=None): #
 
     if options.cluster is not None:
         import ROOT as rt
@@ -155,6 +156,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         import copy as cp
         import tree2dataset as t2din
         import pandas as pdin
+        import awkward as ak
         from collections import OrderedDict as OrderedDictIn
         # import numpy as npin
     else:
@@ -163,6 +165,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         cp = copy
         t2din = t2d
         pdin = pd
+        ak = awkward
         OrderedDictIn = OrderedDict
         # npin = np
         
@@ -194,7 +197,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         return ret
 
     def getProcCatOutIn(proc, cat):
-        with open('/afs/cern.ch/work/t/threiten/Hgg/Differentials/CMSSW_10_2_13/src/flashggFinalFit/procCatNameReplacments.yaml') as repF:
+        with open('/t3home/threiten/afs_work/Hgg/Differentials/CMSSW_10_2_13/src/flashggFinalFit/procCatNameReplacments.yaml') as repF:
             procCatDic = yaml.load(repF)
 
         print(procCatDic)
@@ -280,14 +283,20 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     # df = root_pandas.read_root(
     #     options.infile, '{}/{}_{}'.format(config['treepath'], proc, cat), columns=columns)
     print("Reading the ntuples!")
-    df = rFile['{}/{}_{}'.format(config['treepath'], proc, cat)].pandas.df(columns)
+    # df = rFile['{}/{}_{}'.format(config['treepath'], proc, cat)].pandas.df(columns)
+    # df = list(ur.iterate('{}:{}/{}_{}'.format(options.infile,config['treepath'], proc, cat), branches=columns, library='pd'))[0]
+    lTree = ur.lazy('{}:{}/{}_{}'.format(options.infile,config['treepath'],proc,cat))
+    df = ak.to_pandas(lTree[:,columns])
     if label is not None and 'SIG_125' in options.process and extended:
         df = labelSystVarsIn(df, systVars, label)
 
     if 'SIG' in options.process:
         # dfOA = root_pandas.read_root(
         # options.infileOA, '{}/{}_{}'.format(config['treepath'], procOA, cat), columns=columns)
-        dfOA = rFileOA['{}/{}_{}'.format(config['treepath'], procOA, cat)].pandas.df(columns)
+        # dfOA = rFileOA['{}/{}_{}'.format(config['treepath'], procOA, cat)].pandas.df(columns)
+        lTreeOA = ur.lazy('{}:{}/{}_{}'.format(options.infileOA,config['treepath'],procOA,cat))
+        
+        dfOA = ak.to_pandas(lTreeOA[:,columns])
         if label is not None and 'SIG_125' in options.process and extended:
             dfOA = labelSystVarsIn(dfOA, systVars, label)
 
@@ -553,12 +562,18 @@ def main(options):
     #     if os.path.exists('{}/{}'.format(outfolderOA, outfileOA)):
     #         os.remove('{}/{}'.format(outfolderOA, outfileOA))
 
-    rFile = uproot.open(options.infile)
-    rFileOA = None
-    if 'SIG' in options.process:
-        rFileOA = uproot.open(options.infileOA)
+    # rFile = uproot.ReadOnlyFile(options.infile)
+    # rFileOA = None
+    # if 'SIG' in options.process:
+    #     rFileOA = uproot.ReadOnlyFile(options.infileOA)
 
     categs = config['categories'] if options.process == 'SIG_125' else [config['categories'][0]]
+    # awkarrs = []
+    # for cat in categs:
+    #     tplL = [cat, uproot.lazy('{}:{}/{}_{}'.format(options.infile,config['treepath'],config['procs'][process],cat)),None]
+    #     if 'SIG' in options.process:
+    #         tplL[2] = uproot.lazy('{}:{}/{}_{}'.format(options.infileOA,config['treepath'],config['procs'][processOA],cat))
+    #     awkarrs.append(tuple(tplL))
 
     extended = True
     if options.simple:
@@ -568,14 +583,14 @@ def main(options):
 
     if options.cluster is None:
         for cat in categs:
-            procs_temp, cats_temp = runOneCat(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat)
+            procs_temp, cats_temp = runOneCat(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) #rFile, rFileOA,
 
         if procs_temp is not None and cats_temp is not None:
             procs.extend([x for x in procs_temp if x not in procs])
             cats.extend([x for x in cats_temp if x not in cats])
     else:
         if options.cluster == 'joblib':
-            res = Parallel(n_jobs=10, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) for cat in categs)
+            res = Parallel(n_jobs=-1, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) for cat in categs) # rFile, rFileOA,
 
         elif options.cluster == 'dask':
             print('Getting Cluster')
@@ -584,7 +599,7 @@ def main(options):
             # procCatFutures = client.map(runOneCat, categs, **kwargs)
             procCatFutures = []
             for cat in categs:
-                procCatFutures.append(client.submit(runOneCat, cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, rFile, rFileOA, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat))
+                procCatFutures.append(client.submit(runOneCat, cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat)) # rFile, rFileOA,
     
             progress(procCatFutures)
             res = [future.result() for future in procCatFutures]
