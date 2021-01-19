@@ -1,6 +1,6 @@
 splits: 
-  genJet2p5AbsRapidity0: [0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
-  recoJet2p5AbsRapidity0: [0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
+  genJet2p5AbsRapidity0: [-1000.0,0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
+  recoJet2p5AbsRapidity0: [-1000.0,0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
   sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
    
 variables: 

@@ -1,8 +1,13 @@
 splits: 
-  genJet2p5AbsRapidity0: [-1000.0,0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
-  recoJet2p5AbsRapidity0: [-1000.0,0.0,0.3,0.6,0.9,1.2,1.6,2.0,3.0]
-  sigmaMoM_decorr: [0.0, 0.01076, 0.0165, 0.0332]
-   
+  gen:
+    genTauCJet2p50: [-1000.0,0.0,15.0,25.0,40.0,10000.0]
+    genPt: [[0.0,10000.0],[0.0,45.0,120.0,350.0,10000.0],[0.0,45.0,120.0,350.0,10000.0],[0.0,120.0,350.0,10000.0],[0.0,200.0,350.0,10000.0]]
+  reco:
+    recoTauCJet2p50: [-1000.0,0.0,15.0,25.0,40.0,10000.0]
+    recoPt: [[0.0,10000.0],[0.0,45.0,120.0,350.0,10000.0],[0.0,45.0,120.0,350.0,10000.0],[0.0,120.0,350.0,10000.0],[0.0,200.0,350.0,10000.0]]
+  expmtl:
+    sigmaMoM_decorr: [0.0, 0.01076, 0.0165, 0.0332]
+ 
 variables: 
   CMS_hgg_mass: [100, 180]
   weight: [-inf, inf]
@@ -15,8 +20,8 @@ nominalVariables:
 cut: 'leadmva>0.46 and subleadmva>0.46'
 
 phasespace:
-  gen: 'genJet2p5Rapidity0>-999 and genJet2p5Pt0>30 and abs(genJet2p5Eta0)<2.5'
-  reco : 'recoJet2p5Rapidity0>-999 and recoJet2p5Pt0>30 and abs(recoJet2p5Eta0)<2.5'
+  gen: 'genJet2p5Energy0>-999 and genJet2p5Pz0>-999 and genJet2p5Pt0>30. and abs(genJet2p5Eta0)<2.5'
+  reco: 'recoJet2p5Energy0>-999 and recoJet2p5Pz0>-999 and recoJet2p5Pt0>30. and abs(recoJet2p5Eta0)<2.5'
 
 weight: 'weight'
 
@@ -41,16 +46,16 @@ categories: ['SigmaMpTTag_0', 'SigmaMpTTag_0_FNUFEBDown01sigma', 'SigmaMpTTag_0_
 correlatedSyst: ['JEC', 'ScaleHighR9EB', 'ScaleHighR9EE', 'ScaleLowR9EB', 'ScaleLowR9EE', 'ScaleGain6EB', 'ScaleGain1EB', 'SmearHighR9EBPhi','SmearHighR9EBRho','SmearHighR9EEPhi','SmearHighR9EERho','SmearLowR9EBPhi','SmearLowR9EBRho','SmearLowR9EEPhi','SmearLowR9EERho', 'Material', 'NonLinearity', 'Geant4', 'LightYield', 'Absolute']
 
 filenames:
-  IA_125: 'reducedJet2p5AbsRapidity0IA_genJet2p5AbsRapidity0_nominal.root'
-  OA_125: 'reducedJet2p5AbsRapidity0OA__nominal.root'
-  IA_120: 'reducedJet2p5AbsRapidity0IA_genJet2p5AbsRapidity0_nominal.root'
-  OA_120: 'reducedJet2p5AbsRapidity0OA__nominal.root'
-  IA_130: 'reducedJet2p5AbsRapidity0IA_genJet2p5AbsRapidity0_nominal.root'
-  OA_130: 'reducedJet2p5AbsRapidity0OA__nominal.root'
-  Data: 'reducedJet2p5AbsRapidity0Data__nominal.root'
+  IA_125: 'reducedPtIA_genPt_nominal.root'
+  OA_125: 'reducedPtOA__nominal.root'
+  IA_120: 'reducedPtIA_genPt_nominal.root'
+  OA_120: 'reducedPtOA__nominal.root'
+  IA_130: 'reducedPtIA_genPt_nominal.root'
+  OA_130: 'reducedPtOA__nominal.root'
+  Data: 'reducedPtData__nominal.root'
   
 treepath: 'tagsDumper/trees'
 
 formulas: 
-  genJet2p5AbsRapidity0: 'abs(genJet2p5Rapidity0)'
-  recoJet2p5AbsRapidity0: 'abs(recoJet2p5Rapidity0)'
+  recoTauCJet2p50: 'sqrt(recoJet2p5Energy0**2-recoJet2p5Pz0**2)/(2*cosh(recoJet2p5Rapidity0-recoRapidity))'
+  genTauCJet2p50: 'sqrt(genJet2p5Energy0**2-genJet2p5Pz0**2)/(2*cosh(genJet2p5Rapidity0-genRapidity))'

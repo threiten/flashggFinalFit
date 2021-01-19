@@ -172,7 +172,7 @@ class RooWorkspaceFromDataframe(object):
             else:
                 df['{}_bin'.format(key)] = pd.cut(df[key], bins=item, labels=self.makeBinLabels(key, item), include_lowest=True, right=False)
                 binvars.append('{}_bin'.format(key))
-
+                
         self.gb = df.groupby(binvars)
 
     @staticmethod
@@ -237,16 +237,12 @@ class RooWorkspaceFromDataframe(object):
             self.labels = [self.makeBinLabels(key, item) for key, item in self.splitDic.items()]
             self.categories = list(itertools.product(*self.labels))
 
-        print(self.categories)
-        print(self.labels)
-
     def makeWorkspace(self):
 
         dummyDf = pd.DataFrame(columns=[var[0] for var in self.variables], dtype=np.float32)
 
         prevProc = self.categories[0][0]
         for cat in self.categories:
-            print(cat)
             currProc = cat[0]
             dsetlabel = ''
             for varl in cat:
@@ -283,7 +279,6 @@ class RooWorkspaceFromDataframe(object):
 
             prevProc = cat[0]
             self.actualLabels = []
-            print(self.labels)
             for i, lls in enumerate(self.labels):
                 self.actualLabels.append([])
                 for label in lls:

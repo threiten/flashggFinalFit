@@ -1,6 +1,6 @@
 splits: 
-  genAbsDeltaPhiGgJet2p50: [0.0,2.0,2.6,2.85,3.0,3.07,3.2]
-  recoAbsDeltaPhiGgJet2p50: [0.0,2.0,2.6,2.85,3.0,3.07,3.2]
+  genAbsDeltaPhiGgJet2p50: [-1000.0,0.0,2.0,2.6,2.85,3.0,3.07,3.2]
+  recoAbsDeltaPhiGgJet2p50: [-1000.0,0.0,2.0,2.6,2.85,3.0,3.07,3.2]
   sigmaMoM_decorr: [0.0, 0.01076, 0.0165, 0.0332]
    
 variables: 

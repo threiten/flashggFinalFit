@@ -155,7 +155,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         import copy as cp
         import tree2dataset as t2din
         import pandas as pdin
-        from collections import OrderedDict
+        from collections import OrderedDict as OrderedDictIn
         # import numpy as npin
     else:
         rt = ROOT
@@ -163,6 +163,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         cp = copy
         t2din = t2d
         pdin = pd
+        OrderedDictIn = OrderedDict
         # npin = np
         
     def labelSystVarsIn(df, systVars, label):
@@ -256,7 +257,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     if 'SIG' in options.process:
         procOA = config['procs'][processOA]
 
-    if not isinstance(splitDic[list(splitDic.keys())[0]], OrderedDict):
+    if not isinstance(splitDic[list(splitDic.keys())[0]], OrderedDictIn):
         splitCols = list(splitDic.keys())
     else:
         splitCols = []
@@ -309,13 +310,32 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     if 'SIG' in options.process:
         dfOA.query(cut, engine='python', inplace=True)
 
+    if 'phasespace' in config.keys():
+        for key in splitDic.keys():
+            if 'reco' in key:
+                if isinstance(splitDic[key], OrderedDictIn):
+                    for keyIn in splitDic[key].keys():
+                        if not isinstance(splitDic[key][keyIn][0], list):
+                            recoLabel = str(keyIn)
+                else:
+                    recoLabel = str(key)
+        print(recoLabel)
+        df.loc[df.eval('not ({})'.format(config['phasespace']['reco']), engine='python'), recoLabel] = -999.
+        if 'SIG' in options.process:
+            dfOA.loc[dfOA.eval('not ({})'.format(config['phasespace']['reco']), engine='python'), recoLabel] = -999.
     if 'SIG' in options.process and genPSCut is not None:
         # print('Shifting Events to OOA')
         # dfOA = pdin.concat([dfOA, df.query('not ({})'.format(genPSCut), engine='python')], ignore_index=True)
         # df.query(genPSCut, engine='python', inplace=True)
         for key in splitDic.keys():
             if 'gen' in key:
-                genLabel = str(key)
+                if isinstance(splitDic[key], OrderedDictIn):
+                    for keyIn in splitDic[key].keys():
+                        if not isinstance(splitDic[key][keyIn][0], list):
+                            genLabel = str(keyIn)
+                else:
+                    genLabel = str(key)
+        print(genLabel)
         df.loc[df.eval('not ({})'.format(genPSCut), engine='python'), genLabel] = -999.
 
     if label is not None:
@@ -468,7 +488,7 @@ def main(options):
     genPSCut = None
     if 'phasespace' in config.keys():
         genPSCut = config['phasespace']['gen']
-        cut = '({0}) and ({1})'.format(cut, config['phasespace']['reco'])
+        # cut = '({0}) and ({1})'.format(cut, config['phasespace']['reco'])
 
     if process == 'Data':
         weight = 'weight'
@@ -515,6 +535,8 @@ def main(options):
     print(addRep)
     print('varList before: {}'.format(varList))
     varList += parseVariablesFromFormula(cut, addRep)
+    if 'phasespace' in config.keys():
+        varList += parseVariablesFromFormula(config['phasespace']['reco'], addRep)
     if genPSCut is not None and 'SIG' in options.process:
         varList += parseVariablesFromFormula(genPSCut, addRep)
     if 'formulas' in config.keys():
@@ -553,7 +575,7 @@ def main(options):
             cats.extend([x for x in cats_temp if x not in cats])
     else:
         if options.cluster == 'joblib':
-            res = Parallel(n_jobs=-1, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) for cat in categs)
+            res = Parallel(n_jobs=10, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) for cat in categs)
 
         elif options.cluster == 'dask':
             print('Getting Cluster')

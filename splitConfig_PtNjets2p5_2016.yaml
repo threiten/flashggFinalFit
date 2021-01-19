@@ -1,7 +1,12 @@
 splits: 
-  genAbsDeltaEtaJ1J2Jets4p7: [-1000.0,0.0,0.7,1.6,3.0,5.0,100.0]
-  recoAbsDeltaEtaJ1J2Jets4p7: [-1000.0,0.0,0.7,1.6,3.0,5.0,100.0]
-  sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
+  reco:
+    recoNjets2p5: [-0.5,0.5,1.5,100.0]
+    recoPt: [[0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,45.0,60.0,10000.0],[0.0,30.0,60.0,100.0,170.0,10000.0],[0.0,100.0,170.0,250.0,350.0,10000.0]]
+  gen:
+    genNjets2p5: [-0.5,0.5,1.5,100.0]
+    genPt: [[0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,45.0,60.0,10000.0],[0.0,30.0,60.0,100.0,170.0,10000.0],[0.0,100.0,170.0,250.0,350.0,10000.0]]
+  expmtl:
+    sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
    
 variables: 
   CMS_hgg_mass: [100, 180]
@@ -13,10 +18,6 @@ nominalVariables:
   processIndex: [0,100]
 
 cut: 'leadmva>0.397 and subleadmva>0.397'
-
-phasespace:
-  gen: 'genJet4p7Eta0>-999 and genJet4p7Eta1>-999 and genJet4p7Pt0>30 and genJet4p7Pt1>30 and abs(genJet4p7Eta0)<4.7 and abs(genJet4p7Eta1)<4.7'
-  reco: 'recoJet4p7Eta0>-999 and recoJet4p7Eta1>-999 and recoJet4p7Pt0>30 and recoJet4p7Pt1>30 and abs(recoJet4p7Eta0)<4.7 and abs(recoJet4p7Eta1)<4.7'
 
 weight: 'weight'
 
@@ -41,16 +42,12 @@ categories: ['SigmaMpTTag_0', 'SigmaMpTTag_0_FNUFEBDown01sigma', 'SigmaMpTTag_0_
 correlatedSyst: ['JEC', 'ScaleHighR9EB', 'ScaleHighR9EE', 'ScaleLowR9EB', 'ScaleLowR9EE', 'ScaleGain6EB', 'ScaleGain1EB', 'SmearHighR9EBPhi','SmearHighR9EBRho','SmearHighR9EEPhi','SmearHighR9EERho','SmearLowR9EBPhi','SmearLowR9EBRho','SmearLowR9EEPhi','SmearLowR9EERho', 'Material', 'NonLinearity', 'Geant4', 'LightYield', 'Absolute']
 
 filenames:
-  IA_125: 'reducedAbsDeltaEtaJ1J2Jets4p7IA_genAbsDeltaEtaJ1J2Jets4p7_nominal.root'
-  OA_125: 'reducedAbsDeltaEtaJ1J2Jets4p7OA__nominal.root'
-  IA_120: 'reducedAbsDeltaEtaJ1J2Jets4p7IA_genAbsDeltaEtaJ1J2Jets4p7_nominal.root'
-  OA_120: 'reducedAbsDeltaEtaJ1J2Jets4p7OA__nominal.root'
-  IA_130: 'reducedAbsDeltaEtaJ1J2Jets4p7IA_genAbsDeltaEtaJ1J2Jets4p7_nominal.root'
-  OA_130: 'reducedAbsDeltaEtaJ1J2Jets4p7OA__nominal.root'
-  Data: 'reducedAbsDeltaEtaJ1J2Jets4p7Data__nominal.root'
+  IA_125: 'reducedPtIA_genPt_nominal.root'
+  OA_125: 'reducedPtOA__nominal.root'
+  IA_120: 'reducedPtIA_genPt_nominal.root'
+  OA_120: 'reducedPtOA__nominal.root'
+  IA_130: 'reducedPtIA_genPt_nominal.root'
+  OA_130: 'reducedPtOA__nominal.root'
+  Data: 'reducedPtData__nominal.root'
   
 treepath: 'tagsDumper/trees'
-
-formulas: 
-  recoAbsDeltaEtaJ1J2Jets4p7: 'abs(recoJet4p7Eta0 - recoJet4p7Eta1)'
-  genAbsDeltaEtaJ1J2Jets4p7: 'abs(genJet4p7Eta0 - genJet4p7Eta1)'

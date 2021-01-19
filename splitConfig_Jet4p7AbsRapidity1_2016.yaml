@@ -1,6 +1,6 @@
 splits: 
-  genJet4p7AbsRapidity1: [0.0,0.6,1.2,1.8,2.5,3.5,5.0]
-  recoJet4p7AbsRapidity1: [0.0,0.6,1.2,1.8,2.5,3.5,5.0]
+  genJet4p7AbsRapidity1: [-1000.0,0.0,0.6,1.2,1.8,2.5,3.5,5.0]
+  recoJet4p7AbsRapidity1: [-1000.0,0.0,0.6,1.2,1.8,2.5,3.5,5.0]
   sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
    
 variables: 

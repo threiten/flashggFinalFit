@@ -1,6 +1,6 @@
 splits: 
-  genAbsDeltaEtaJ1J2Jets4p7: [0.0,0.7,1.6,3.0,5.0,100.0]
-  recoAbsDeltaEtaJ1J2Jets4p7: [0.0,0.7,1.6,3.0,5.0,100.0]
+  genAbsDeltaEtaJ1J2Jets4p7: [-1000.0,0.0,0.7,1.6,3.0,5.0,100.0]
+  recoAbsDeltaEtaJ1J2Jets4p7: [-1000.0,0.0,0.7,1.6,3.0,5.0,100.0]
   sigmaMoM_decorr: [0.0, 0.01076, 0.0165, 0.0332]
    
 variables: 

@@ -1,6 +1,6 @@
 splits: 
-  genAbsZeppenfeldEtaJets4p7: [0.0,0.2,0.5,0.85,1.2,1.7,10.0]
-  recoAbsZeppenfeldEtaJets4p7: [0.0,0.2,0.5,0.85,1.2,1.7,10.0]
+  genAbsZeppenfeldEtaJets4p7: [-1000.0,0.0,0.2,0.5,0.85,1.2,1.7,10.0]
+  recoAbsZeppenfeldEtaJets4p7: [-1000.0,0.0,0.2,0.5,0.85,1.2,1.7,10.0]
   sigmaMoM_decorr: [0.0, 0.01076, 0.0165, 0.0332]
    
 variables: 

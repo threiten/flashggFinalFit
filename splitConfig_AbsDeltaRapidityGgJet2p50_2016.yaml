@@ -1,6 +1,6 @@
 splits: 
-  genAbsDeltaRapidityGgJet2p50: [0.0,0.3,0.6,1.0,1.4,1.9,2.5,100.0]
-  recoAbsDeltaRapidityGgJet2p50: [0.0,0.3,0.6,1.0,1.4,1.9,2.5,100.0]
+  genAbsDeltaRapidityGgJet2p50: [-1000.0,0.0,0.3,0.6,1.0,1.4,1.9,2.5,100.0]
+  recoAbsDeltaRapidityGgJet2p50: [-1000.0,0.0,0.3,0.6,1.0,1.4,1.9,2.5,100.0]
   sigmaMoM_decorr: [0.0, 0.0106, 0.0146, 0.0396]
    
 variables: 
