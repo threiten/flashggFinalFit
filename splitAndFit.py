@@ -8,19 +8,19 @@ cmssw_path = os.environ['CMSSW_BASE']
 
 rootDir = {
     '16': {
-        'IA': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wSwPW_fixNNLOPS_signal_IA_16/',
-        'OA': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wSwPW_fixNNLOPS_signal_OA_16/',
-        'Data': '/eos/user/t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wJMET_reRunSum20_data_16/'
+        'IA': '/eos/home-t/threiten/Analysis/Differentials/2016ReReco/dev_differential_fixSystNNLOPS_2PsEoE_signal_IA_16/',
+        'OA': '/eos/home-t/threiten/Analysis/Differentials/2016ReReco/dev_differential_fixSystNNLOPS_2PsEoE_signal_OA_16/',
+        'Data': '/eos/home-t/threiten/Analysis/Differentials/2016ReReco/dev_differential_wJMET_reRunSum20_data_16/'
     },
     '17': {
-        'IA': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wSwPW_fixNNLOPS_signal_IA_17/',
-        'OA': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wSwPW_fixNNLOPS_signal_OA_17/',
-        'Data': '/eos/user/t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wJMET_reRunSum20_data_17/'
+        'IA': '/eos/home-t/threiten/Analysis/Differentials/2017ReReco/dev_differential_fixSystNNLOPS_2PsEoE_signal_IA_17/',
+        'OA': '/eos/home-t/threiten/Analysis/Differentials/2017ReReco/dev_differential_fixSystNNLOPS_2PsEoE_signal_OA_17/',
+        'Data': '/eos/home-t/threiten/Analysis/Differentials/2017ReReco/dev_differential_wJMET_reRunSum20_data_17/'
     },
     '18': {
-        'IA': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wSwPW_fixNNLOPS_signal_IA_18/',
-        'OA': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wSwPW_fixNNLOPS_signal_OA_18/',
-        'Data': '/eos/user/t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wJMET_reRunSum20_data_18/'
+        'IA': '/eos/home-t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_fixSystNNLOPS_2PsEoE_signal_IA_18/',
+        'OA': '/eos/home-t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_fixSystNNLOPS_2PsEoE_signal_OA_18/',
+        'Data': '/eos/home-t/threiten/Analysis/Differentials/2018ReABCPromptDReco/dev_differential_wJMET_reRunSum20_data_18/'
     }}
 
 replacementDic = {
@@ -38,6 +38,7 @@ varDic = {
     'AbsRapidityFine': 'AbsRapidity',
     'Jet2p5Pt0': 'Jet2p5Pt0',
     'Jet2p5AbsRapidity0': 'Jet2p5AbsRapidity0',
+    'Jet2p5AbsRapidity0_testShUnc': 'Jet2p5AbsRapidity0',
     'AbsDeltaRapidityGgJet2p50': 'AbsDeltaRapidityGgJet2p50',
     'AbsDeltaPhiGgJet2p50': 'AbsDeltaPhiGgJet2p50',
     'Jet4p7Pt1': 'Jet4p7Pt1',
@@ -54,19 +55,14 @@ varDic = {
     'AbsDeltaPhiGgJjJets4p7VBFlike': 'AbsDeltaPhiGgJjJets4p7',
     'AbsDeltaPhiJ1J2Jets4p7VBFlike': 'AbsDeltaPhiJ1J2Jets4p7',
     'PtVBFlike': 'Pt',
-    'Pt0Jets': 'Pt',
-    'Pt1Jets': 'Pt',
-    'Pt1PJets': 'Pt',
     'TauCJet2p50': 'TauCJet2p50',
     'AbsPhiS': 'AbsPhiS',
-    'PtTauC0': 'Pt',
-    'PtTauC1': 'Pt',
-    'PtTauC2': 'Pt',
-    'PtTauC3': 'Pt',
     'PtInclusive': 'Pt',
     'PtInclusive1L1B': 'Pt',
     'PtInclusive1LHPtM': 'Pt',
-    'PtInclusive1LLPtM': 'Pt'
+    'PtInclusive1LLPtM': 'Pt',
+    'PtTauCJet2p50': 'Pt',
+    'PtNjets2p5': 'Pt'
 }
 
 inpDir = '/eos/home-t/threiten/Analysis/Differentials/FinalFitsInDir'
@@ -224,8 +220,8 @@ def main(options):
     for cat in cats:
         catStr += '{},'.format(cat)
     catStr = catStr[:-1]
-    dCardP = subprocess.Popen(r'./makeParametricModelDatacardFLASHgg.py -i {3}/m125_{0}_1*/reduced{1}IA_gen{1}_nominal*.root {3}/m125_OA_{0}_1*/reduced{1}OA__nominal*.root -o Datacard_13TeV_differential_{0}.txt --ext differential_{0} -p $(head -n1 {3}/m125_{0}_16/proc_cat_names_gen{1}.txt | tail -1),OutsideAcceptance -c {2} --photonCatScales HighR9EB,HighR9EE,LowR9EB,LowR9EE,Gain6EB,Gain1EB --photonCatSmears HighR9EBPhi,HighR9EBRho,HighR9EEPhi,HighR9EERho,LowR9EBPhi,LowR9EBRho,LowR9EEPhi,LowR9EERho --mass 125 --intLumi16 35.9 --intLumi17 41.5 --intLumi18 59.35 --intLumi 35.9 --differential --isMultiPdf --fullRunII --rateFiles /afs/cern.ch/work/t/threiten/Hgg/Differentials/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/test/preAppNov20/theoryPred_{0}_16.pkl /afs/cern.ch/work/t/threiten/Hgg/Differentials/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/test/preAppNov20/theoryPred_{0}_17.pkl /afs/cern.ch/work/t/threiten/Hgg/Differentials/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/test/preAppNov20/theoryPred_{0}_18.pkl'.format(
-        options.extension, variable, catStr, inpDir), cwd='{0}/src/flashggFinalFit/Datacard'.format(cmssw_path), shell=True)
+    dCardP = subprocess.Popen(r'./makeParametricModelDatacardFLASHgg.py -i {3}/m125_{0}_1*/reduced{1}IA_gen{1}_nominal*.root {3}/m125_OA_{0}_1*/reduced{1}OA__nominal*.root -o Datacard_13TeV_differential_{0}.txt --ext differential_{0} -p $(head -n1 {3}/m125_{0}_16/proc_cat_names_gen{1}.txt | tail -1),OutsideAcceptance -c {2} --photonCatScales HighR9EB,HighR9EE,LowR9EB,LowR9EE,Gain6EB,Gain1EB --photonCatSmears HighR9EBPhi,HighR9EBRho,HighR9EEPhi,HighR9EERho,LowR9EBPhi,LowR9EBRho,LowR9EEPhi,LowR9EERho --mass 125 --intLumi16 35.9 --intLumi17 41.5 --intLumi18 59.35 --intLumi 35.9 --differential --isMultiPdf --fullRunII --rateFiles {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_16.pkl {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_17.pkl {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_18.pkl'.format(
+        options.extension, variable, catStr, inpDir, cmssw_path), cwd='{0}/src/flashggFinalFit/Datacard'.format(cmssw_path), shell=True)
     commands['Datacard'] = dCardP.args
     dCardP.wait()
 

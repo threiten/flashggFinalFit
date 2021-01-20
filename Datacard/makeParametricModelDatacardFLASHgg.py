@@ -56,11 +56,11 @@ class WSTFileWrapper:
 
    def data(self,dataName):
         result = None
-        complained_yet =0 
+        complained_yet = False
         for i in range(len(self.fnList)):
           this_result_obj = self.wsList[i].data(dataName);
           if ( result and this_result_obj and (not complained_yet) ):
-            complained_yet = true;
+            complained_yet = True
           if this_result_obj: # [3]
              result = this_result_obj
         return result 
