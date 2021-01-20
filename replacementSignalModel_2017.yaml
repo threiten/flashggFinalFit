@@ -30,6 +30,10 @@ Jet2p5AbsRapidity0:
   tag: 'hgg_YJ0_2p0_3p0_cat2_17'
   proc: 'smH_YJ0_2p0_3p0'
 
+Jet2p5AbsRapidity0_testShUnc:
+  tag: 'hgg_YJ0_2p0_3p0_cat2_17'
+  proc: 'smH_YJ0_2p0_3p0'
+  
 AbsDeltaRapidityGgJet2p50:
   tag: 'hgg_DYHJ0_2p5_100p0_cat2_17'
   proc: 'smH_DYHJ0_2p5_100p0'
@@ -83,8 +87,8 @@ PtMiss:
 AbsDeltaPhiGgJjJets4p7VBFlike:
   tag: 'hgg_DPhiHJJ_3p07_3p2_cat2_17'
   proc: 'smH_DPhiHJJ_3p07_3p2'
-  tagWV: 'hgg_DPhiHJJ_2p7_2p95_cat2_17'
-  procWV: 'OutsideAcceptance'
+  tagWV: 'hgg_DPhiHJJ_2p95_3p07_cat2_17'
+  procWV: 'smH_DPhiHJJ_m1000p0_0p0'
 
 AbsDeltaPhiJ1J2Jets4p7VBFlike:
   tag: 'hgg_DPhiJJ_1p7_2p5_cat2_17'
@@ -149,13 +153,23 @@ PtInclusive:
   proc: 'smH_PTH_0p0_10000p0'
 
 PtInclusive1L1B:
-  tag: 'hgg_PTH_0p0_10000p0_cat1_17'
+  tag: 'hgg_PTH_0p0_10000p0_cat0_17'
   proc: 'smH_PTH_0p0_10000p0'
 
 PtInclusive1LHPtM:
-  tag: 'hgg_PTH_0p0_10000p0_cat1_17'
-  proc: 'OutsideAcceptance'
+  tag: 'hgg_PTH_0p0_10000p0_cat0_17'
+  proc: 'smH_PTH_0p0_10000p0'
 
 PtInclusive1LLPtM:
   tag: 'hgg_PTH_0p0_10000p0_cat1_17'
   proc: 'smH_PTH_0p0_10000p0'
+
+PtTauCJet2p50:
+  tag: 'hgg_TCJ0_15p0_25p0_hgg_PTH_0p0_45p0_cat1_17'
+  proc: 'smH_TCJ0_15p0_25p0_PTH_0p0_45p0'
+  tagWV: 'hgg_TCJ0_0p0_15p0_hgg_PTH_0p0_45p0_cat1_17'
+  procWV: 'smH_TCJ0_m1000p0_0p0_PTH_0p0_10000p0'
+
+PtNjets2p5:
+  tag: 'NJ_0_PTH_15p0_20p0_cat1_17'
+  proc: 'smH_hgg_NJ_0_hgg_PTH_15p0_20p0'
