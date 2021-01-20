@@ -92,6 +92,7 @@ parser.add_option("--refTagWV",default="",help="ref replacement tag for WV")
 parser.add_option("--refProcWV",default="",help="ref replacement proc for WV")
 parser.add_option("--normalisationCut",default="",help="cut on datasets for final normalisation")
 parser.add_option("--skipSecondaryModels",default=False,action="store_true",help="Turn off creation of all additional models")
+parser.add_option("--doQuadraticSigmaSum",default=False,action="store_true",help="Do quadratic sum for variation of sigma")
 (opts,args) = parser.parse_args()
 
 defaults = copy(opts)
@@ -227,6 +228,7 @@ refTagWVOpt = ""
 refProcWVOpt = ""
 normCutOpt = ""
 skipSecModOpt = ""
+doQuadraticSigmaSum = ""
 
 if opts.shiftOffDiag:
     offdiagopt = " --shiftOffDiag 1"
@@ -246,6 +248,8 @@ if opts.normalisationCut:
     normCutOpt = " --normalisationCut "+str(opts.normalisationCut)
 if opts.skipSecondaryModels:
     skipSecModOpt = " --skipSecondaryModels "
+if opts.doQuadraticSigmaSum:
+    doQuadraticSigmaSum = " --doQuadraticSigmaSum "
 
 if opts.batch != "HTCONDOR":
     for proc in  opts.procs.split(","):
@@ -260,9 +264,9 @@ if opts.batch != "HTCONDOR":
             else:
                 bsRW=1
             if opts.systdatfile:
-                exec_line = "%s/bin/SignalFit -i %s -d %s/%s  --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt) #--verbose 3
+                exec_line = "%s/bin/SignalFit -i %s -d %s/%s  --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt,doQuadraticSigmaSum) #--verbose 3
             else:
-                exec_line = "%s/bin/SignalFit -i %s -d %s/%s  --mhLow=%s --mhHigh=%s  --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt) #--verbose 3
+                exec_line = "%s/bin/SignalFit -i %s -d %s/%s  --mhLow=%s --mhHigh=%s  --procs %s -o  %s/%s -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --split %s,%s --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,os.getcwd(),opts.datfile,opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root","_%s_%s.root"%(proc,cat)), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi, proc,cat,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt, doQuadraticSigmaSum) #--verbose 3
                 #exec_line = "%s/bin/SignalFit -i %s  -p %s -f %s --considerOnly %s -o %s/%s --datfilename %s/%s/SignalFitJobs/outputs/config_%d.dat" %(os.getcwd(), opts.infile,proc,opts.flashggCats,cat,os.getcwd(),opts.outDir,os.getcwd(),opts.outDir, counter)
                 #print exec_line
             writePostamble(file,exec_line) #includes submission
@@ -290,9 +294,9 @@ elif opts.batch == "HTCONDOR":
     else:
         bsRW=1
     if opts.systdatfile:
-        exec_line = "%s/bin/SignalFit -i %s -d ${datMap[${PROCID}]} --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o %s/%s_${procMap[${PROCID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt) #--verbose 3
+        exec_line = "%s/bin/SignalFit -i %s -d ${datMap[${PROCID}]} --mhLow=%s --mhHigh=%s -s %s/%s --procs %s -o %s/%s_${procMap[${PROCID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile,opts.mhLow, opts.mhHigh, os.getcwd(),opts.systdatfile, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt,noskipopt,refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt,skipSecModOpt,doQuadraticSigmaSum) #--verbose 3
     else:
-        exec_line = "%s/bin/SignalFit -i %s -d ${datMap[${PROCID}]} --mhLow=%s --mhHigh=%s  --procs %s -o %s/%s_${procMap[${PROCID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile, opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt) #--verbose 3
+        exec_line = "%s/bin/SignalFit -i %s -d ${datMap[${PROCID}]} --mhLow=%s --mhHigh=%s  --procs %s -o %s/%s_${procMap[${PROCID}]}.root -p %s/%s -f %s --changeIntLumi %s --binnedFit 1 --nBins 320 --beamSpotReweigh %d --dataBeamSpotWidth %f %s %s %s %s %s %s %s %s %s %s %s" %(os.getcwd(), opts.infile, opts.mhLow, opts.mhHigh, opts.procs,os.getcwd(),opts.outfilename.replace(".root",""), os.getcwd(),opts.outDir, opts.flashggCats ,opts.changeIntLumi,bsRW,float(opts.bs), mhrefopt, offdiagopt, noskipopt, refProcOpt,refProcDiffOpt,refTagDiffOpt,refTagWVOpt,refProcWVOpt,normCutOpt, skipSecModOpt,doQuadraticSigmaSum) #--verbose 3
         #exec_line = "%s/bin/SignalFit -i %s  -p %s -f %s --considerOnly %s -o %s/%s --datfilename %s/%s/SignalFitJobs/outputs/config_%d.dat" %(os.getcwd(), opts.infile,proc,opts.flashggCats,cat,os.getcwd(),opts.outDir,os.getcwd(),opts.outDir, counter)
         #print exec_line
     writePostamble(jobFile, exec_line, counter) #includes submission

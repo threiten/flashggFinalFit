@@ -333,7 +333,9 @@ double getRateVar(TH1F* nom, TH1F *up, TH1F* down){
 	}
 	double val = (TMath::Abs(u)+TMath::Abs(d))/2.;
 	if (val!=val) val=0.;
-	return val;
+	val = min(val,0.05);
+        // double c = 0.00;
+        return val;
 }
 
 vector<TH1F*> getHistograms(vector<TFile*> files, string name, string syst){

@@ -165,7 +165,7 @@ def writePostamble(sub_file, exec_line, nJobs=None):
       HTCondorSubfile.write('+JobFlavour = "%s"\n'%(opts.queue))
       HTCondorSubfile.write('\n')
       HTCondorSubfile.write('executable  = %s.sh\n'%sub_file_name)
-      HTCondorSubfile.write('output  = %s_$(ProcId).out\n'%sub_file_name)
+      # HTCondorSubfile.write('output  = %s_$(ProcId).out\n'%sub_file_name)
       HTCondorSubfile.write('error  = %s_$(ProcId).err\n'%sub_file_name)
       HTCondorSubfile.write('log  = %s_$(ProcId).log\n'%sub_file_name)
       HTCondorSubfile.write('arguments = $(ProcId)\n')
