@@ -279,8 +279,8 @@ print "[INFO] Get Intlumi from file, value : ", intL," pb^{-1}", " sqrts ", sqrt
 ## SHAPE SYSTEMATIC SETUP  ####################################################
 ###############################################################################
 file_ext = options.ext
-dataFile = 'CMS-HGG_%s_%dTeV_multipdf.root'%(file_ext,sqrts)
-bkgFile = 'CMS-HGG_%s_%dTeV_multipdf.root'%(file_ext,sqrts)
+dataFile = 'CMS-HGG_%s_%dTeV_multipdf_$CAT.root'%(file_ext,sqrts)
+bkgFile = 'CMS-HGG_%s_%dTeV_multipdf_$CAT.root'%(file_ext,sqrts)
 dataWS = 'multipdf'
 bkgWS = 'multipdf'
 #sigFile = 'CMS-HGG_%s_%dTeV_sigfit.root'%(file_ext,sqrts)
