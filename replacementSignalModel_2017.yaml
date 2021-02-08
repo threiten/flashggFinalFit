@@ -57,7 +57,7 @@ AbsDeltaPhiGgJjJets4p7:
   procWV: 'smH_DPhiHJJ_3p07_3p2'
 
 AbsDeltaPhiJ1J2Jets4p7:
-  tag: 'hgg_DPhiJJ_1p7_2p5_cat2_17'
+  tag: 'hgg_DPhiJJ_1p7_2p5_cat1_17'
   proc: 'smH_DPhiJJ_1p7_2p5'
 
 AbsZeppenfeldEtaJets4p7:
@@ -65,6 +65,10 @@ AbsZeppenfeldEtaJets4p7:
   proc: 'smH_DEtaHJJ_1p7_10p0'
 
 MjjJets4p7:
+  tag: 'hgg_MJJ_1000p0_13000p0_cat2_17'
+  proc: 'smH_MJJ_1000p0_13000p0'
+
+MjjJets4p7NewBins:
   tag: 'hgg_MJJ_1000p0_13000p0_cat2_17'
   proc: 'smH_MJJ_1000p0_13000p0'
 

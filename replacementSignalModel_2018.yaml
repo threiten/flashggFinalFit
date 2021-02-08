@@ -70,6 +70,10 @@ MjjJets4p7:
   tag: 'hgg_MJJ_1000p0_13000p0_cat2_18'
   proc: 'smH_MJJ_1000p0_13000p0'
 
+MjjJets4p7NewBins:
+  tag: 'hgg_MJJ_1000p0_13000p0_cat2_18'
+  proc: 'smH_MJJ_1000p0_13000p0'
+
 AbsDeltaEtaJ1J2Jets4p7:
   tag: 'hgg_DEtaJJ_5p0_100p0_cat2_18'
   proc: 'smH_DEtaJJ_5p0_100p0'

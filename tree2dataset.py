@@ -188,13 +188,14 @@ class RooWorkspaceFromDataframe(object):
 
     def makeCategories(self):
 
-        if 'reco' in self.splitDic.keys() and 'expmtl' in self.splitDic.keys():
+        if 'gen' in self.splitDic.keys(): # and 'expmtl' in self.splitDic.keys():
             self.labels = []
             regCats = {}
             regLabels = {}
             catVec = []
             regList = list(self.splitDic.keys())
-            regList.remove('expmtl')
+            if 'expmtl' in self.splitDic.keys():
+                regList.remove('expmtl')
             for reg in regList:
                 regLabels[reg] = []
                 for key, item in self.splitDic[reg].items():
@@ -209,6 +210,7 @@ class RooWorkspaceFromDataframe(object):
                     for k in range(len(regLabels[reg][i])):
                         if not isinstance(regLabels[reg][i][k], list):
                             regLabels[reg][i][k] = [regLabels[reg][i][k]]
+                print(regLabels)
                 regLabels[reg] = np.array(regLabels[reg]).T
                 regCats[reg] = []
                 for lbl in regLabels[reg]:
@@ -221,12 +223,13 @@ class RooWorkspaceFromDataframe(object):
                         labl += '{}_'.format(pa)
                     labString.append(labl[:-1])
                 self.labels.append(labString)
-            labsExp = [self.makeBinLabels(key, item) for key, item in self.splitDic['expmtl'].items()]
-            for j in range(len(labsExp)):
-                self.labels.append(copy.deepcopy(labsExp[j]))            
-                for i, lab in enumerate(labsExp[j]):
-                    labsExp[j][i] = tuple([lab])
-            catVec += labsExp
+            if 'expmtl' in self.splitDic.keys():
+                labsExp = [self.makeBinLabels(key, item) for key, item in self.splitDic['expmtl'].items()]
+                for j in range(len(labsExp)):
+                    self.labels.append(copy.deepcopy(labsExp[j]))            
+                    for i, lab in enumerate(labsExp[j]):
+                        labsExp[j][i] = tuple([lab])
+                catVec += labsExp
             self.categories = list(itertools.product(*catVec))
             for i in range(len(self.categories)):
                 flat = ()

@@ -47,6 +47,7 @@ varDic = {
     'AbsDeltaPhiJ1J2Jets4p7': 'AbsDeltaPhiJ1J2Jets4p7',
     'AbsZeppenfeldEtaJets4p7': 'AbsZeppenfeldEtaJets4p7',
     'MjjJets4p7': 'MjjJets4p7',
+    'MjjJets4p7NewBins': 'MjjJets4p7',
     'AbsDeltaEtaJ1J2Jets4p7': 'AbsDeltaEtaJ1J2Jets4p7',
     'Nleptons': 'Nleptons',
     'NBjets2p5': 'NBjets2p5',
@@ -170,7 +171,7 @@ def main(options):
             refProcWV = replacementDic[year][options.extension]['procWV'] if 'procWV' in replacementDic[year][options.extension].keys() else replacementDic[year][options.extension]['proc']
             replStr = '--refTagDiff={0} --refTagWV={2} --refProcWV={3} --refProcDiff={1} --refProc={1}'.format(
                 replacementDic[year][options.extension]['tag'], replacementDic[year][options.extension]['proc'], refTagWV, refProcWV)
-            bkgFitsP.append(subprocess.Popen(r'bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runBackgroundOnly=1 --DatacardOpt=--noSysts --bkgModOpt=--noSysts --sigModOpt=--noSysts --inputDir={5}'.format(
+            bkgFitsP.append(subprocess.Popen(r"bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runBackgroundOnly=1 --DatacardOpt=--noSysts --bkgModOpt=--noSysts --bkgLabel={0} --sigModOpt=--noSysts --inputDir={5}".format(
                 year, ext, variable, replStr, cmssw_path, inpDir), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True))
             commands['Background_{}'.format(year)] = bkgFitsP[-1].args
 
@@ -178,11 +179,11 @@ def main(options):
     
         yaml.dump(commands, open(
             '{1}/src/flashggFinalFit/commands_{0}.yaml'.format(options.extension, cmssw_path), 'w'))
-        if os.path.exists('{1}/src/flashggFinalFit/Background/CMS-HGG_multipdf_differential_{0}.root'.format(options.extension, cmssw_path)):
-            os.remove('{1}/src/flashggFinalFit/Background/CMS-HGG_multipdf_differential_{0}.root'.format(options.extension, cmssw_path))
-        bkgMergeP = subprocess.Popen(r'./Signal/mergeWorkspaces.py ./Background/CMS-HGG_multipdf_differential_{0}.root ./Background/CMS-HGG_multipdf_differential_{0}_1*.root'.format(options.extension),
-                                     cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
-        bkgMergeP.wait()
+        # if os.path.exists('{1}/src/flashggFinalFit/Background/CMS-HGG_multipdf_differential_{0}.root'.format(options.extension, cmssw_path)):
+        #     os.remove('{1}/src/flashggFinalFit/Background/CMS-HGG_multipdf_differential_{0}.root'.format(options.extension, cmssw_path))
+        # bkgMergeP = subprocess.Popen(r'./Signal/mergeWorkspaces.py ./Background/CMS-HGG_multipdf_differential_{0}.root ./Background/CMS-HGG_multipdf_differential_{0}_1*.root'.format(options.extension),
+        #                              cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
+        # bkgMergeP.wait()
 
     # -----------------------------Datacard----------------------------------
     # if not os.path.exists('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}'.format(options.extension, cmssw_path)):
@@ -191,39 +192,40 @@ def main(options):
     #                           cwd='{0}/src/flashggFinalFit/Datacard'.format(cmssw_path), shell=True)
     # mergeP.wait()
     # commands['Datacard_mergeW'] = mergeP.args
-    if not os.path.exists('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path)):
-        os.mkdir('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path))
-    if os.path.exists('{0}/src/flashggFinalFit/Signal/outdir_differential_{1}/sigfit/binsToSkipInDatacard_Addtl.txt'.format(cmssw_path, options.extension)):
-        skipF = subprocess.Popen(
-            r'cat ./Signal/outdir_differential_{0}_16/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_17/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_18/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard_Addtl.txt | tee ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard.txt'.format(options.extension), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
-        skipF.wait()
-        commands['Datacard_catSkipF'] = skipF.args
-    else:
-        skipF = subprocess.Popen(
-            r'cat ./Signal/outdir_differential_{0}_16/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_17/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_18/sigfit/binsToSkipInDatacard_*.txt | tee ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard.txt'.format(options.extension), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
-        skipF.wait()
-        commands['Datacard_catSkipF'] = skipF.args
-    cats = []
-    for year in ['16', '17', '18']:
-        with open('{0}/m125_{1}_{2}/proc_cat_names_gen{3}.txt'.format(inpDir, options.extension, year, variable)) as f:
-            lines = list(f.readlines())
-            cats += lines[1].split(',')
-            
-    if os.path.exists('{0}/src/flashggFinalFit/Signal/outdir_differential_{1}/catsToSkip.txt'.format(cmssw_path, options.extension)):
-        with open('{0}/src/flashggFinalFit/Signal/outdir_differential_{1}/catsToSkip.txt'.format(cmssw_path, options.extension)) as f:
-            catsToSkip = list(f.readlines())
-        for cat in catsToSkip:
-            cat = cat.replace('\n', '')
-            cats.remove(cat)
-            
-    catStr = ''
-    for cat in cats:
-        catStr += '{},'.format(cat)
-    catStr = catStr[:-1]
-    dCardP = subprocess.Popen(r'./makeParametricModelDatacardFLASHgg.py -i {3}/m125_{0}_1*/reduced{1}IA_gen{1}_nominal*.root {3}/m125_OA_{0}_1*/reduced{1}OA__nominal*.root -o Datacard_13TeV_differential_{0}.txt --ext differential_{0} -p $(head -n1 {3}/m125_{0}_16/proc_cat_names_gen{1}.txt | tail -1),OutsideAcceptance -c {2} --photonCatScales HighR9EB,HighR9EE,LowR9EB,LowR9EE,Gain6EB,Gain1EB --photonCatSmears HighR9EBPhi,HighR9EBRho,HighR9EEPhi,HighR9EERho,LowR9EBPhi,LowR9EBRho,LowR9EEPhi,LowR9EERho --mass 125 --intLumi16 35.9 --intLumi17 41.5 --intLumi18 59.35 --intLumi 35.9 --differential --isMultiPdf --fullRunII --rateFiles {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_16.pkl {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_17.pkl {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_18.pkl'.format(
-        options.extension, variable, catStr, inpDir, cmssw_path), cwd='{0}/src/flashggFinalFit/Datacard'.format(cmssw_path), shell=True)
-    commands['Datacard'] = dCardP.args
-    dCardP.wait()
+    if not options.noDatacard:
+        if not os.path.exists('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path)):
+            os.mkdir('{1}/src/flashggFinalFit/Signal/outdir_differential_{0}/sigfit'.format(options.extension, cmssw_path))
+        if os.path.exists('{0}/src/flashggFinalFit/Signal/outdir_differential_{1}/sigfit/binsToSkipInDatacard_Addtl.txt'.format(cmssw_path, options.extension)):
+            skipF = subprocess.Popen(
+                r'cat ./Signal/outdir_differential_{0}_16/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_17/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_18/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard_Addtl.txt | tee ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard.txt'.format(options.extension), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
+            skipF.wait()
+            commands['Datacard_catSkipF'] = skipF.args
+        else:
+            skipF = subprocess.Popen(
+                r'cat ./Signal/outdir_differential_{0}_16/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_17/sigfit/binsToSkipInDatacard_*.txt ./Signal/outdir_differential_{0}_18/sigfit/binsToSkipInDatacard_*.txt | tee ./Signal/outdir_differential_{0}/sigfit/binsToSkipInDatacard.txt'.format(options.extension), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)
+            skipF.wait()
+            commands['Datacard_catSkipF'] = skipF.args
+        cats = []
+        for year in ['16', '17', '18']:
+            with open('{0}/m125_{1}_{2}/proc_cat_names_gen{3}.txt'.format(inpDir, options.extension, year, variable)) as f:
+                lines = list(f.readlines())
+                cats += lines[1].split(',')
+
+        if os.path.exists('{0}/src/flashggFinalFit/Signal/outdir_differential_{1}/catsToSkip.txt'.format(cmssw_path, options.extension)):
+            with open('{0}/src/flashggFinalFit/Signal/outdir_differential_{1}/catsToSkip.txt'.format(cmssw_path, options.extension)) as f:
+                catsToSkip = list(f.readlines())
+            for cat in catsToSkip:
+                cat = cat.replace('\n', '')
+                cats.remove(cat)
+
+        catStr = ''
+        for cat in cats:
+            catStr += '{},'.format(cat)
+        catStr = catStr[:-1]
+        dCardP = subprocess.Popen(r'./makeParametricModelDatacardFLASHgg.py -i {3}/m125_{0}_1*/reduced{1}IA_gen{1}_nominal*.root {3}/m125_OA_{0}_1*/reduced{1}OA__nominal*.root -o Datacard_13TeV_differential_{0}.txt --ext differential_{0} -p $(head -n1 {3}/m125_{0}_16/proc_cat_names_gen{1}.txt | tail -1),OutsideAcceptance -c {2} --photonCatScales HighR9EB,HighR9EE,LowR9EB,LowR9EE,Gain6EB,Gain1EB --photonCatSmears HighR9EBPhi,HighR9EBRho,HighR9EEPhi,HighR9EERho,LowR9EBPhi,LowR9EBRho,LowR9EEPhi,LowR9EERho --mass 125 --intLumi16 35.9 --intLumi17 41.5 --intLumi18 59.35 --intLumi 35.9 --differential --isMultiPdf --fullRunII --rateFiles {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_16.pkl {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_17.pkl {4}/src/HiggsAnalysis/CombinedLimit/test/preApp21/theoryPred_{0}_18.pkl'.format(
+            options.extension, variable, catStr, inpDir, cmssw_path), cwd='{0}/src/flashggFinalFit/Datacard'.format(cmssw_path), shell=True)
+        commands['Datacard'] = dCardP.args
+        dCardP.wait()
 
     yaml.dump(commands, open(
         '{1}/src/flashggFinalFit/commands_{0}.yaml'.format(options.extension, cmssw_path), 'w'))
@@ -247,6 +249,8 @@ if __name__ == "__main__":
         '--noSig', action='store_true', default=False)
     optionalArgs.add_argument(
         '--noBkg', action='store_true', default=False)
+    optionalArgs.add_argument(
+        '--noDatacard', action='store_true', default=False)
     optionalArgs.add_argument(
         '--queue', '-q', action='store', type=str, default='longlunch')
     options = parser.parse_args()

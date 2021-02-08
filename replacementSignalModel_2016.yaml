@@ -65,8 +65,16 @@ AbsZeppenfeldEtaJets4p7:
   proc: 'smH_DEtaHJJ_1p7_10p0'
 
 MjjJets4p7:
-  tag: 'hgg_MJJ_1000p0_13000p0_cat2_16'
-  proc: 'smH_MJJ_1000p0_13000p0'
+  tag: 'hgg_MJJ_75p0_120p0_cat1_16'
+  proc: 'smH_MJJ_75p0_120p0'
+  tagWV: 'hgg_MJJ_m1000p0_0p0_cat1_16'
+  provWV: 'smH_MJJ_m1000p0_0p0'
+
+MjjJets4p7NewBins:
+  tag: 'hgg_MJJ_75p0_120p0_cat1_16'
+  proc: 'smH_MJJ_75p0_120p0'
+  tagWV: 'hgg_MJJ_m1000p0_0p0_cat1_16'
+  provWV: 'smH_MJJ_m1000p0_0p0'
 
 AbsDeltaEtaJ1J2Jets4p7:
   tag: 'hgg_DEtaJJ_5p0_100p0_cat2_16'
@@ -153,16 +161,16 @@ PtInclusive:
   proc: 'smH_PTH_0p0_10000p0'
 
 PtInclusive1L1B:
-  tag: 'hgg_PTH_0p0_10000p0_cat1_16'
-  proc: 'smH_PTH_0p0_10000p0'
+  tag: 'hgg_PTH_m1000p0_0p0_cat1_16'
+  proc: 'smH_PTH_m1000p0_0p0'
 
 PtInclusive1LHPtM:
-  tag: 'hgg_PTH_0p0_10000p0_cat0_16'
-  proc: 'smH_PTH_0p0_10000p0'
+  tag: 'hgg_PTH_m1000p0_0p0_cat1_16'
+  proc: 'smH_PTH_m1000p0_0p0'
 
 PtInclusive1LLPtM:
-  tag: 'hgg_PTH_0p0_10000p0_cat1_16'
-  proc: 'smH_PTH_0p0_10000p0'
+  tag: 'hgg_PTH_m1000p0_0p0_cat1_16'
+  proc: 'smH_PTH_m1000p0_0p0'
 
 PtTauCJet2p50:
   tag: 'hgg_TCJ0_15p0_25p0_hgg_PTH_0p0_45p0_cat1_16'
