@@ -1044,6 +1044,13 @@ def printFileOptions():
         print file
         wsname = info[1]
         pdfname = info[2].replace('$CHANNEL','%s'%c)
+        if typ == 'bkg_mass':
+           if '16' in pdfname.split('_'):
+              pdfname = pdfname.replace('_16_13TeV', '_16_16_13TeV')
+           elif '17' in pdfname.split('_'):
+              pdfname = pdfname.replace('_17_13TeV', '_17_17_13TeV')
+           elif '18' in pdfname.split('_'):
+              pdfname = pdfname.replace('_18_13TeV', '_18_18_13TeV')
         if typ not in options.procs and typ!='data_obs': continue
       #outFile.write('shapes %-10s %-15s %-30s %-30s\n'%(typ,'%s_%dTeV'%(c,sqrts),file.replace(".root","_%s_%s.root"%(typ,c)),wsname+':'+pdfname))
         outFile.write('shapes %-10s %-15s %-30s %-30s\n'%(typ,'%s_%dTeV'%(c,sqrts),file,wsname+':'+pdfname))
@@ -1554,7 +1561,14 @@ def printSimpleTTHSysts():
 def printMultiPdf():
   if options.isMultiPdf:
     for c in options.cats:
-      outFile.write('pdfindex_%s_%dTeV  discrete\n'%(c,sqrts))
+      mPdfOutputString = 'pdfindex_%s_%dTeV  discrete\n'%(c,sqrts)
+      if '16' in mPdfOutputString.split('_'):
+         mPdfOutputString = mPdfOutputString.replace('_16_13TeV', '_16_16_13TeV')
+      elif '17' in mPdfOutputString.split('_'):
+         mPdfOutputString = mPdfOutputString.replace('_17_13TeV', '_17_17_13TeV')
+      elif '18' in mPdfOutputString.split('_'):
+         mPdfOutputString = mPdfOutputString.replace('_18_13TeV', '_18_18_13TeV')
+      outFile.write(mPdfOutputString)
 
 def printRateParams():
    yr = ['16', '17', '18']
