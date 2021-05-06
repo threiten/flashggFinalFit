@@ -92,7 +92,7 @@ parser.add_argument("-o","--outfilename",default="cms_hgg_datacard.txt",help="Na
 parser.add_argument("-p","--procs",default="ggh,vbf,wh,zh,tth",help="String list of procs (default: %default)")
 parser.add_argument("-c","--cats",default="UntaggedTag_0,UntaggedTag_1,UntaggedTag_2,UntaggedTag_3,UntaggedTag_4,VBFTag_0,VBFTag_1,VBFTag_2",help="Flashgg Categories (default: %default)")
 parser.add_argument("--photonCatScales",default="HighR9EE,LowR9EE,HighR9EB,LowR9EB,Gain1EB,Gain6EB",help="String list of photon scale nuisance names - WILL NOT correlate across years (default: %default)")
-parser.add_argument("--photonCatScalesCorr",default="MaterialCentral,MaterialForward",help="String list of photon scale nuisance names - WILL correlate across years (default: %default)")
+parser.add_argument("--photonCatScalesCorr",default="MaterialCentralBarrel,MaterialOuterBarrel,MaterialForward",help="String list of photon scale nuisance names - WILL correlate across years (default: %default)")
 parser.add_argument("--photonCatSmears",default="HighR9EE,LowR9EE,HighR9EBRho,LowR9EBRho,HighR9EBPhi,LowR9EBPhi",help="String list of photon smearing nuisance names - WILL NOT correlate across years (default: %default)")
 parser.add_argument("--photonCatSmearsCorr",default="",help="String list of photon smearing nuisance names - WILL correlate across years (default: %default)")
 parser.add_argument("--globalScales",default="NonLinearity:0.001,Geant4:0.0005,LightColl:0.0005,Absolute:0.0001",help="String list of global scale nuisances names with value separated by a \':\' - WILL NOT correlate across years (default: %default)")
