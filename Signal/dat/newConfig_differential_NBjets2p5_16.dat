@@ -10,11 +10,11 @@ smH_NBJ_1 hgg_NBJ_0_cat2_16 1 -1
 smH_NBJ_1 hgg_NBJ_0_cat0_16 1 -1
 smH_NBJ_1p5_100 hgg_NBJ_1_cat1_16 1 -1
 smH_NBJ_1p5_100 hgg_NBJ_1_cat2_16 1 -1
-smH_NBJ_1p5_100 hgg_NBJ_1_cat0_16 2 -1
+smH_NBJ_1p5_100 hgg_NBJ_1_cat0_16 1 -1
 smH_NBJ_1p5_100 hgg_NBJ_1p5_100_cat1_16 1 -1
 smH_NBJ_1p5_100 hgg_NBJ_1p5_100_cat2_16 1 -1
 smH_NBJ_1p5_100 hgg_NBJ_1p5_100_cat0_16 1 -1
-smH_NBJ_1p5_100 hgg_NBJ_0_cat1_16 4 -1
+smH_NBJ_1p5_100 hgg_NBJ_0_cat1_16 1 -1
 smH_NBJ_1p5_100 hgg_NBJ_0_cat2_16 1 -1
 smH_NBJ_1p5_100 hgg_NBJ_0_cat0_16 1 -1
 smH_NBJ_0 hgg_NBJ_1_cat1_16 1 -1
@@ -28,7 +28,7 @@ smH_NBJ_0 hgg_NBJ_0_cat2_16 2 1
 smH_NBJ_0 hgg_NBJ_0_cat0_16 4 1
 OutsideAcceptance hgg_NBJ_1_cat1_16 -1 -1
 OutsideAcceptance hgg_NBJ_1_cat2_16 -1 -1
-OutsideAcceptance hgg_NBJ_1_cat0_16 2 -1
+OutsideAcceptance hgg_NBJ_1_cat0_16 1 -1
 OutsideAcceptance hgg_NBJ_1p5_100_cat1_16 -1 -1
 OutsideAcceptance hgg_NBJ_1p5_100_cat2_16 -1 -1
 OutsideAcceptance hgg_NBJ_1p5_100_cat0_16 -1 -1

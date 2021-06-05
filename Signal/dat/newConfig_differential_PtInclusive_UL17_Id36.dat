@@ -1,0 +1,7 @@
+#proc cat nGausRV nGausWV
+OutsideAcceptance hgg_PTH_0p0_10000p0_cat0_17 2 -1
+OutsideAcceptance hgg_PTH_0p0_10000p0_cat1_17 2 1
+OutsideAcceptance hgg_PTH_0p0_10000p0_cat2_17 2 1
+smH_PTH_0p0_10000p0 hgg_PTH_0p0_10000p0_cat0_17 3 2
+smH_PTH_0p0_10000p0 hgg_PTH_0p0_10000p0_cat1_17 4 2
+smH_PTH_0p0_10000p0 hgg_PTH_0p0_10000p0_cat2_17 4 2

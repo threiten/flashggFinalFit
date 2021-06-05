@@ -48,6 +48,15 @@ def loadRFiles(path, treepath, branches, cutoff=None, shuffle=False, fmatch=None
 
     return ret
 
+def getBins(bins, var, lastBins):
+    if bins[-1] > 5 * bins[-2]:
+        bins[-1] = 2 * bins[-2] - bins[-3] if len(bins)>2 else bins[-1]
+    if var.replace('gen','') in lastBins.keys():
+        bins[-1] = lastBins[var.replace('gen','')]
+    binw = bins[1:] - bins[:-1]
+
+    return bins, binw
+
 def main(options):
 
     config = yaml.load(open(options.config))
@@ -58,7 +67,10 @@ def main(options):
     splitDic = OrderedDict({})
     for key in config['splits'].keys():
         if 'gen' in key:
-            splitDic[key] = config['splits'][key]
+            if isinstance(config['splits'][key], list):
+                splitDic[key] = config['splits'][key]
+            elif isinstance(config['splits'][key], dict):
+                splitDic[key] = OrderedDict(config['splits'][key])
 
     delKeys = []
     if 'formulas' in config.keys():
@@ -87,8 +99,16 @@ def main(options):
     if 'formulas' in config.keys():
         varList += parseVariablesFromFormulas(config['formulas'], addRep)
 
-    splitCols = list(splitDic.keys())
+    # splitCols = list(splitDic.keys())
+    print(splitDic)
+    if not isinstance(splitDic[list(splitDic.keys())[0]], dict):
+        splitCols = list(splitDic.keys())
+    else:
+        splitCols = []
+        for key, item in splitDic.items():
+            splitCols += list(item.keys())
     columns = splitCols + varList
+    print(columns)
     
     if 'formulas' in config.keys():
         config['formulas']['genWeight'] = 'weight/puweight'
@@ -127,21 +147,42 @@ def main(options):
             if 'formulas' in config.keys():
                 evaluate_formulas(dfs[tag][mass], config['formulas'])
             if genPSCut is not None:
-                dfs[tag][mass].query(genPSCut, engine='python', inplace=True)
+                for key in splitDic.keys():
+                    if 'gen' in key:
+                        if isinstance(splitDic[key], OrderedDict):
+                            for keyIn in splitDic[key].keys():
+                                if not isinstance(splitDic[key][keyIn][0], list):
+                                    genLabel = str(keyIn)
+                        else:
+                            genLabel = str(key)
+                        # genLabel = str(key)
+                dfs[tag][mass].loc[dfs[tag][mass].eval('not ({})'.format(genPSCut), engine='python'), genLabel] = -999.
+                # dfs[tag][mass].query(genPSCut, engine='python', inplace=True)
 
             t2w = t2d.RooWorkspaceFromDataframe(dfs[tag][mass], splitDic, variables, 'weight', "cms_hgg_13TeV")
             gbs[tag][mass] = copy.deepcopy(t2w.gb)
 
-    var = list(splitDic.keys())[0]
-    labels = t2w.makeBinLabels(var, splitDic[var])
+    if isinstance(splitDic[list(splitDic.keys())[0]], OrderedDict):
+        t2w.makeCategories()
+        labels = t2w.categories
+        var = list(splitDic['gen'].keys())[1]
+        bins = splitDic['gen'][var]
+        binsTmp = []
+        binwTmp = []
+        for binss in bins:
+            tpl = getBins(np.array(binss), var, lastBins)
+            binsTmp.append(tpl[0])
+            binwTmp.append(tpl[1])
+        bins = np.concatenate(binsTmp)
+        binw = np.concatenate(binwTmp)
+    else:
+        var = list(splitDic.keys())[0]
+        labels = t2w.makeBinLabels(var, splitDic[var])
+        bins = np.array(splitDic[var])
+        bins, binw = getBins(bins, var, lastBins)
 
-    bins = np.array(splitDic[var])
-    if bins[-1] > 5 * bins[-2]:
-        bins[-1] = 2 * bins[-2] - bins[-3] if len(bins)>2 else bins[-1]
-    if var.replace('gen','') in lastBins.keys():
-        bins[-1] = lastBins[var.replace('gen','')]
-    binw = bins[1:] - bins[:-1]
-    print(bins, binw)
+    
+    print(bins, binw, labels)
     xss = np.zeros((len(binw),3))
     errs = np.zeros((len(binw),3))
     for i in range(len(binw)):

@@ -48,7 +48,7 @@ smH_PTH_0p0_5p0 hgg_PTH_45p0_60p0_cat1_17 -1 -1
 smH_PTH_0p0_5p0 hgg_PTH_45p0_60p0_cat2_17 -1 -1
 smH_PTH_0p0_5p0 hgg_PTH_45p0_60p0_cat0_17 -1 -1
 smH_PTH_0p0_5p0 hgg_PTH_5p0_10p0_cat1_17 4 2
-smH_PTH_0p0_5p0 hgg_PTH_5p0_10p0_cat2_17 1 1
+smH_PTH_0p0_5p0 hgg_PTH_5p0_10p0_cat2_17 2 1
 smH_PTH_0p0_5p0 hgg_PTH_5p0_10p0_cat0_17 -1 1
 smH_PTH_0p0_5p0 hgg_PTH_60p0_80p0_cat1_17 -1 -1
 smH_PTH_0p0_5p0 hgg_PTH_60p0_80p0_cat2_17 -1 -1
@@ -110,7 +110,7 @@ smH_PTH_100p0_120p0 hgg_PTH_5p0_10p0_cat0_17 -1 -1
 smH_PTH_100p0_120p0 hgg_PTH_60p0_80p0_cat1_17 -1 -1
 smH_PTH_100p0_120p0 hgg_PTH_60p0_80p0_cat2_17 -1 -1
 smH_PTH_100p0_120p0 hgg_PTH_60p0_80p0_cat0_17 -1 -1
-smH_PTH_100p0_120p0 hgg_PTH_80p0_100p0_cat1_17 4 -1
+smH_PTH_100p0_120p0 hgg_PTH_80p0_100p0_cat1_17 2 -1
 smH_PTH_100p0_120p0 hgg_PTH_80p0_100p0_cat2_17 2 -1
 smH_PTH_100p0_120p0 hgg_PTH_80p0_100p0_cat0_17 1 -1
 smH_PTH_10p0_15p0 hgg_PTH_0p0_5p0_cat1_17 -1 -1
@@ -163,7 +163,7 @@ smH_PTH_10p0_15p0 hgg_PTH_45p0_60p0_cat2_17 -1 -1
 smH_PTH_10p0_15p0 hgg_PTH_45p0_60p0_cat0_17 -1 -1
 smH_PTH_10p0_15p0 hgg_PTH_5p0_10p0_cat1_17 1 2
 smH_PTH_10p0_15p0 hgg_PTH_5p0_10p0_cat2_17 1 2
-smH_PTH_10p0_15p0 hgg_PTH_5p0_10p0_cat0_17 3 1
+smH_PTH_10p0_15p0 hgg_PTH_5p0_10p0_cat0_17 4 1
 smH_PTH_10p0_15p0 hgg_PTH_60p0_80p0_cat1_17 -1 -1
 smH_PTH_10p0_15p0 hgg_PTH_60p0_80p0_cat2_17 -1 -1
 smH_PTH_10p0_15p0 hgg_PTH_60p0_80p0_cat0_17 -1 -1
@@ -593,14 +593,14 @@ smH_PTH_25p0_30p0 hgg_PTH_170p0_200p0_cat0_17 -1 -1
 smH_PTH_25p0_30p0 hgg_PTH_200p0_250p0_cat1_17 -1 -1
 smH_PTH_25p0_30p0 hgg_PTH_200p0_250p0_cat2_17 -1 -1
 smH_PTH_25p0_30p0 hgg_PTH_200p0_250p0_cat0_17 -1 -1
-smH_PTH_25p0_30p0 hgg_PTH_20p0_25p0_cat1_17 3 1
+smH_PTH_25p0_30p0 hgg_PTH_20p0_25p0_cat1_17 2 1
 smH_PTH_25p0_30p0 hgg_PTH_20p0_25p0_cat2_17 2 1
-smH_PTH_25p0_30p0 hgg_PTH_20p0_25p0_cat0_17 1 -1
+smH_PTH_25p0_30p0 hgg_PTH_20p0_25p0_cat0_17 2 -1
 smH_PTH_25p0_30p0 hgg_PTH_250p0_350p0_cat1_17 -1 -1
 smH_PTH_25p0_30p0 hgg_PTH_250p0_350p0_cat2_17 -1 -1
 smH_PTH_25p0_30p0 hgg_PTH_250p0_350p0_cat0_17 -1 -1
 smH_PTH_25p0_30p0 hgg_PTH_25p0_30p0_cat1_17 4 2
-smH_PTH_25p0_30p0 hgg_PTH_25p0_30p0_cat2_17 4 1
+smH_PTH_25p0_30p0 hgg_PTH_25p0_30p0_cat2_17 2 1
 smH_PTH_25p0_30p0 hgg_PTH_25p0_30p0_cat0_17 3 3
 smH_PTH_25p0_30p0 hgg_PTH_30p0_35p0_cat1_17 1 -1
 smH_PTH_25p0_30p0 hgg_PTH_30p0_35p0_cat2_17 2 1
@@ -719,8 +719,8 @@ smH_PTH_350p0_450p0 hgg_PTH_25p0_30p0_cat0_17 -1 -1
 smH_PTH_350p0_450p0 hgg_PTH_30p0_35p0_cat1_17 -1 -1
 smH_PTH_350p0_450p0 hgg_PTH_30p0_35p0_cat2_17 -1 -1
 smH_PTH_350p0_450p0 hgg_PTH_30p0_35p0_cat0_17 -1 -1
-smH_PTH_350p0_450p0 hgg_PTH_350p0_450p0_cat1_17 3 -1
-smH_PTH_350p0_450p0 hgg_PTH_350p0_450p0_cat2_17 3 -1
+smH_PTH_350p0_450p0 hgg_PTH_350p0_450p0_cat1_17 2 -1
+smH_PTH_350p0_450p0 hgg_PTH_350p0_450p0_cat2_17 2 -1
 smH_PTH_350p0_450p0 hgg_PTH_350p0_450p0_cat0_17 2 -1
 smH_PTH_350p0_450p0 hgg_PTH_35p0_45p0_cat1_17 -1 -1
 smH_PTH_350p0_450p0 hgg_PTH_35p0_45p0_cat2_17 -1 -1
