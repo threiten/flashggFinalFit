@@ -30,6 +30,7 @@ KEEPCURRENTFITS=0
 NOSYSTS=0
 SKIPSECONDARYMODELS=0
 DOQUADRATICSIGMASUM=0
+SKIPDATASETS=0
 USEFTEST=0
 NOSKIP=0
 usage(){
@@ -65,6 +66,7 @@ usage(){
 		echo "--normalisationCut) cut on datasets for final signal normalisation)"      
 		echo "--skipSecondaryModels) Turn off creation of all additional models) "
 		echo "--doQuadraticSigmaSum) Use quadratic sum for sigma shift calculaiton) "
+		echo "--skipDatasets) Do NOT include datasets in output files) "
 		echo "--useFtest) Use f-test result as it is, without manual tuning) "
 		echo "--queue) queue to submit jobs to (specific to batch)) "
 }
@@ -74,7 +76,7 @@ usage(){
 
 
 # options may be followed by one colon to indicate they have a required argument
-if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,smears:,scales:,scalesCorr:,scalesGlobal:,flashggCats:,ext:,fTestOnly,calcPhoSystOnly,skipCalcPhoSyst,sigFitOnly,sigPlotsOnly,packageOnly,intLumi:,batch:,MHref:,keepCurrentFits,noSysts,shiftOffDiag,noSkip,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,skipSecondaryModels,doQuadraticSigmaSum,useFtest,queue: -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,smears:,scales:,scalesCorr:,scalesGlobal:,flashggCats:,ext:,fTestOnly,calcPhoSystOnly,skipCalcPhoSyst,sigFitOnly,sigPlotsOnly,packageOnly,intLumi:,batch:,MHref:,keepCurrentFits,noSysts,shiftOffDiag,noSkip,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,skipSecondaryModels,doQuadraticSigmaSum,skipDatasets,useFtest,queue: -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
 exit 1
@@ -116,6 +118,7 @@ case $1 in
 --normalisationCut) NORMCUT=$2; shift;;
 --skipSecondaryModels) SKIPSECONDARYMODELS=1;;
 --doQuadraticSigmaSum) DOQUADRATICSIGMASUM=1;;
+--skipDatasets) SKIPDATASETS=1;;
 --useFtest) USEFTEST=1;;
 --queue) QUEUE=$2; shift;;
 
@@ -317,6 +320,9 @@ if [ $SIGFITONLY == 1 ]; then
     fi
     if [ $DOQUADRATICSIGMASUM == 1 ]; then
 	SIGFITOPTS="${SIGFITOPTS} --doQuadraticSigmaSum"
+    fi
+    if [ $SKIPDATASETS == 1 ]; then
+	SIGFITOPTS="${SIGFITOPTS} --skipDatasets"
     fi
     
     echo "runsigopt is $SIGFITOPTS"

@@ -65,7 +65,7 @@ class FinalModelConstruction {
   
   void plotPdf(std::string outDir);
   
-  void save(RooWorkspace *work);
+  void save(RooWorkspace *work, bool includeDatasets=true);
   
  private:
   

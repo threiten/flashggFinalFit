@@ -1356,14 +1356,16 @@ void FinalModelConstruction::getNormalization(std::string cut ){
   }
 }
 
-void FinalModelConstruction::save(RooWorkspace *work){
+void FinalModelConstruction::save(RooWorkspace *work, bool includeDatasets){
   work->import(*finalPdf,RecycleConflictNodes());
   work->import(*finalNorm,RecycleConflictNodes());
   work->import(*finalNormThisLum,RecycleConflictNodes());
   work->import(*extendPdf,RecycleConflictNodes());
   work->import(*extendPdfRel,RecycleConflictNodes());
-  for (map<int,RooDataSet*>::iterator it=stdDatasets.begin(); it!=stdDatasets.end(); it++){
-    work->import(*(it->second));
+  if (includeDatasets){
+    for (map<int,RooDataSet*>::iterator it=stdDatasets.begin(); it!=stdDatasets.end(); it++){
+      work->import(*(it->second));
+    }
   }
   
   // do secondary models

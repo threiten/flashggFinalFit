@@ -29,6 +29,7 @@ INTLUMI=1
 DATAFILE=""
 UNBLIND=0
 NOBKGPLOTS=0
+BKGLABEL=""
 MONITORDATAPLOTS=0
 ISDATA=0
 BS=0
@@ -37,6 +38,7 @@ SHIFTOFFDIAG=0
 NOSKIP=0
 SKIPSECONDARYMODELS=0
 DOQUADRATICSIGMASUM=0
+SKIPDATASETS=0
 MHREF=""
 REFPROC=""
 REFPROCDIFF=""
@@ -75,6 +77,7 @@ usage(){
     echo "--isFakeData) FAKE DATA (default 0)) "
     echo "--unblind) specified in fb^-{1} (default $UNBLIND)) "
     echo "--noBkgPlots) skip background plots jobs) "
+    echo "--bkgLabel) label for background parameters) "
     echo "--dataFile) specified in fb^-{1} (default $DATAFILE)) "
     echo "--batch) which batch system to use (LSF,IC) (default $BATCH)) "
     echo "--queue) which batch queue to use) "
@@ -84,6 +87,7 @@ usage(){
     echo "--noSkip)  do not skip datasets below min conditions for signal model ) "
     echo "--skipSecondaryModels) Turn off creation of all additional models ) "
     echo "--doQuadraticSigmaSum) Use quadratic sum for sigma shift calculation"
+    echo "--skipDatasets) Do NOT include datasets in output files) "
     echo "--keepCurrentFits)  keep existing results of signal fits, if there ) "
     echo "--datacardDifferential)  automatic numbering of processes in datacard for differential analysis) "
     echo "--multiPdf) write multipdf in datacard)"
@@ -105,7 +109,7 @@ usage(){
 
 
 # options may be followed by one colon to indicate they have a required argument
-if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,flashggCats:,ext:,smears:,scales:,pseudoDataDat:,sigFile:,combine,combineOnly,combinePlotsOnly,signalOnly,packageOnly,backgroundOnly,datacardOnly,superloop:,continueLoop:,intLumi:,unblind,noBkgPlots,noSysts,shiftOffDiag,noSkip,skipSecondaryModels,doQuadraticSigmaSum,isData,isFakeData,dataFile:,batch:,queue:,verbose,MHref:,keepCurrentFits,datacardDifferential,multiPdf,isToSkip,toSkip:,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,useFtest,monitorDataPlots,skipCalcPhoSyst -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,bs:,flashggCats:,ext:,smears:,scales:,pseudoDataDat:,sigFile:,combine,combineOnly,combinePlotsOnly,signalOnly,packageOnly,backgroundOnly,datacardOnly,superloop:,continueLoop:,intLumi:,unblind,noBkgPlots,bkgLabel:,noSysts,shiftOffDiag,noSkip,skipSecondaryModels,doQuadraticSigmaSum,skipDatasets,isData,isFakeData,dataFile:,batch:,queue:,verbose,MHref:,keepCurrentFits,datacardDifferential,multiPdf,isToSkip,toSkip:,refProc:,refProcDiff:,refTagDiff:,refTagWV:,refProcWV:,normalisationCut:,useFtest,monitorDataPlots,skipCalcPhoSyst -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
     exit 1
@@ -144,12 +148,14 @@ do
 	--isFakeData) ISDATA=0;; 
 	--unblind) UNBLIND=1;;
 	--noBkgPlots) NOBKGPLOTS=1;;
+	--bkgLabel) BKGLABEL=$2; shift;;
 	--MHref) MHREF=$2; shift;;
 	--noSysts) NOSYSTS=1;;
 	--shiftOffDiag) SHIFTOFFDIAG=1;;
 	--noSkip) NOSKIP=1;;
 	--skipSecondaryModels) SKIPSECONDARYMODELS=1;;
 	--doQuadraticSigmaSum) DOQUADRATICSIGMASUM=1;;
+	--skipDatasets) SKIPDATASETS=1;;
 	--keepCurrentFits) KEEPCURRENTFITS=1;;
 	--datacardDifferential) DATACARDDIFFERENTIAL=1;;
 	--multiPdf) MULTIPDF=1;;
@@ -266,6 +272,9 @@ if [ $CONTINUELOOP == 0 ]; then
 	if [ $DOQUADRATICSIGMASUM == 1 ]; then
 	    RUNSIGOPT="${RUNSIGOPT} --doQuadraticSigmaSum"
 	fi
+	if [ $SKIPDATASETS == 1 ]; then
+	    RUNSIGOPT="${RUNSIGOPT} --skipDatasets"
+	fi
 	
 	echo "runsigopt is $RUNSIGOPT"
 	
@@ -341,12 +350,15 @@ while [ $COUNTER -lt $SUPERLOOP ]; do
 	else
 	    PSEUDODATAOPT="  --pseudoDataDat $PSEUDODATADAT"
 	fi
+	if [ $BKGLABEL != "" ]; then
+	    BKGLABELOPT=" --label $BKGLABEL"
+	fi
 
 	SIGFILES=$PWD/Signal/$OUTDIR/CMS-HGG_sigfit_${EXT}.root
 
 	cd Background
-	echo "./runBackgroundScripts.sh -p $PROCS -f $CATS --ext $EXT --sigFile $SIGFILES --seed $COUNTER --intLumi $INTLUMI $BLINDINGOPT $PSEUDODATAOPT $DATAOPT $DATAFILEOPT $BATCHOPTION $NOBKGPLOTSOPT $MONITORDATAPLOTSOPT "
-	./runBackgroundScripts.sh -p $PROCS -f $CATS --ext $EXT --sigFile $SIGFILES --seed $COUNTER --intLumi $INTLUMI $BLINDINGOPT $PSEUDODATAOPT $DATAOPT $DATAFILEOPT $BATCHOPTION $NOBKGPLOTSOPT $MONITORDATAPLOTSOPT
+	echo "./runBackgroundScripts.sh -p $PROCS -f $CATS --ext $EXT --sigFile $SIGFILES --seed $COUNTER --intLumi $INTLUMI $BLINDINGOPT $PSEUDODATAOPT $DATAOPT $DATAFILEOPT $BATCHOPTION $NOBKGPLOTSOPT $MONITORDATAPLOTSOPT $BKGLABELOPT"
+	./runBackgroundScripts.sh -p $PROCS -f $CATS --ext $EXT --sigFile $SIGFILES --seed $COUNTER --intLumi $INTLUMI $BLINDINGOPT $PSEUDODATAOPT $DATAOPT $DATAFILEOPT $BATCHOPTION $NOBKGPLOTSOPT $MONITORDATAPLOTSOPT $BKGLABELOPT
 
 	cd -
 	if [ $USER == lcorpe ]; then

@@ -530,6 +530,7 @@ int main(int argc, char* argv[]){
   lumi_8TeV  = "19.1 fb^{-1}"; // default is "19.7 fb^{-1}"
   lumi_7TeV  = "4.9 fb^{-1}";  // default is "5.1 fb^{-1}"
   lumi_sqrtS = "13 TeV";       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+  string label_ = "";
 
   string fileName;
   int ncats;
@@ -540,10 +541,10 @@ int main(int argc, char* argv[]){
   bool is2011=false;
   bool verbose=false;
   bool saveMultiPdf=false;
-	int isFlashgg_ =1;
-string flashggCatsStr_;
-vector<string> flashggCats_;
- bool isData_ =0;
+  int isFlashgg_ =1;
+  string flashggCatsStr_;
+  vector<string> flashggCats_;
+  bool isData_ =0;
 
   po::options_description desc("Allowed options");
   desc.add_options()
@@ -560,7 +561,8 @@ vector<string> flashggCats_;
     ("unblind",  									        "Dont blind plots")
     ("isFlashgg",  po::value<int>(&isFlashgg_)->default_value(1),  								    	        "Use Flashgg output ")
     ("isData",  po::value<bool>(&isData_)->default_value(0),  								    	        "Use Data not MC ")
-		("flashggCats,f", po::value<string>(&flashggCatsStr_)->default_value("UntaggedTag_0,UntaggedTag_1,UntaggedTag_2,UntaggedTag_3,UntaggedTag_4,VBFTag_0,VBFTag_1,VBFTag_2,TTHHadronicTag,TTHLeptonicTag,VHHadronicTag,VHTightTag,VHLooseTag,VHEtTag"),       "Flashgg category names to consider")
+    ("flashggCats,f", po::value<string>(&flashggCatsStr_)->default_value("UntaggedTag_0,UntaggedTag_1,UntaggedTag_2,UntaggedTag_3,UntaggedTag_4,VBFTag_0,VBFTag_1,VBFTag_2,TTHHadronicTag,TTHLeptonicTag,VHHadronicTag,VHTightTag,VHLooseTag,VHEtTag"),       "Flashgg category names to consider")
+    ("label", po::value<string>(&label_)->default_value(""), "label for functions and paramters")
     ("verbose,v",                                                                               "Run with more output")
   ;
   po::variables_map vm;
@@ -650,7 +652,7 @@ vector<string> flashggCats_;
 
 	// store results here
 
-	FILE *resFile ;
+	FILE *resFile;
 	if  (singleCategory >-1) resFile = fopen(Form("%s/fTestResults_%s.txt",outDir.c_str(),flashggCats_[singleCategory].c_str()),"w");
 	else resFile = fopen(Form("%s/fTestResults.txt",outDir.c_str()),"w");
 	vector<map<string,int> > choices_vec;
@@ -667,7 +669,12 @@ vector<string> flashggCats_;
 	fprintf(resFile,"\\hline\n");
 
 	std::string ext = is2011 ? "7TeV" : "8TeV";
-	if (isFlashgg_) ext = "13TeV";
+	if (isFlashgg_) {
+	  ext = "13TeV";
+	  if (label_ != "") {
+	    ext = Form("%s_13TeV", label_.c_str());
+	  }
+	}
 	for (int cat=startingCategory; cat<ncats; cat++){
 
 		map<string,int> choices;
@@ -737,7 +744,7 @@ vector<string> flashggCats_;
 			int counter =0;
 			//	while (prob<0.05){
 			while (prob<0.05 && order < 7){ //FIXME
-				RooAbsPdf *bkgPdf = getPdf(pdfsModel,*funcType,order,Form("ftest_pdf_%d_%s",cat,ext.c_str()));
+			  RooAbsPdf *bkgPdf = getPdf(pdfsModel,*funcType,order,Form("ftest_pdf_%d_%s",cat,ext.c_str()));
 				if (!bkgPdf){
 					// assume this order is not allowed
 					order++;
@@ -821,7 +828,7 @@ vector<string> flashggCats_;
 
 						if ((prob < upperEnvThreshold) ) { // Looser requirements for the envelope
 
-							if (gofProb > 0.01 || order == truthOrder ) {  // Good looking fit or one of our regular truth functions
+						  if ((gofProb > 0.01 || order == truthOrder ) && fitStatus == 0) {  // Good looking fit or one of our regular truth functions
 
 								std::cout << "[INFO] Adding to Envelope " << bkgPdf->GetName() << " "<< gofProb 
 									<< " 2xNLL + c is " << myNll + bkgPdf->getVariables()->getSize() <<  std::endl;
@@ -910,8 +917,8 @@ vector<string> flashggCats_;
 			cout << "Cat " << cat << endl;
 			fprintf(dfile,"cat=%d\n",cat); 
 			for (map<string,int>::iterator it=choices_vec[cat-startingCategory].begin(); it!=choices_vec[cat-startingCategory].end(); it++){
-				cout << "\t" << it->first << " - " << it->second << endl;
-				fprintf(dfile,"truth=%s:%d:%s%d\n",it->first.c_str(),it->second,namingMap[it->first].c_str(),it->second);
+			  cout << "\t" << it->first << " - " << it->second << endl;
+			  fprintf(dfile,"truth=%s:%d:%s%d\n",it->first.c_str(),it->second,namingMap[it->first].c_str(),it->second);
 			}
 			for (map<string,std::vector<int> >::iterator it=choices_envelope_vec[cat-startingCategory].begin(); it!=choices_envelope_vec[cat-startingCategory].end(); it++){
 				std::vector<int> ords = it->second;

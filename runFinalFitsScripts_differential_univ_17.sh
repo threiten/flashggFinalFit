@@ -13,14 +13,16 @@ usage(){
     echo "--range, range for POIs scan )" 
     echo "--npoints, number of points for POIs scan )" 
     echo "--shiftOffDiag, correct for bias in off-diag elements when using diag replacement )" 
-    echo "--noSkip, do not skip datasets with conditions below min for signal model )" 
+    echo "--noSkip, do not skip datasets with conditions below min for signal model )"
+    echo "--skipDatasets Do NOT include datasets in output files) "
     echo "--refTagDiff, reference replacement tag for differentials )" 
     echo "--refTagWV, reference replacement tag for WV datasets )" 
     echo "--refProc, reference replacement process )" 
     echo "--refProcDiff, reference replacement process for differentials )" 
     echo "--refProcWV, reference replacement process for WV datasets )" 
     echo "--sigModOpt, more options to be propagated to signal model scripts )" 
-    echo "--bkgModOpt, more options to be propagated to bkg model scripts )"     
+    echo "--bkgModOpt, more options to be propagated to bkg model scripts )"
+    echo "--bkgLabel, Label for background parameters )"
     echo "--DatacardOpt, more options to be propagated to datacard scripts )"     
     echo "--runCombineOnly, assume models and datacard are there and only run combine )" 
     echo "--runDatacardOnly, only produce the datacard, assuming inputs are there )" 
@@ -32,7 +34,7 @@ usage(){
 
 }
 
-if ! options=$(getopt -u -o hi:p:f: -l help,obs:,ext:,inputDir:,procs:,cats:,range:,npoints:,shiftOffDiag:,noSkip:,refTagDiff:,refTagWV:,refProc:,refProcDiff:,refProcWV:,sigModOpt::,bkgModOpt::,DatacardOpt::,runCombineOnly:,runDatacardOnly:,runSignalOnly:,runBackgroundOnly:,unblind:,queue: -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,obs:,ext:,inputDir:,procs:,cats:,range:,npoints:,shiftOffDiag:,noSkip:,skipDatasets,refTagDiff:,refTagWV:,refProc:,refProcDiff:,refProcWV:,sigModOpt::,bkgModOpt::,bkgLabel:,DatacardOpt::,runCombineOnly:,runDatacardOnly:,runSignalOnly:,runBackgroundOnly:,unblind:,queue: -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
     exit 1
@@ -48,6 +50,7 @@ RANGE="[1,-1.0,3.0]"
 NPOINTS="20"
 SHIFTOFFDIAG=1
 NOSKIP=0
+SKIPDATASETS=0
 REFTAGDIFF="cat0"
 REFTAGWV="cat0"
 REFPROC="ggh"
@@ -55,6 +58,7 @@ REFPROCDIFF="ggh"
 REFPROCWV="ggh"
 SIGMODOPT=""
 BKGMODOPT=""
+BKGLABEL=""
 DATACARDOPT=""
 COMBINEONLY=0
 DATACARDONLY=0
@@ -75,6 +79,7 @@ do
 	--npoints) NPOINTS=$2; shift;;
 	--shiftOffDiag) SHIFTOFFDIAG=$2; shift;;
 	--noSkip) NOSKIP=$2; shift;;
+	--skipDatasets) SKIPDATASETS=1;;
 	--refTagDiff) REFTAGDIFF=$2; shift;;
 	--refTagWV) REFTAGWV=$2; shift;;
 	--refProc) REFPROC=$2; shift;;
@@ -82,6 +87,7 @@ do
 	--refProcWV) REFPROCWV=$2; shift;;
 	--sigModOpt) SIGMODOPT=$2; shift;;
 	--bkgModOpt) BKGMODOPT=$2; shift;;
+	--bkgLabel) BKGLABEL=$2; shift;;
 	--DatacardOpt) DATACARDOPT=$2; shift;;
 	--runCombineOnly) COMBINEONLY=$2; shift;;
 	--runDatacardOnly) DATACARDONLY=$2; shift;;
@@ -177,7 +183,7 @@ echo $PROCS
 OUTDIR=outdir_$EXT
 #photon energy scale and smear categories
 SCALES="HighR9EB,HighR9EE,LowR9EB,LowR9EE,Gain6EB,Gain1EB"
-SMEARS="HighR9EBPhi,HighR9EBRho,HighR9EEPhi,HighR9EERho,LowR9EBPhi,LowR9EBRho,LowR9EEPhi,LowR9EERho"
+SMEARS="HighR9EBRho,HighR9EERho,LowR9EBRho,LowR9EERho"
 
 #amount of data
 INTLUMI=41.5 #FIXME
@@ -196,6 +202,9 @@ fi
 if [[ $QUEUE ]]; then
     SIGMODOPT="${SIGMODOPT} --queue $QUEUE"
 fi
+if [ $SKIPDATASETS == 1 ]; then
+    SIGMODOPT="${SIGMODOPT} --skipDatasets"
+fi
 ##signal model preparation
 #The first tiem you run this command, it will run the signal f-test to determine the number of gaussians to use for each tag/process. You'll be prompted to use the output of this to fill in the required config file. Then re-run to build the signal model.
 ##./runFinalFitsScripts.sh -i $FILE -p $PROCS -f $CATS --ext $EXT --batch $BATCH --intLumi $INTLUMI --smears $SMEARS --scales $SCALES --signalOnly --bs 3.5 --shiftOffDiag --refTagDiff $5 --refTagWV $6 --refProcWV $7 --refProcDiff $8 --refProc $9 ## --normalisationCut "processIndex==11"
@@ -207,6 +216,9 @@ fi
 if [ $DOBKG -eq 1 ]; then
     ##background model preparations
     #by default this produces blinded plots... use option --unblind to unblind.
+    if [ $BKGLABEL  != "" ]; then
+	BKGMODOPT="${BKGMODOPT} --bkgLabel ${BKGLABEL}"
+    fi
     if [ $UNBLIND -eq 0 ]; then
 	./runFinalFitsScripts.sh -i $FILE -p $PROCS -f $CATS --ext $EXT --intLumi $INTLUMI --backgroundOnly --dataFile $DATA --isData --batch $BATCH $BKGMODOPT ##--noBkgPlots OR --monitorDataPlots
     else

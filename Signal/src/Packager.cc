@@ -20,7 +20,7 @@ using namespace std;
 using namespace RooFit;
 
 Packager::Packager(WSTFileWrapper *ws, RooWorkspace *wsSave  , vector<string> procs, int nCats, int mhLow, int mhHigh, vector<int> skipMasses, int sqrts, bool skipPlots, string outDir, 
-		   RooWorkspace *wsMerge, const vector<int>& cats, const vector<string>& flashggCats, string skipProc):
+		   RooWorkspace *wsMerge, const vector<int>& cats, const vector<string>& flashggCats, string skipProc, bool includeDatasets):
   WS(ws),
   mergeWS(wsMerge),
   saveWS(wsSave),
@@ -34,7 +34,8 @@ Packager::Packager(WSTFileWrapper *ws, RooWorkspace *wsSave  , vector<string> pr
   outDir_(outDir),
   sqrts_(sqrts),
   skipMasses_(skipMasses),
-  skipProc_(skipProc)
+  skipProc_(skipProc),
+  includeDatasets_(includeDatasets)
 {
 	normalization = new Normalization_8TeV();
 	normalization->Init(sqrts_);
@@ -54,6 +55,7 @@ void Packager::packageOutput(bool split, string process , string tag){
   vector<string> expectedObjectsNotFound;
   bool split_=split;
   std::cout << split_ << std::endl;
+  std::cout << "Include Datasets: " << includeDatasets_ << std::endl;
   // sum datasets first
   for (int mh=mhLow_; mh<=mhHigh_; mh+=5){
     if (skipMass(mh)) continue;
@@ -68,10 +70,10 @@ void Packager::packageOutput(bool split, string process , string tag){
 	RooDataSet *tempData = 0;
 	if( merge ) { 
 	  tempData = (RooDataSet*)mergeWS->data(Form("sig_%s_mass_m%d_%s",proc->c_str(),mh,catname.c_str()));
-	  if(tempData && !saveWS->data(Form("sig_%s_mass_m%d_%s",proc->c_str(),mh,catname.c_str())))  saveWS->import(*tempData); //FIXME
+	  if(tempData && !saveWS->data(Form("sig_%s_mass_m%d_%s",proc->c_str(),mh,catname.c_str())) && includeDatasets_)  saveWS->import(*tempData); //FIXME
 	} else {
 	  tempData = (RooDataSet*)WS->data(Form("sig_%s_mass_m%d_%s",proc->c_str(),mh,catname.c_str()));
-	  if(tempData && !saveWS->data(Form("sig_%s_mass_m%d_%s",proc->c_str(),mh,catname.c_str())))  saveWS->import(*tempData); //FIXME
+	  if(tempData && !saveWS->data(Form("sig_%s_mass_m%d_%s",proc->c_str(),mh,catname.c_str())) && includeDatasets_)  saveWS->import(*tempData); //FIXME
 	}
 	if (!tempData) {
 	  if (!split_)	cerr << "[WARNING] -- dataset: " << Form("sig_%s_mass_m%d_%s",proc->c_str(),mh,catname.c_str()) << " not found. It will be skipped" << endl;
@@ -90,13 +92,13 @@ void Packager::packageOutput(bool split, string process , string tag){
 	if (!split_)	cerr << "[WARNING] -- allData for cat " << catname.c_str() << " is NULL. Probably because the relevant datasets couldn't be found. Skipping.. " << endl;
 	continue;
       }
-      saveWS->import(*allDataThisCat);
+      if (includeDatasets_) saveWS->import(*allDataThisCat);
     }
     if (!allDataThisMass) {
 		if (!split_)	cerr << "[WARNING] -- allData for mass " << mh << " is NULL. Probably because the relevant datasets couldn't be found. Skipping.. " << endl;
 		continue;
     }
-    saveWS->import(*allDataThisMass);
+    if (includeDatasets_) saveWS->import(*allDataThisMass);
   }
   std::cout << "Importing Datasets done!" << std::endl;
   RooRealVar *MH = (RooRealVar*)WS->var("MH");

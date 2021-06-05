@@ -20,6 +20,7 @@ NOBKGPLOTS=0
 MONITORDATAPLOTS=0
 BATCH=""
 QUEUE=""
+LABEL=""
 YEAR="2016"
 
 
@@ -47,6 +48,7 @@ echo "--noBkgPlots) skip backgroud plots jobs) "
 echo "--monitorDataPlots) monitor jobs submitted for data mass plots) "
 echo "--batch) which batch system to use (None (''),HTCONDOR,IC) (default '$BATCH')) "
 echo "--queue) queue to submit jobs to (specific to batch))"
+echo "--label) label for parameters)"
 }
 
 
@@ -54,7 +56,7 @@ echo "--queue) queue to submit jobs to (specific to batch))"
 
 
 # options may be followed by one colon to indicate they have a required argument
-if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,flashggCats:,ext:,fTestOnly,pseudoDataOnly,bkgPlotsOnly,pseudoDataDat:,sigFile:,seed:,intLumi:,unblind,isData,batch:,noBkgPlots,monitorDataPlots,queue: -- "$@")
+if ! options=$(getopt -u -o hi:p:f: -l help,inputFile:,procs:,flashggCats:,ext:,fTestOnly,pseudoDataOnly,bkgPlotsOnly,pseudoDataDat:,sigFile:,seed:,intLumi:,unblind,isData,batch:,noBkgPlots,monitorDataPlots,queue:,label: -- "$@")
 then
 # something went wrong, getopt will put out an error message for us
 exit 1
@@ -83,6 +85,7 @@ case $1 in
 --noBkgPlots) NOBKGPLOTS=1;;
 --monitorDataPlots) MONITORDATAPLOTS=1;;
 --queue) QUEUE=$2; shift;;
+--label) LABEL=$2; shift;;
 
 
 (--) shift; break;;
@@ -189,7 +192,13 @@ OPT=" --isData 1"
 fi
 
 echo " ./bin/fTest -i $FILE --saveMultiPdf CMS-HGG_multipdf_$EXT.root  -D $OUTDIR/bkgfTest$DATAEXT -f $CATS $OPT"
-./bin/fTest -i $FILE --saveMultiPdf CMS-HGG_multipdf_$EXT.root  -D $OUTDIR/bkgfTest$DATAEXT -f $CATS $OPT --verbose 1
+
+if [[ $LABEL == "" ]] ;
+then
+    ./bin/fTest -i $FILE --saveMultiPdf CMS-HGG_multipdf_$EXT.root  -D $OUTDIR/bkgfTest$DATAEXT -f $CATS $OPT --verbose 1
+else
+    ./bin/fTest -i $FILE --saveMultiPdf CMS-HGG_multipdf_$EXT.root  -D $OUTDIR/bkgfTest$DATAEXT -f $CATS $OPT --verbose 1 --label $LABEL
+fi
 
 OPT=""
 fi

@@ -152,6 +152,7 @@ RooRealVar *intLumi_;
 bool beamSpotReweigh_ = false;
 bool shiftOffDiag_ = false;
 bool noSkip_ = false;
+bool skipDatasets_ = false;
 float MHref_ = 0.;
 
 string optReferenceProc_ = "";
@@ -212,6 +213,7 @@ void OptionParser(int argc, char *argv[]){
     ("refProcWV", po::value<			string>(&optReferenceProcWV_)->default_value(""),            			"reference proc for replacement WV")
     ("normalisationCut", po::value<string>(&normalisationCut_)->default_value("1"),            			"specify cut to apply on the final normalisation, e.g. select process with processIndex == xx")
     ("noSkip",po::value<bool>(&noSkip_)->default_value(false)," Do not skip datasets with conditions below minimum")
+    ("skipDatasets", "Include datasets in outputfiles")
     ;                                                                                             		
   
   po::options_description desc("Allowed options");
@@ -234,6 +236,7 @@ void OptionParser(int argc, char *argv[]){
   if (vm.count("doQuadraticSigmaSum"))			doQuadraticSigmaSum_=true;
   if (vm.count("skipSecondaryModels"))      doSecondaryModels_=false;
   if (vm.count("recursive"))                recursive_=false;
+  if (vm.count("skipDatasets")) skipDatasets_=true;
   if (vm.count("skipMasses")) {
     cout << "[INFO] Masses to skip... " << endl;
     vector<string> els;
@@ -1442,7 +1445,7 @@ int main(int argc, char *argv[]){
         }
         finalModel.getNormalization(normalisationCut_);
         if (!skipPlots_) finalModel.plotPdf(plotDir_);
-        finalModel.save(outWS);
+        finalModel.save(outWS, (!skipDatasets_));
       }
     }
   }
@@ -1464,7 +1467,8 @@ int main(int argc, char *argv[]){
     } else {
       skipProc = map_proc_[0];
     }
-    Packager packager(outWSWrapper, outWS,procs_,nCats_,mhLow_,mhHigh_,skipMasses_,sqrts_,skipPlots_,plotDir_,mergeWS,cats_,flashggCats_,skipProc);
+    std::cout << "Skip Datasets: " << skipDatasets_ << std::endl;
+    Packager packager(outWSWrapper, outWS,procs_,nCats_,mhLow_,mhHigh_,skipMasses_,sqrts_,skipPlots_,plotDir_,mergeWS,cats_,flashggCats_,skipProc,(!skipDatasets_));
     
     // if we are doing jobs for each proc/tag, want to do the split.
     bool split = 0;

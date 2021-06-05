@@ -1051,6 +1051,8 @@ def printFileOptions():
               pdfname = pdfname.replace('_17_13TeV', '_17_17_13TeV')
            elif '18' in pdfname.split('_'):
               pdfname = pdfname.replace('_18_13TeV', '_18_18_13TeV')
+           # elif 'ALL' in pdfname.split('_') and 'wUL17' in pdfname.split('_'):
+           #    pdfname = pdfname.replace('_ALL_wUL17_13TeV', '_ALL_wUL17_ALL_wUL17_13TeV')
         if typ not in options.procs and typ!='data_obs': continue
       #outFile.write('shapes %-10s %-15s %-30s %-30s\n'%(typ,'%s_%dTeV'%(c,sqrts),file.replace(".root","_%s_%s.root"%(typ,c)),wsname+':'+pdfname))
         outFile.write('shapes %-10s %-15s %-30s %-30s\n'%(typ,'%s_%dTeV'%(c,sqrts),file,wsname+':'+pdfname))
@@ -1568,6 +1570,8 @@ def printMultiPdf():
          mPdfOutputString = mPdfOutputString.replace('_17_13TeV', '_17_17_13TeV')
       elif '18' in mPdfOutputString.split('_'):
          mPdfOutputString = mPdfOutputString.replace('_18_13TeV', '_18_18_13TeV')
+      # elif 'ALL' in mPdfOutputString.split('_') and 'wUL17' in mPdfOutputString.split('_'):
+      #    mPdfOutputString = mPdfOutputString.replace('_ALL_wUL17_13TeV', '_ALL_wUL17_ALL_wUL17_13TeV')
       outFile.write(mPdfOutputString)
 
 def printRateParams():
@@ -1612,7 +1616,6 @@ if ((options.justThisSyst== "batch_split") or options.justThisSyst==""):
   #nuisance param systematics
   printMultiPdf()
 #  printBRSyst()
-  printLumiSyst()
   #printTrigSyst() # now a weight in the main roodataset!
   if not options.statonly:
      # printSimpleTTHSysts()
@@ -1621,6 +1624,7 @@ if not options.statonly:
    if (len(tthCats) > 0 ):  printTTHSysts()
    nominalDFDict = getNominalDFs()
    printTheorySysts()
+   printLumiSyst()
    # lnN systematics
    printFlashggSysts()
    printJECSysts()
