@@ -9,6 +9,11 @@ variables:
 
 nominalVariables:
   centralObjectWeight: [-1000, 1000]
+  JetBTagCutWeightCentral: [-1000,1000]
+  ElectronIDWeight: [-1000, 1000]
+  ElectronRecoWeight: [-1000, 1000]
+  MuonIsoWeight: [-1000, 1000]
+  MuonIDWeight: [-1000,1000]
   dZ: [-inf, inf]
   processIndex: [0,100]
 
@@ -18,9 +23,11 @@ phasespace:
   gen: 'genNleptons2p4>=1 and genNjetsBflavor2p5>=1'
   reco: '(recoNelectronsAll+recoNmuonsAll)>=1 and recoNjetsBflavorTight2p5>=1'
 
-weight: 'weight'
+weight:
+  nominal: 'weight*ElectronIDWeight*ElectronRecoWeight*MuonIsoWeight*MuonIDWeight*JetBTagCutWeightCentral'
+  syst: 'weight'
 
-systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','ElectronIDWeight','ElectronRecoWeight','JetBTagCutWeight']
+systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','prefireWeight','ElectronIDWeight','ElectronRecoWeight','MuonIsoWeight', 'MuonIDWeight','JetBTagCutWeight']
 
 theoryWeights :
   pdfWeights: 60

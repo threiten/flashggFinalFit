@@ -32,7 +32,8 @@ replacementDic = {
     '16': yaml.load(open('{0}/src/flashggFinalFit/replacementSignalModel_2016.yaml'.format(cmssw_path))),
     '17': yaml.load(open('{0}/src/flashggFinalFit/replacementSignalModel_2017.yaml'.format(cmssw_path))),
     'UL17': yaml.load(open('{0}/src/flashggFinalFit/replacementSignalModel_UL17.yaml'.format(cmssw_path))),
-    '18': yaml.load(open('{0}/src/flashggFinalFit/replacementSignalModel_2018.yaml'.format(cmssw_path)))
+    '18': yaml.load(open('{0}/src/flashggFinalFit/replacementSignalModel_2018.yaml'.format(cmssw_path))),
+    'ALL_wUL17': yaml.load(open('{0}/src/flashggFinalFit/replacementSignalModel_ALL_wUL17.yaml'.format(cmssw_path))),
 }
 
 varDic = {
@@ -76,7 +77,8 @@ labels = {
     '16' : '16',
     '17' : '17',
     'UL17' : '17',
-    '18' : '18'
+    '18' : '18',
+    'ALL_wUL17' : 'ALL_wUL17'
 }
 
 inpDir = '/eos/home-t/threiten/Analysis/Differentials/FinalFitsInDir'
@@ -169,6 +171,10 @@ def main(options):
     if not options.noSig:
         sFitsP = []
         sigModOpt = '--sigModOpt=--skipCalcPhoSyst' if options.skipCalcPhoSyst else ''
+        if options.noSysts:
+            sigModOpt = '--sigModOpt=--noSysts'
+        if options.skipDatasets:
+            sigModOpt += ' --skipDatasets'
         for year in years:
             ext = '{0}_{1}'.format(options.extension, year)
             yrLabel = labels[year]
@@ -199,8 +205,8 @@ def main(options):
             refProcWV = replacementDic[year][options.extension]['procWV'] if 'procWV' in replacementDic[year][options.extension].keys() else replacementDic[year][options.extension]['proc']
             replStr = '--refTagDiff={0} --refTagWV={2} --refProcWV={3} --refProcDiff={1} --refProc={1}'.format(
                 replacementDic[year][options.extension]['tag'], replacementDic[year][options.extension]['proc'], refTagWV, refProcWV)
-            bkgFitsP.append(subprocess.Popen(r"bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runBackgroundOnly=1 --DatacardOpt=--noSysts --bkgModOpt=--noSysts --bkgLabel={0} --sigModOpt=--noSysts --inputDir={5}".format(
-                yrLabel, ext, variable, replStr, cmssw_path, inpDir), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True))
+            bkgFitsP.append(subprocess.Popen(r"bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runBackgroundOnly=1 --DatacardOpt=--noSysts --sigModOpt=--noSysts --inputDir={5}".format(
+                yrLabel, ext, variable, replStr, cmssw_path, inpDir), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)) #--bkgModOpt=--noSysts  --bkgLabel={0}
             commands['Background_{}'.format(year)] = bkgFitsP[-1].args
 
         retCodes = [subp.wait() for subp in bkgFitsP]
@@ -315,5 +321,9 @@ if __name__ == "__main__":
         '--skipCalcPhoSyst', action='store_true', default=False)
     optionalArgs.add_argument(
         '--wUL17', action='store_true', default=False)
+    optionalArgs.add_argument(
+        '--skipDatasets', action='store_true', default=False)
+    optionalArgs.add_argument(
+        '--noSysts', action='store_true', default=False)
     options = parser.parse_args()
     main(options)

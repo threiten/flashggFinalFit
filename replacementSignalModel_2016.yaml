@@ -129,6 +129,10 @@ TauCJet2p50:
   proc: 'smH_TCJ0_15p0_25p0'
   tagWV: 'hgg_TCJ0_0p0_5p0_cat2_16'
   procWV: 'smH_TCJ0_0p0_5p0'
+
+TauCJets4p7:
+  tag: 'hgg_TCJ_20p0_30p0_cat2_16'
+  proc: 'smH_TCJ_20p0_30p0'
   
 AbsPhiS:
   tag: 'hgg_PhiSH_0p7_1p0_cat1_16'
@@ -177,6 +181,12 @@ PtTauCJet2p50:
   proc: 'smH_TCJ0_15p0_25p0_PTH_0p0_45p0'
   tagWV: 'hgg_TCJ0_0p0_15p0_hgg_PTH_0p0_45p0_cat1_16'
   procWV: 'smH_TCJ0_m1000p0_0p0_PTH_0p0_10000p0'
+
+PtTauCJets4p7:
+  tag: 'hgg_TCJ_15p0_25p0_hgg_PTH_0p0_45p0_cat1_16'
+  proc: 'smH_TCJ_15p0_25p0_PTH_0p0_45p0'
+  tagWV: 'hgg_TCJ_m1000p0_15p0_hgg_PTH_0p0_45p0_cat1_16'
+  procWV: 'smH_TCJ_m1000p0_15p0_PTH_0p0_45p0'
 
 PtNjets2p5:
   tag: 'NJ_0_PTH_15p0_20p0_cat1_16'

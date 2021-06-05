@@ -9,14 +9,20 @@ variables:
 
 nominalVariables:
   centralObjectWeight: [-1000, 1000]
+  ElectronIDWeight: [-1000, 1000]
+  ElectronRecoWeight: [-1000, 1000]
+  MuonIsoWeight: [-1000, 1000]
+  MuonIDWeight: [-1000,1000]
   dZ: [-inf, inf]
   processIndex: [0,100]
 
 cut: 'leadmva>0.397 and subleadmva>0.397'
 
-weight: 'weight'
+weight:
+  nominal: 'weight*ElectronIDWeight*ElectronRecoWeight*MuonIsoWeight*MuonIDWeight'
+  syst: 'weight'
 
-systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','ElectronIDWeight','ElectronRecoWeight','JetBTagCutWeight']
+systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','prefireWeight','ElectronIDWeight','ElectronRecoWeight','MuonIsoWeight', 'MuonIDWeight']
 
 theoryWeights :
   pdfWeights: 60

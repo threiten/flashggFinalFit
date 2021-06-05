@@ -20,7 +20,7 @@ phasespace:
   gen: 'genJet4p7Phi0>-999 and genJet4p7Phi1>-999 and genJet4p7Pt0>30 and abs(genJet4p7Eta0)<4.7 and genJet4p7Pt1>30 and abs(genJet4p7Eta1)<4.7 and (abs(genJet4p7Eta0 - genJet4p7Eta1) > 3.5) and genMjjJets4p7>200'
   reco: 'recoJet4p7Phi0>-999 and recoJet4p7Phi1>-999 and recoJet4p7Pt0>30 and abs(recoJet4p7Eta0)<4.7 and recoJet4p7Pt1>30 and abs(recoJet4p7Eta1)<4.7 and (abs(recoJet4p7Eta0 - recoJet4p7Eta1) > 3.5) and recoMjjJets4p7>200'
 
-systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','ElectronIDWeight','ElectronRecoWeight','JetBTagCutWeight']
+systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight']
 
 theoryWeights :
   pdfWeights: 60

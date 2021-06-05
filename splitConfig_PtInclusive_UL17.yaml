@@ -1,0 +1,48 @@
+splits:
+  genPt: [0.0,10000.0]
+  recoPt: [0.0,10000.0]
+  sigmaMoM_decorr: [0.0, 0.00926, 0.0137, 0.0224]
+
+variables:
+  CMS_hgg_mass: [100, 180]
+  weight: [-inf, inf]
+
+nominalVariables:
+  centralObjectWeight: [-1000, 1000]
+  dZ: [-inf, inf]
+  processIndex: [0,100]
+
+cut: 'leadmva>0.24 and subleadmva>0.24'
+
+weight: 'weight'
+
+systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','prefireWeight']
+
+theoryWeights :
+  pdfWeights: 60
+  alphaSWeights: 2
+  scaleWeights: 9
+
+procs:
+  IA_125: 'InsideAcceptance_125_13TeV'
+  OA_125: 'OutsideAcceptance_125_13TeV'
+  IA_120: 'InsideAcceptance_120_13TeV'
+  OA_120: 'OutsideAcceptance_120_13TeV'
+  IA_130: 'InsideAcceptance_130_13TeV'
+  OA_130: 'OutsideAcceptance_130_13TeV'
+  Data: 'Data_13TeV'
+  
+categories: ['SigmaMpTTag_0'] #, 'SigmaMpTTag_0_FNUFEBDown01sigma', 'SigmaMpTTag_0_FNUFEBUp01sigma', 'SigmaMpTTag_0_FNUFEEDown01sigma', 'SigmaMpTTag_0_FNUFEEUp01sigma', 'SigmaMpTTag_0_JECAbsolute2017Down01sigma', 'SigmaMpTTag_0_JECAbsolute2017Up01sigma', 'SigmaMpTTag_0_JECAbsoluteDown01sigma', 'SigmaMpTTag_0_JECAbsoluteUp01sigma', 'SigmaMpTTag_0_JECBBEC12017Down01sigma', 'SigmaMpTTag_0_JECBBEC12017Up01sigma', 'SigmaMpTTag_0_JECBBEC1Down01sigma', 'SigmaMpTTag_0_JECBBEC1Up01sigma', 'SigmaMpTTag_0_JECDown01sigma', 'SigmaMpTTag_0_JECEC22017Down01sigma', 'SigmaMpTTag_0_JECEC22017Up01sigma', 'SigmaMpTTag_0_JECEC2Up01sigma', 'SigmaMpTTag_0_JECEC2Down01sigma', 'SigmaMpTTag_0_JECFlavorQCDDown01sigma', 'SigmaMpTTag_0_JECFlavorQCDUp01sigma', 'SigmaMpTTag_0_JECHF2017Down01sigma', 'SigmaMpTTag_0_JECHFDown01sigma', 'SigmaMpTTag_0_JECHF2017Up01sigma', 'SigmaMpTTag_0_JECHFUp01sigma', 'SigmaMpTTag_0_JECRelativeBalDown01sigma', 'SigmaMpTTag_0_JECRelativeSample2017Down01sigma', 'SigmaMpTTag_0_JECRelativeBalUp01sigma', 'SigmaMpTTag_0_JECRelativeSample2017Up01sigma', 'SigmaMpTTag_0_JECUp01sigma', 'SigmaMpTTag_0_JERDown01sigma', 'SigmaMpTTag_0_JERUp01sigma', 'SigmaMpTTag_0_MCScaleGain1EBDown01sigma', 'SigmaMpTTag_0_MCScaleGain1EBUp01sigma', 'SigmaMpTTag_0_MCScaleGain6EBDown01sigma', 'SigmaMpTTag_0_MCScaleGain6EBUp01sigma', 'SigmaMpTTag_0_MCScaleHighR9EBDown01sigma', 'SigmaMpTTag_0_MCScaleHighR9EBUp01sigma', 'SigmaMpTTag_0_MCScaleHighR9EEDown01sigma', 'SigmaMpTTag_0_MCScaleHighR9EEUp01sigma', 'SigmaMpTTag_0_MCScaleLowR9EBDown01sigma', 'SigmaMpTTag_0_MCScaleLowR9EBUp01sigma', 'SigmaMpTTag_0_MCScaleLowR9EEDown01sigma', 'SigmaMpTTag_0_MCScaleLowR9EEUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBPhiDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBPhiUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBRhoDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EBRhoUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EEPhiDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EEPhiUp01sigma', 'SigmaMpTTag_0_MCSmearHighR9EERhoDown01sigma', 'SigmaMpTTag_0_MCSmearHighR9EERhoUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBPhiDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBPhiUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBRhoDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EBRhoUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EEPhiDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EEPhiUp01sigma', 'SigmaMpTTag_0_MCSmearLowR9EERhoDown01sigma', 'SigmaMpTTag_0_MCSmearLowR9EERhoUp01sigma', 'SigmaMpTTag_0_MaterialCentralBarrelDown01sigma', 'SigmaMpTTag_0_MaterialCentralBarrelUp01sigma', 'SigmaMpTTag_0_MaterialForwardDown01sigma', 'SigmaMpTTag_0_MaterialForwardUp01sigma', 'SigmaMpTTag_0_MaterialOuterBarrelDown01sigma', 'SigmaMpTTag_0_MaterialOuterBarrelUp01sigma', 'SigmaMpTTag_0_MvaShiftDown01sigma', 'SigmaMpTTag_0_MvaShiftUp01sigma', 'SigmaMpTTag_0_PUJIDShiftDown01sigma', 'SigmaMpTTag_0_PUJIDShiftUp01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EBDown01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EBUp01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EEDown01sigma', 'SigmaMpTTag_0_ShowerShapeHighR9EEUp01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EBDown01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EBUp01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EEDown01sigma', 'SigmaMpTTag_0_ShowerShapeLowR9EEUp01sigma', 'SigmaMpTTag_0_SigmaEOverEShiftDown01sigma', 'SigmaMpTTag_0_SigmaEOverEShiftUp01sigma', 'SigmaMpTTag_0_metJecUncertaintyDown01sigma', 'SigmaMpTTag_0_metJecUncertaintyUp01sigma', 'SigmaMpTTag_0_metJerUncertaintyDown01sigma', 'SigmaMpTTag_0_metJerUncertaintyUp01sigma', 'SigmaMpTTag_0_metPhoUncertaintyDown01sigma', 'SigmaMpTTag_0_metPhoUncertaintyUp01sigma', 'SigmaMpTTag_0_metUncUncertaintyDown01sigma', 'SigmaMpTTag_0_metUncUncertaintyUp01sigma']
+
+correlatedSyst: ['JEC', 'ScaleHighR9EB', 'ScaleHighR9EE', 'ScaleLowR9EB', 'ScaleLowR9EE', 'ScaleGain6EB', 'ScaleGain1EB', 'SmearHighR9EBPhi','SmearHighR9EBRho','SmearHighR9EEPhi','SmearHighR9EERho','SmearLowR9EBPhi','SmearLowR9EBRho','SmearLowR9EEPhi','SmearLowR9EERho', 'Material', 'NonLinearity', 'Geant4', 'LightYield', 'Absolute']
+
+filenames:
+  IA_125: 'reducedPtIA_genPt_nominal.root'
+  OA_125: 'reducedPtOA__nominal.root'
+  IA_120: 'reducedPtIA_genPt_nominal.root'
+  OA_120: 'reducedPtOA__nominal.root'
+  IA_130: 'reducedPtIA_genPt_nominal.root'
+  OA_130: 'reducedPtOA__nominal.root'
+  Data: 'reducedPtData__nominal.root'
+  
+treepath: 'tagsDumper/trees'

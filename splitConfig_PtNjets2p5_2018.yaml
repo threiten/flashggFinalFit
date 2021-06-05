@@ -21,7 +21,7 @@ cut: 'leadmva>0.46 and subleadmva>0.46'
 
 weight: 'weight'
 
-systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','ElectronIDWeight','ElectronRecoWeight','JetBTagCutWeight']
+systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight']
 
 theoryWeights :
   pdfWeights: 60

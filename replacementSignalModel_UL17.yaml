@@ -1,0 +1,195 @@
+Pt:
+  tag: 'hgg_PTH_20p0_25p0_cat1_17'
+  proc: 'smH_PTH_20p0_25p0'
+
+Njets2p5:
+  tag: 'hgg_NJ_1_cat2_17'
+  proc: 'smH_NJ_1'
+
+Njets2p5_testNames:
+  tag: 'hgg_NJ_1_cat2_17'
+  proc: 'smH_NJ_1'
+
+CosThetaS:
+  tag: 'hgg_cThetaS_0p55_0p75_cat1_17'
+  proc: 'smH_cThetaS_0p55_0p75'
+
+AbsRapidity:
+  tag: 'hgg_YH_0p3_0p45_cat2_17'
+  proc: 'smH_YH_0p3_0p45'
+
+AbsRapidityFine:
+  tag: 'hgg_YH_0p3_0p45_cat1_17'
+  proc: 'smH_YH_0p3_0p45'
+
+Jet2p5Pt0:
+  tag: 'hgg_PTJ0_30p0_40p0_cat2_17'
+  proc: 'smH_PTJ0_30p0_40p0'
+
+Jet2p5AbsRapidity0:
+  tag: 'hgg_YJ0_2p0_3p0_cat2_17'
+  proc: 'smH_YJ0_2p0_3p0'
+
+Jet2p5AbsRapidity0_testShUnc:
+  tag: 'hgg_YJ0_2p0_3p0_cat2_17'
+  proc: 'smH_YJ0_2p0_3p0'
+  
+AbsDeltaRapidityGgJet2p50:
+  tag: 'hgg_DYHJ0_2p5_100p0_cat2_17'
+  proc: 'smH_DYHJ0_2p5_100p0'
+
+AbsDeltaPhiGgJet2p50:
+  tag: 'hgg_DPhiHJ0_0p0_2p0_cat2_17'
+  proc: 'smH_DPhiHJ0_0p0_2p0'
+
+Jet4p7Pt1:
+  tag: 'hgg_PTJ1_40p0_65p0_cat2_17'
+  proc: 'smH_PTJ1_40p0_65p0'
+
+Jet4p7AbsRapidity1:
+  tag: 'hgg_YJ1_3p5_5p0_cat2_17'
+  proc: 'smH_YJ1_3p5_5p0'
+
+AbsDeltaPhiGgJjJets4p7:
+  tag: 'hgg_DPhiHJJ_3p07_3p2_cat2_17'
+  proc: 'smH_DPhiHJJ_3p07_3p2'
+  tagWV: 'hgg_DPhiHJJ_3p07_3p2_cat0_17'
+  procWV: 'smH_DPhiHJJ_3p07_3p2'
+
+AbsDeltaPhiJ1J2Jets4p7:
+  tag: 'hgg_DPhiJJ_1p7_2p5_cat1_17'
+  proc: 'smH_DPhiJJ_1p7_2p5'
+
+AbsZeppenfeldEtaJets4p7:
+  tag: 'hgg_DEtaHJJ_1p7_10p0_cat2_17'
+  proc: 'smH_DEtaHJJ_1p7_10p0'
+
+MjjJets4p7:
+  tag: 'hgg_MJJ_1000p0_13000p0_cat2_17'
+  proc: 'smH_MJJ_1000p0_13000p0'
+
+MjjJets4p7NewBins:
+  tag: 'hgg_MJJ_1000p0_13000p0_cat2_17'
+  proc: 'smH_MJJ_1000p0_13000p0'
+
+AbsDeltaEtaJ1J2Jets4p7:
+  tag: 'hgg_DEtaJJ_5p0_100p0_cat2_17'
+  proc: 'smH_DEtaJJ_5p0_100p0'
+
+Nleptons:
+  tag: 'hgg_NL_0_cat2_17'
+  proc: 'smH_NL_0'
+
+NBjets2p5:
+  tag: 'hgg_NBJ_0_cat2_17'
+  proc: 'smH_NBJ_0'
+
+PtMiss:
+  tag: 'hgg_PTHMiss_0p0_30p0_cat2_17'
+  proc: 'smH_PTHMiss_0p0_30p0'
+
+AbsDeltaPhiGgJjJets4p7VBFlike:
+  tag: 'hgg_DPhiHJJ_3p07_3p2_cat1_17'
+  proc: 'smH_DPhiHJJ_3p07_3p2'
+
+AbsDeltaPhiJ1J2Jets4p7VBFlike:
+  tag: 'hgg_DPhiJJ_1p7_2p5_cat2_17'
+  proc: 'smH_DPhiJJ_1p7_2p5'
+
+Jet4p7Pt1VBFlike:
+  tag: 'hgg_PTJ1_40p0_65p0_cat2_17'
+  proc: 'smH_PTJ1_40p0_65p0'
+
+PtVBFlike:
+  tag: 'hgg_PTH_30p0_60p0_cat2_17'
+  proc: 'smH_PTH_30p0_60p0'
+  tagWV: 'hgg_PTH_m1000p0_0p0_cat2_17'
+  procWV: 'smH_PTH_30p0_60p0'
+
+Pt0Jets:
+  tag: 'hgg_PTH_35p0_45p0_cat1_17'
+  proc: 'smH_PTH_35p0_45p0'
+
+Pt1Jets:
+  tag: 'hgg_PTH_60p0_100p0_cat2_17'
+  proc: 'smH_PTH_60p0_100p0'
+
+Pt1PJets:
+  tag: 'hgg_PTH_170p0_250p0_cat1_17'
+  proc: 'smH_PTH_170p0_250p0'
+  tagWV: 'hgg_PTH_0p0_100p0_cat1_17'
+  procWV: 'OutsideAcceptance'
+
+TauCJet2p50:
+  tag: 'hgg_TCJ0_15p0_25p0_cat2_17'
+  proc: 'smH_TCJ0_15p0_25p0'
+  tagWV: 'hgg_TCJ0_0p0_5p0_cat2_17'
+  procWV: 'smH_TCJ0_0p0_5p0'
+
+TauCJets4p7:
+  tag: 'hgg_TCJ_20p0_30p0_cat2_17'
+  proc: 'smH_TCJ_20p0_30p0'
+
+AbsPhiS:
+  tag: 'hgg_PhiSH_1p0_1p5_cat1_17'
+  proc: 'smH_PhiSH_1p0_1p5'
+
+PtTauC0:
+  tag: 'hgg_PTH_45p0_120p0_cat1_17'
+  proc: 'smH_PTH_45p0_120p0'
+
+PtTauC1:
+  tag: 'hgg_PTH_120p0_350p0_cat1_17'
+  proc: 'smH_PTH_120p0_350p0'
+  tagWV: 'hgg_PTH_0p0_45p0_cat2_17'
+  procWV: 'OutsideAcceptance'
+
+PtTauC2:
+  tag: 'hgg_PTH_120p0_350p0_cat1_17'
+  proc: 'smH_PTH_120p0_350p0'
+  tagWV: 'hgg_PTH_0p0_120p0_cat2_17'
+  procWV: 'OutsideAcceptance'
+
+PtTauC3:
+  tag: 'hgg_PTH_200p0_350p0_cat1_17'
+  proc: 'smH_PTH_200p0_350p0'
+  tagWV: 'hgg_PTH_0p0_200p0_cat2_17'
+  procWV: 'OutsideAcceptance'
+
+PtInclusive:
+  tag: 'hgg_PTH_0p0_10000p0_cat1_17'
+  proc: 'smH_PTH_0p0_10000p0'
+
+PtInclusive1L1B:
+  tag: 'hgg_PTH_0p0_10000p0_cat0_17'
+  proc: 'smH_PTH_0p0_10000p0'
+  tagWV: 'hgg_PTH_m1000p0_0p0_cat0_17'
+  procWV: 'smH_PTH_m1000p0_0p0'
+
+PtInclusive1LHPtM:
+  tag: 'hgg_PTH_0p0_10000p0_cat0_17'
+  proc: 'smH_PTH_0p0_10000p0'
+  tagWV: 'hgg_PTH_m1000p0_0p0_cat0_17'
+  procWV: 'smH_PTH_m1000p0_0p0'
+
+PtInclusive1LLPtM:
+  tag: 'hgg_PTH_0p0_10000p0_cat1_17'
+  proc: 'smH_PTH_0p0_10000p0'
+  tagWV: 'hgg_PTH_m1000p0_0p0_cat1_17'
+  procWV: 'smH_PTH_m1000p0_0p0'
+
+PtTauCJet2p50:
+  tag: 'hgg_TCJ0_15p0_25p0_hgg_PTH_0p0_45p0_cat1_17'
+  proc: 'smH_TCJ0_15p0_25p0_PTH_0p0_45p0'
+  tagWV: 'hgg_TCJ0_0p0_15p0_hgg_PTH_0p0_45p0_cat1_17'
+  procWV: 'smH_TCJ0_m1000p0_0p0_PTH_0p0_10000p0'
+
+PtTauCJets4p7:
+  tag: 'hgg_TCJ_15p0_25p0_hgg_PTH_0p0_45p0_cat1_17'
+  proc: 'smH_TCJ_15p0_25p0_PTH_0p0_45p0'
+  tagWV: 'hgg_TCJ_m1000p0_15p0_hgg_PTH_0p0_45p0_cat1_17'
+  procWV: 'smH_TCJ_m1000p0_15p0_PTH_0p0_45p0'
+  
+PtNjets2p5:
+  tag: 'NJ_0_PTH_15p0_20p0_cat2_17'
+  proc: 'smH_hgg_NJ_0_hgg_PTH_15p0_20p0'

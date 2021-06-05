@@ -91,7 +91,7 @@ class RooHistogramFromDataframe(RooDatasetFromDataframe):
 
 class RooWorkspaceFromDataframe(object):
 
-    def __init__(self, df, splitDic, variables, weight, wsName, dsetPreSuffix=None, workspace=None, useHists=False, replacementNames=None, splitByProc=False):
+    def __init__(self, df, splitDic, variables, weight, wsName, dsetPreSuffix=None, workspace=None, useHists=False, replacementNames=None, splitByProc=False, splitByProcCat=False):
 
         ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.WARNING)
         self.splitDic = splitDic
@@ -100,6 +100,7 @@ class RooWorkspaceFromDataframe(object):
         self.useHists = useHists
         self.name = wsName
         self.splitByProc = splitByProc
+        self.splitByProcCat = splitByProcCat
         if dsetPreSuffix is not None:
             self.dsetPreSuffix = dsetPreSuffix
 
@@ -117,7 +118,7 @@ class RooWorkspaceFromDataframe(object):
             self.workspace = ROOT.RooWorkspace(self.name)
             self.createdDS = True
 
-        if self.splitByProc:
+        if self.splitByProc or self.splitByProcCat:
             self.workspace = [self.workspace]
 
         if not isinstance(splitDic[list(splitDic.keys())[0]], OrderedDict):
@@ -188,7 +189,7 @@ class RooWorkspaceFromDataframe(object):
 
     def makeCategories(self):
 
-        if 'gen' in self.splitDic.keys(): # and 'expmtl' in self.splitDic.keys():
+        if 'gen' in self.splitDic.keys() or 'reco' in self.splitDic.keys(): # and 'expmtl' in self.splitDic.keys():
             self.labels = []
             regCats = {}
             regLabels = {}
@@ -245,7 +246,7 @@ class RooWorkspaceFromDataframe(object):
         dummyDf = pd.DataFrame(columns=[var[0] for var in self.variables], dtype=np.float32)
 
         prevProc = self.categories[0][0]
-        for cat in self.categories:
+        for cInd, cat in enumerate(self.categories):
             currProc = cat[0]
             dsetlabel = ''
             for varl in cat:
@@ -275,6 +276,10 @@ class RooWorkspaceFromDataframe(object):
             if not self.createdDS:
                 if self.splitByProc:
                     if currProc != prevProc:
+                        self.workspace.append(ROOT.RooWorkspace(self.name))
+                    getattr(self.workspace[-1], 'import')(dset, ROOT.RooFit.Rename(dset.GetName()))
+                elif self.splitByProcCat:
+                    if cInd>0:
                         self.workspace.append(ROOT.RooWorkspace(self.name))
                     getattr(self.workspace[-1], 'import')(dset, ROOT.RooFit.Rename(dset.GetName()))
                 else:

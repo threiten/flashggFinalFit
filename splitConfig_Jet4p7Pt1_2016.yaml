@@ -20,7 +20,7 @@ phasespace:
 
 weight: 'weight'
 
-systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','ElectronIDWeight','ElectronRecoWeight','JetBTagCutWeight']
+systVars: ['PreselSF','electronVetoSF','TriggerWeight','FracRVWeight','prefireWeight']
 
 theoryWeights :
   pdfWeights: 60

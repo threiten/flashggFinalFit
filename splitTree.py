@@ -3,6 +3,7 @@ import ROOT
 # import root_pandas
 import uproot
 from collections import OrderedDict
+import itertools
 import argparse
 import os
 import copy
@@ -10,8 +11,8 @@ import awkward
 import oyaml as yaml
 import numpy as np
 import pandas as pd
-# from dask.distributed import Client, LocalCluster, progress
-# from dask_jobqueue import HTCondorCluster
+from dask.distributed import Client, LocalCluster, progress
+from dask_jobqueue import HTCondorCluster
 from joblib import delayed, Parallel
 
 def parse_variables(variables):
@@ -148,7 +149,7 @@ def getCluster():
 #     return ret
 
 
-def runOneCat(catR, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut=None, outfolderOA=None, outfileOA=None, processOA=None, splitDicOA=None, extCat=None): #
+def runOneCat(catR, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut=None, outfolderOA=None, outfileOA=None, processOA=None, splitDicOA=None, extCat=None, nomWeight=None): #
 
     if options.cluster is not None:
         import ROOT as rt
@@ -168,7 +169,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         ak = awkward
         OrderedDictIn = OrderedDict
         # npin = np
-        
+    
     def labelSystVarsIn(df, systVars, label):
         for var in systVars:
             for dirr in ['Up01sigma', 'Down01sigma']:
@@ -197,7 +198,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         return ret
 
     def getProcCatOutIn(proc, cat):
-        with open('/t3home/threiten/afs_work/Hgg/Differentials/CMSSW_10_2_13/src/flashggFinalFit/procCatNameReplacments.yaml') as repF:
+        with open('/afs/cern.ch/work/t/threiten/Hgg/Differentials/CMSSW_10_2_13/src/flashggFinalFit/procCatNameReplacments.yaml') as repF:
             procCatDic = yaml.load(repF)
 
         print(procCatDic)
@@ -221,6 +222,20 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     def evaluate_formulasIn(df, form_dic):
         for form in form_dic.keys():
             df[form] = df.eval(form_dic[form], engine='python')
+
+    def reweightAndMergeDfsIn(dfs, singleLumis, fullLumi):
+        if len(singleLumis) != len(dfs):
+            raise ValueError("There have to be as many lumis as there are dataframes")
+        for i, df in enumerate(dfs):
+            print("Reweighting to lumi fraction {}".format(singleLumis[i]/fullLumi))
+            df.loc[:, 'weight'] = df.eval('weight*{}'.format(singleLumis[i]/fullLumi))
+        ret = dfs[0]
+        if len(dfs) > 1:
+            for df in dfs[1:]:
+                ret = ret.append(df, ignore_index=True)
+
+        print("Merged dfs of size {} to df of size {}".format([df.index.size for df in dfs], ret.index.size))
+        return ret
 
     print('extCat: {}'.format(extCat))
     print('catR: {}'.format(catR))
@@ -266,7 +281,13 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         splitCols = []
         for key, item in splitDic.items():
             splitCols += list(item.keys())
-            
+
+    weightUse = weight
+    if 'SIG' in options.process and extended:
+        if nomWeight is not None:
+            weightUse = nomWeight
+
+    print('weightUse: ', weightUse)
     columns = splitCols + varList
     if 'SIG' in options.process:
         if extended:
@@ -285,8 +306,17 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     print("Reading the ntuples!")
     # df = rFile['{}/{}_{}'.format(config['treepath'], proc, cat)].pandas.df(columns)
     # df = list(ur.iterate('{}:{}/{}_{}'.format(options.infile,config['treepath'], proc, cat), branches=columns, library='pd'))[0]
-    lTree = ur.lazy('{}:{}/{}_{}'.format(options.infile,config['treepath'],proc,cat))
-    df = ak.to_pandas(lTree[:,columns])
+    if len(options.infile) > 1:
+        lTrees = [ur.lazy('{}:{}/{}_{}'.format(infl, config['treepath'],proc,cat)) for infl in options.infile]
+        dfs = [ak.to_pandas(lTr[:,columns]) for lTr in lTrees]
+        if options.process == 'Data':
+            df = reweightAndMergeDfsIn(dfs, [1., 1., 1.], 1.)
+        else:
+            df = reweightAndMergeDfsIn(dfs, config['merging']['singleLumis'], config['merging']['fullLumi'])
+    else:
+        lTree = ur.lazy('{}:{}/{}_{}'.format(options.infile[0],config['treepath'],proc,cat))
+        df = ak.to_pandas(lTree[:,columns])
+        
     if label is not None and 'SIG_125' in options.process and extended:
         df = labelSystVarsIn(df, systVars, label)
 
@@ -294,9 +324,14 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
         # dfOA = root_pandas.read_root(
         # options.infileOA, '{}/{}_{}'.format(config['treepath'], procOA, cat), columns=columns)
         # dfOA = rFileOA['{}/{}_{}'.format(config['treepath'], procOA, cat)].pandas.df(columns)
-        lTreeOA = ur.lazy('{}:{}/{}_{}'.format(options.infileOA,config['treepath'],procOA,cat))
+        if len(options.infileOA) > 1:
+            lTreesOA = [ur.lazy('{}:{}/{}_{}'.format(infl, config['treepath'], procOA ,cat)) for infl in options.infileOA]
+            dfsOA = [ak.to_pandas(lTr[:,columns]) for lTr in lTreesOA]
+            dfOA = reweightAndMergeDfsIn(dfsOA, config['merging']['singleLumis'], config['merging']['fullLumi'])
+        else:
+            lTreeOA = ur.lazy('{}:{}/{}_{}'.format(options.infileOA[0], config['treepath'], procOA, cat))
+            dfOA = ak.to_pandas(lTreeOA[:,columns])
         
-        dfOA = ak.to_pandas(lTreeOA[:,columns])
         if label is not None and 'SIG_125' in options.process and extended:
             dfOA = labelSystVarsIn(dfOA, systVars, label)
 
@@ -372,12 +407,26 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     labelHere = None if extended else label
     
     w = t2din.RooWorkspaceFromDataframe(
-        df, splitDic, currVariables, weight, "cms_hgg_13TeV", (procOut, catOut), ws, useHists=useHists, replacementNames=replacements, splitByProc=options.splitByProc)
+        df, splitDic, currVariables, weightUse, "cms_hgg_13TeV", (procOut, catOut), ws, useHists=useHists, replacementNames=replacements, splitByProc=options.splitByProc, splitByProcCat=options.splitByProcCat)
     w.makeCategories()
     w.makeWorkspace()
-    if options.splitByProc:
+    if options.splitByProc or options.splitByProcCat:
+        print("Length workspace", len(w.getWorkspace()))
+        if options.splitByProcCat:
+            procCatLabels = list(itertools.product(*w.actualLabels))
+            for l in range(len(procCatLabels)):
+                newLbl = ''
+                for m in range(len(procCatLabels[l])):
+                    newLbl += '_{}'.format(procCatLabels[l][m])
+                procCatLabels[l] = newLbl[1:]
         for i, workS in enumerate(w.getWorkspace()):
-            f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere, w.actualLabels[0][i]), "RECREATE")
+            if options.splitByProcCat:
+                print(procCatLabels)
+                print(len(procCatLabels))
+                pLabel = procCatLabels[i]
+            elif options.splitByProc:
+                pLabel = w.actualLabels[0][i]
+            f = rt.TFile(getFilenameIn(outfolder, outfile, catLabel, labelHere, pLabel), "RECREATE")
             workS.Write("cms_hgg_13TeV")
             f.Close()
     else:
@@ -388,7 +437,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     if 'SIG' in options.process:
         procOAOut, _, _ = getProcCatOutIn(procOA, cat)
         wOA = t2din.RooWorkspaceFromDataframe(
-            dfOA, splitDicOA, currVariables, weight, "cms_hgg_13TeV", (procOAOut, catOut), wsOA, useHists=useHists, replacementNames=replacements)
+            dfOA, splitDicOA, currVariables, weightUse, "cms_hgg_13TeV", (procOAOut, catOut), wsOA, useHists=useHists, replacementNames=replacements)
         wOA.makeCategories()
         wOA.makeWorkspace()
         fOA = rt.TFile(getFilenameIn(outfolderOA, outfileOA, catLabel, labelHere), "RECREATE")
@@ -434,7 +483,7 @@ def runOneCat(catR, config, options, variables, systematicVariables, nomVariable
     return None, None
 
 def main(options):
-
+    
     outfolder = os.path.abspath(options.outfolder)
     if not os.path.exists(outfolder):
         os.mkdir(outfolder)
@@ -499,10 +548,15 @@ def main(options):
         genPSCut = config['phasespace']['gen']
         # cut = '({0}) and ({1})'.format(cut, config['phasespace']['reco'])
 
+    nomWeight = None
     if process == 'Data':
         weight = 'weight'
     else:
-        weight = config['weight']
+        if isinstance(config['weight'], OrderedDict):
+            weight = config['weight']['syst']
+            nomWeight = config['weight']['nominal']
+        else:
+            weight = config['weight']
     outfile = config['filenames'][process]
     outfileOA = None
     if 'SIG' in options.process:
@@ -522,24 +576,27 @@ def main(options):
             else:
                 systematicVariables.append(('{}{}'.format(var, dirr), -999999., 999999.))
 
-    theoryWeights = config['theoryWeights']
-    print(theoryWeights)
-    for theoryWeight in theoryWeights.keys():
-        for j in range(theoryWeights[theoryWeight]):
-            systematicVariables.append(('{}{}'.format(theoryWeight, j), -999999., 999999.))
+    if 'theoryWeights' in  config.keys():
+        theoryWeights = config['theoryWeights']
+        print(theoryWeights)
+        for theoryWeight in theoryWeights.keys():
+            for j in range(theoryWeights[theoryWeight]):
+                systematicVariables.append(('{}{}'.format(theoryWeight, j), -999999., 999999.))
 
+    addRep = list(config['functions'].keys()) if ('functions' in config.keys()) else []
     varList = [var[0] for var in variables]
     nomVarList = []
     systVarList = []
     if 'SIG' in options.process:
         nomVarList = [var[0] for var in nomVariables]
+        if 'weight' in config.keys():
+            if isinstance(config['weight'], OrderedDict):
+                if 'nominal' in config['weight'].keys():
+                    nomVarList += parseVariablesFromFormula(config['weight']['nominal'], addRep)
         if label is not None:
             systVarList = [var[0].replace('_{}'.format(label),'') for var in systematicVariables]
         else:
             systVarList = [var[0] for var in systematicVariables]
-
-    addRep = list(config['functions'].keys()) if ('functions' in config.keys()) else []
-    # addRep += list(config['formulas'].keys()) if ('formulas' in config.keys()) else []
     
     print(addRep)
     print('varList before: {}'.format(varList))
@@ -550,7 +607,12 @@ def main(options):
         varList += parseVariablesFromFormula(genPSCut, addRep)
     if 'formulas' in config.keys():
         varList += parseVariablesFromFormulas(config['formulas'], addRep)
-
+    if 'weight' in config.keys():
+        if isinstance(config['weight'], OrderedDict):
+            if 'syst' in config['weight'].keys():
+                varList += parseVariablesFromFormula(config['weight']['syst'], addRep)
+        else:
+            varList += parseVariablesFromFormula(config['weight'], addRep)
     print(varList)
     procs = []
     cats = []
@@ -581,16 +643,20 @@ def main(options):
     extCat = config['categories'][0] if extended else None
     wasExtd = True if extended else False
 
+    if options.splitByProcCat and options.splitByProc:
+        print("WARNING: --splitByProc and --splitByProcCat cannot be set at the same time. --splitByProc will be turned off")
+        options.splitByProc = False
+
     if options.cluster is None:
         for cat in categs:
-            procs_temp, cats_temp = runOneCat(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) #rFile, rFileOA,
+            procs_temp, cats_temp = runOneCat(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat, nomWeight) #rFile, rFileOA,
 
         if procs_temp is not None and cats_temp is not None:
             procs.extend([x for x in procs_temp if x not in procs])
             cats.extend([x for x in cats_temp if x not in cats])
     else:
         if options.cluster == 'joblib':
-            res = Parallel(n_jobs=-1, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat) for cat in categs) # rFile, rFileOA,
+            res = Parallel(n_jobs=10, verbose=20)(delayed(runOneCat)(cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat, nomWeight) for cat in categs) # rFile, rFileOA,
 
         elif options.cluster == 'dask':
             print('Getting Cluster')
@@ -599,7 +665,7 @@ def main(options):
             # procCatFutures = client.map(runOneCat, categs, **kwargs)
             procCatFutures = []
             for cat in categs:
-                procCatFutures.append(client.submit(runOneCat, cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat)) # rFile, rFileOA,
+                procCatFutures.append(client.submit(runOneCat, cat, config, options, variables, systematicVariables, nomVariables, splitDic, varList, nomVarList, systVarList, systVars, label, process, outfolder, outfile, replace, weight, cut, genPSCut, outfolderOA, outfileOA, processOA, splitDicOA, extCat, nomWeight)) # rFile, rFileOA,
     
             progress(procCatFutures)
             res = [future.result() for future in procCatFutures]
@@ -630,7 +696,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     requiredAgrs = parser.add_argument_group()
     requiredAgrs.add_argument(
-        '--infile', '-i', action='store', type=str, required=True)
+        '--infile', '-i', nargs='+', action='store', type=str, required=True)
     requiredAgrs.add_argument(
         '--process', '-p', action='store', type=str, required=True)
     requiredAgrs.add_argument(
@@ -641,8 +707,9 @@ if __name__ == "__main__":
     optionalArgs.add_argument('--label', '-l', action='store', type=str)
     optionalArgs.add_argument('--simple', '-s', action='store_true', default=False)
     optionalArgs.add_argument('--splitByProc', action='store_true', default=False)
+    optionalArgs.add_argument('--splitByProcCat', action='store_true', default=False)
     optionalArgs.add_argument('--outfolderOA', action='store', type=str)
     optionalArgs.add_argument('--cluster', action='store', type=str)
-    requiredAgrs.add_argument('--infileOA', action='store', type=str)
+    requiredAgrs.add_argument('--infileOA', nargs='+', action='store', type=str)
     options = parser.parse_args()
     main(options)
