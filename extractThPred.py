@@ -57,12 +57,38 @@ def getBins(bins, var, lastBins):
 
     return bins, binw
 
+def getNNLOPSweight(ptnjets, nnlopsweights):
+    pt = ptnjets[0]
+    njets = ptnjets[1]
+    if njets==0:
+        return nnlopsweights[0].Eval(min(pt, 125.))
+    elif njets==1:
+        return nnlopsweights[1].Eval(min(pt, 625.))
+    elif njets==2:
+        return nnlopsweights[2].Eval(min(pt, 800.))
+    elif njets>=3:
+        return nnlopsweights[3].Eval(min(pt, 925.))
+
 def main(options):
 
     config = yaml.load(open(options.config))
 
-    tags = ['SigmaMpTTag_0', 'NoTag_0']
+    tags = ['NoTag_0', 'SigmaMpTTag_0']
+    dumpers = {
+        'SigmaMpTTag_0' : 'tagsDumper',
+        'NoTag_0' : 'genDiphotonDumper'
+    }
     masss = ['120', '125', '130']
+    if options.proc is None:
+        procs = ['GluGluHToGG', 'VBFHToGG', 'VHToGG', 'ttHJetToGG']
+    else:
+        procs = options.proc
+        
+    NNLOPSfile = ROOT.TFile("/eos/cms/store/group/phys_higgs/cmshgg/flashgg-data/Taggers/data/NNLOPS_reweight.root")
+    nnlopsweights = []
+    for i in range(4):
+        nnlopsweights.append(NNLOPSfile.Get("gr_NNLOPSratio_pt_mcatnlo_{}jet".format(i)))
+    NNLOPSfile.Close()
     
     splitDic = OrderedDict({})
     for key in config['splits'].keys():
@@ -86,8 +112,8 @@ def main(options):
 
     varDic = {
         'weight': ['-inf', 'inf'],
-        'puweight': ['-inf', 'inf'],
-        'genWeight': ['-inf', 'inf']
+        'puweight': ['-inf', 'inf']
+        # 'genWeight': ['-inf', 'inf'],
     }
     variables = parse_variables(varDic)
 
@@ -110,11 +136,11 @@ def main(options):
     columns = splitCols + varList
     print(columns)
     
-    if 'formulas' in config.keys():
-        config['formulas']['genWeight'] = 'weight/puweight'
-    else:
-        config['formulas'] = {}
-        config['formulas']['genWeight'] = 'weight/puweight'
+    # if 'formulas' in config.keys():
+    #     config['formulas']['genWeight'] = 'weight/puweight'
+    # else:
+    #     config['formulas'] = {}
+    #     config['formulas']['genWeight'] = 'weight/puweight'
         
     for key in config['formulas'].keys():
         while key in columns:
@@ -126,24 +152,44 @@ def main(options):
     if 'functions' in config.keys():
         for key in config['functions']:
             exec(config['functions'][key], globals())
-    
+
     # infiles = {}
     # for i, infile in enumerate(options.infiles):
     #     infiles[masss[i]] = infile
 
     dfs = {}
-
+    
     columns = list(set(columns))
     for tag in tags:
         dfs[tag] = {}
+        dpr = dumpers[tag]
+        if 'NoTag' in tag:
+            addCols = ['genPt', 'genNjets4p7']
+        else:
+            addCols = ['NNLOPSweight', 'centralObjectWeight']
         for mass in masss:
-            dfs[tag][mass] = loadRFiles(options.inpath, 'genDiphotonDumper/trees/InsideAcceptance_{}_13TeV_{}'.format(mass, tag), columns, fmatch='output_*_M{}*.root'.format(mass))
-            dfs[tag][mass]['genWeight'] = dfs[tag][mass].eval('weight/puweight')
+            dfs[tag][mass] = pd.DataFrame(columns=columns)
+            for proc in procs:
+                dfLoad = loadRFiles(options.inpath, '{}/trees/InsideAcceptance_{}_13TeV_{}'.format(dpr, mass, tag), list(set(columns+addCols)), fmatch='output_{}_M{}*.root'.format(proc, mass))
+                print('Proc: ', proc)
+                if 'NoTag' in tag:
+                    dfLoad['genWeight'] = dfLoad.eval('weight/puweight')
+                    if 'GluGlu' in proc and options.applyNNLOPSweights:
+                        print('Applying NNLOPSweight')
+                        dfLoad['NNLOPSweight'] = np.apply_along_axis(getNNLOPSweight, 1, dfLoad.loc[:,['genPt', 'genNjets4p7']].values, nnlopsweights=nnlopsweights)
+                        dfLoad['genWeight'] = dfLoad.eval('genWeight*NNLOPSweight')
+                else:
+                    dfLoad['genWeight'] = dfLoad.eval('weight/(puweight*centralObjectWeight)')
+                    if 'GluGlu' in proc and options.applyNNLOPSweights:
+                        print('Applying NNLOPSweight')
+                        dfLoad['genWeight'] = dfLoad.eval('genWeight*(NNLOPSweight/centralObjectWeight)')
+                dfs[tag][mass] = dfs[tag][mass].append(dfLoad.loc[:, columns], ignore_index=True)
 
     gbs = {}
     for tag in tags:
         gbs[tag] = {}
         for mass in masss:
+            print(dfs[tag][mass])
             if 'formulas' in config.keys():
                 evaluate_formulas(dfs[tag][mass], config['formulas'])
             if genPSCut is not None:
@@ -223,5 +269,9 @@ if __name__ == "__main__":
         '--ofile', '-o', action='store', type=str)
     optionalArgs.add_argument(
         '--dumpErrors', '-e', action='store_true', default=False)
+    optionalArgs.add_argument(
+        '--proc', '-p', nargs='+', action='store', type=str)
+    optionalArgs.add_argument(
+        '--applyNNLOPSweights', action='store_true', default=False)
     options = parser.parse_args()
     main(options)    
