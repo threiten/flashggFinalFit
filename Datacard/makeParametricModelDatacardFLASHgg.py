@@ -115,6 +115,7 @@ parser.add_argument("--fullRunII", action='store_true',help="Make systematics ye
 parser.add_argument("--differential",action="store_true",dest="differential",help="differential settings")
 parser.add_argument("--statonly",action="store_true",dest="statonly",help="ignore systematics")
 parser.add_argument("--debugcats",action="store_true",dest="debugcats",help="hack to redefine and debug categories")
+parser.add_argument("--constrainedMass",action="store",type=float, nargs=2, dest="constrainedMass",help="Write mass as nuisance parameter with first value given takes as central value, second as uncertainty")
 options=parser.parse_args()
 allSystList=[]
 if options.submitSelf :
@@ -350,6 +351,8 @@ def getNominalDFs():
          ds.convertToTreeStore()
          df = pd.DataFrame(root_numpy.tree2array(ds.tree()))
          df['weight'] = np.array(weightVec)
+         if 'JetBTagCutWeightCentral' in df.columns:
+            df['JetBTagCutWeight'] = df['JetBTagCutWeightCentral']
          ret[datasetname] = df
 
    return ret
@@ -748,26 +751,26 @@ def printBRSyst():
   outFile.write('\n')
   outFile.write('\n')
 
-# Uncorrelated 2016,2.2,0.0,0.0
-# Uncorrelated 2017,0.0,2.0,0.0
-# Uncorrelated 2018,0.0,0.0,1.5
-# X-Y factorization,0.9,0.8,2.0
-# Length scale 17-18,0.0,0.3,0.2
-# Beam-beam deflection 16-17,0.4,0.4,0.0
-# Dynamic beta 16-17,0.5,0.5,0.0
-# Beam current calibration 17-18,0.0,0.3,0.2
-# Ghosts and satellites 16-17,0.4,0.1,0.0 
+# Uncorrelated 2015       0.9
+# Uncorrelated 2016       0.6
+# Uncorrelated 2017       2.0
+# Uncorrelated 2018       1.5
+# Correlated 2015,2016       1.1,0.9
+# Correlated 2015,2016,2017,2018    0.6,0.6,0.9,2.0
+# Correlated 2017,2018       0.6,0.2
 def printLumiSyst():
   lumiSysts = {
-     'lumi_16_uncorrelated' : [0.022, 0, 0],
+     'lumi_16_uncorrelated' : [0.006, 0, 0],
      'lumi_17_uncorrelated' : [0, 0.020, 0],
      'lumi_18_uncorrelated' : [0 ,0, 0.015],
-     'lumi_X_Y_factorization' : [0.009, 0.008, 0.02],
-     'lumi_Length_Scale' : [0, 0.003, 0.003],
-     'lumi_Beam_Beam_Deflection' : [0.004, 0.004, 0],
-     'lumi_Dynamic_Beta' : [0.005, 0.005, 0],
-     'lumi_Beam_Current_Calibration' : [0, 0.003, 0.002],
-     'lumi_Ghosts_And_Satellites' : [0.004, 0.001, 0]
+     'lumi_161718_correlated' : [0.006, 0.009, 0.02],
+     'lumi_1718_correlated' : [0.0, 0.006, 0.002]
+     # 'lumi_X_Y_factorization' : [0.009, 0.008, 0.02],
+     # 'lumi_Length_Scale' : [0, 0.003, 0.003],
+     # 'lumi_Beam_Beam_Deflection' : [0.004, 0.004, 0],
+     # 'lumi_Dynamic_Beta' : [0.005, 0.005, 0],
+     # 'lumi_Beam_Current_Calibration' : [0, 0.003, 0.002],
+     # 'lumi_Ghosts_And_Satellites' : [0.004, 0.001, 0]
   }
   year = ['16', '17', '18']
   print '[INFO] Lumi...'
@@ -834,24 +837,24 @@ if not options.statonly:
    # flashggSysts['LooseMvaSF'] =  'LooseMvaSF'
    flashggSysts['PreselSF']    =  'PreselSF'
    flashggSysts['SigmaEOverEShift'] = 'SigmaEOverEShift'
-   flashggSysts['ElectronIDWeight'] = 'electronID'
-   flashggSysts['ElectronRecoWeight'] = 'electronReco'
    flashggSysts['electronVetoSF'] = 'electronVetoSF'
    flashggSysts['TriggerWeight'] = 'TriggerWeight'
    # flashggSysts['JEC'] = 'JEC'
-   flashggSysts['JER'] = 'JER'
+   flashggSysts['JER'] = 'res_j'
    flashggSysts['PUJIDShift'] = 'PUJIDShift'
 
 
-   if any("lepton" in s for s in options.procs) or any("Lepton" in s for s in options.procs):
+   if any("lepton" in s for s in options.procs) or any("Lepton" in s for s in options.procs) or any("NL_" in s for s in options.procs):
       flashggSysts['MuonWeight'] = 'eff_m'
-      flashggSysts['MuonMiniIsoWeight'] = 'eff_m_MiniIso'
+      flashggSysts['MuonIsoWeight'] = 'eff_m_MiniIso'
+      flashggSysts['ElectronIDWeight'] = 'eff_e_ID'
+      flashggSysts['ElectronRecoWeight'] = 'eff_e_Reco'
 
 
-   if any("Bflavor" in s for s in options.procs) or any("Bjet" in s for s in options.procs):
+   if any("Bflavor" in s for s in options.procs) or any("Bjet" in s for s in options.procs) or any("BJet" in s for s in options.procs) or any("NB_" in s for s in options.procs):
       flashggSysts['JetBTagCutWeight'] = 'eff_b'
 
-   if any("MET" in s for s in options.procs):
+   if any("PtM" in s for s in options.procs):
       flashggSysts['metPhoUncertainty'] = 'MET_PhotonScale'
       flashggSysts['metUncUncertainty'] = 'MET_Unclustered'
       flashggSysts['metJecUncertainty'] = 'MET_JEC'
@@ -872,7 +875,9 @@ if not options.statonly:
          flashggSysts.update(dic)
 
       flashggSysts['JetHEM_18'] = 'JetHEM_18'
-         
+      flashggSysts['prefireWeight_16'] = 'prefireWeight_16'
+      flashggSysts['prefireWeight_17'] = 'prefireWeight_17'
+      
       JECSysts = {
          'JECAbsolute' : 'Absolute',
          'JECRelativeBal' : 'RelativeBal',
@@ -1147,6 +1152,8 @@ def printNuisParams():
       printNuisParam(phoSyst,"smear",sqrts)
     for phoSyst in options.photonCatSmearsCorr:
       printNuisParam(phoSyst,"smear")
+    if options.constrainedMass is not None:
+      outFile.write('MH param %.2f %1.4g\n'%(options.constrainedMass[0], options.constrainedMass[1]))
     outFile.write('\n')
 ###############################################################################
 
