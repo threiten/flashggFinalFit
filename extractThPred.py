@@ -141,10 +141,10 @@ def main(options):
     # else:
     #     config['formulas'] = {}
     #     config['formulas']['genWeight'] = 'weight/puweight'
-        
-    for key in config['formulas'].keys():
-        while key in columns:
-            columns.remove(key)
+    if 'formulas' in config.keys():
+        for key in config['formulas'].keys():
+            while key in columns:
+                columns.remove(key)
     # for wName in ['weight', 'puweight']:
     #     if wName not in columns:
     #         columns += [wName]
@@ -183,8 +183,9 @@ def main(options):
                     if 'GluGlu' in proc and options.applyNNLOPSweights:
                         print('Applying NNLOPSweight')
                         dfLoad['genWeight'] = dfLoad.eval('genWeight*(NNLOPSweight/centralObjectWeight)')
-                dfs[tag][mass] = dfs[tag][mass].append(dfLoad.loc[:, columns], ignore_index=True)
+                dfs[tag][mass] = dfs[tag][mass].append(dfLoad.loc[:, columns+['genWeight']], ignore_index=True)
 
+    variables.append(('genWeight', float('-inf'), float('inf')))
     gbs = {}
     for tag in tags:
         gbs[tag] = {}

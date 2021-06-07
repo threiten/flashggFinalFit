@@ -196,6 +196,7 @@ vhHadCat    =[]
 tightLepCat=[]
 looseLepCat=[]
 metCat=[]
+reweightedDatasets = {}
 #fill
 for i in range(len(options.cats)):
   if "Untagged" in options.cats[i]:
@@ -844,17 +845,17 @@ if not options.statonly:
    flashggSysts['PUJIDShift'] = 'PUJIDShift'
 
 
-   if any("lepton" in s for s in options.procs) or any("Lepton" in s for s in options.procs) or any("NL_" in s for s in options.procs):
-      flashggSysts['MuonWeight'] = 'eff_m'
+   if any("lepton" in s for s in options.procs) or any("Lepton" in s for s in options.procs) or any("NL_" in s for s in options.procs)  or '1L' in options.ext:
+      flashggSysts['MuonIDWeight'] = 'eff_m_ID'
       flashggSysts['MuonIsoWeight'] = 'eff_m_MiniIso'
       flashggSysts['ElectronIDWeight'] = 'eff_e_ID'
       flashggSysts['ElectronRecoWeight'] = 'eff_e_Reco'
 
 
-   if any("Bflavor" in s for s in options.procs) or any("Bjet" in s for s in options.procs) or any("BJet" in s for s in options.procs) or any("NB_" in s for s in options.procs):
+   if any("Bflavor" in s for s in options.procs) or any("Bjet" in s for s in options.procs) or any("BJet" in s for s in options.procs) or any("NBJ_" in s for s in options.procs) or '1B' in options.ext:
       flashggSysts['JetBTagCutWeight'] = 'eff_b'
 
-   if any("PtM" in s for s in options.procs):
+   if "PtM" in options.ext:
       flashggSysts['metPhoUncertainty'] = 'MET_PhotonScale'
       flashggSysts['metUncUncertainty'] = 'MET_Unclustered'
       flashggSysts['metJecUncertainty'] = 'MET_JEC'
@@ -1206,6 +1207,9 @@ def getFlashggLine(proc,cat,syst):
   if (asymmetric and eventweight) :
 
      df = nominalDFDict[datasetname]
+     for tpeWeight in ['ElectronIDWeight', 'ElectronRecoWeight', 'MuonIsoWeight', 'MuonIDWeight', 'JetBTagCutWeight']:
+        if tpeWeight in df.columns:
+           df['weight'] = df.eval('weight/{}'.format(tpeWeight))
      wDown = df.eval('{}Down01sigma*(weight/centralObjectWeight)'.format(syst))
      wUp = df.eval('{}Up01sigma*(weight/centralObjectWeight)'.format(syst))
      downS = 1 + ((wDown.sum() - df['weight'].sum())/df['weight'].sum())
@@ -1249,7 +1253,31 @@ def getFlashggLine(proc,cat,syst):
     # dataNOMINAL =  data_nominal  #repalce UP/DOwn histograms defined outside scope of this "if"
      flashggSystDump.write('proc: %s, cat: %s, %s nominal: %5.3f up: %5.3f down: %5.3f vals: [%5.3f,%5.3f] \n'%(proc,cat,syst,dataNOMINAL.sumEntries(),wUp.sum(),wDown.sum(),systVals[0],systVals[1]))
   else:
-     systVals = interp1SigmaDataset(dataNOMINAL,dataDOWN,dataUP)
+     data_nominal = dataNOMINAL.emptyClone();
+     use_nominal = False
+     weightNew = r.RooRealVar("weight","weight",0)
+     massNew = inWS.var("CMS_hgg_mass")
+     exWgtList = []
+     for tpeWeight in ['ElectronIDWeight', 'ElectronRecoWeight', 'MuonIsoWeight', 'MuonIDWeight', 'JetBTagCutWeightCentral']:
+        if inWS.var(tpeWeight) is not None:
+           weight_tpe = inWS.var(tpeWeight)
+           exWgtList.append(weight_tpe)
+           use_nominal = True
+     print "use_nominal: ", use_nominal, " exWgtList: ", exWgtList
+     if use_nominal:
+        if dataNOMINAL.GetName() not in reweightedDatasets.keys():
+           for i in range(0, int(dataNOMINAL.numEntries())):
+              massNew.setVal(dataNOMINAL.get(i).getRealValue("CMS_hgg_mass"))
+              wgtNOM = dataNOMINAL.weight()
+              wgtSet = wgtNOM
+              for tpeWgt in exWgtList:
+                 wgtSet /= dataNOMINAL.get(i).getRealValue(tpeWgt.GetName())
+              weightNew.setVal(wgtSet)
+              data_nominal.add(r.RooArgSet(massNew, weightNew), weightNew.getVal())
+           reweightedDatasets[data_nominal.GetName()] = data_nominal
+        systVals = interp1SigmaDataset(reweightedDatasets[dataNOMINAL.GetName()],dataDOWN,dataUP)
+     else:
+        systVals = interp1SigmaDataset(dataNOMINAL,dataDOWN,dataUP)
      flashggSystDump.write('proc: %s, cat: %s, %s nominal: %5.3f up: %5.3f down: %5.3f vals: [%5.3f,%5.3f] \n'%(proc,cat,syst,dataNOMINAL.sumEntries(),dataUP.sumEntries(),dataDOWN.sumEntries(),systVals[0],systVals[1]))
   print "systvals ", systVals 
   if systVals[0]==1 and systVals[1]==1:
