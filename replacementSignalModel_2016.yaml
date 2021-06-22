@@ -89,8 +89,8 @@ NBjets2p5:
   proc: 'smH_NBJ_0'
 
 PtMiss:
-  tag: 'hgg_PTHMiss_0p0_30p0_cat2_16'
-  proc: 'smH_PTHMiss_0p0_30p0'
+  tag: 'hgg_PTHMiss_0p0_100p0_cat2_16'
+  proc: 'smH_PTHMiss_0p0_100p0'
 
 Jet4p7Pt1VBFlike:
   tag: 'hgg_PTJ1_40p0_65p0_cat2_16'

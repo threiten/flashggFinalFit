@@ -37,6 +37,8 @@ def loadRFiles(path, treepath, branches, cutoff=None, shuffle=False, fmatch=None
         if shuffle:
             random.shuffle(flist)
         path = [os.path.join(path, f) for f in flist]
+        if len(path) == 0:
+            raise OSError("No matching files found!")
     it = uproot.pandas.iterate(path, treepath=treepath, branches=branches)
     ret = pd.DataFrame(columns=branches)
     for df in it:
@@ -78,7 +80,12 @@ def main(options):
         'SigmaMpTTag_0' : 'tagsDumper',
         'NoTag_0' : 'genDiphotonDumper'
     }
-    masss = ['120', '125', '130']
+
+    if options.masses is None:
+        masss = ['120', '125', '130']
+    else:
+        masss = options.masses
+        
     if options.proc is None:
         procs = ['GluGluHToGG', 'VBFHToGG', 'VHToGG', 'ttHJetToGG']
     else:
@@ -230,8 +237,8 @@ def main(options):
 
     
     print(bins, binw, labels)
-    xss = np.zeros((len(binw),3))
-    errs = np.zeros((len(binw),3))
+    xss = np.zeros((len(binw),len(masss)))
+    errs = np.zeros((len(binw),len(masss)))
     for i in range(len(binw)):
         for j, mass in enumerate(masss):
             xss[i, j] = (gbs[tags[0]][mass].get_group(labels[i])['genWeight'].sum() + gbs[tags[1]][mass].get_group(labels[i])['genWeight'].sum())/binw[i]
@@ -272,6 +279,8 @@ if __name__ == "__main__":
         '--dumpErrors', '-e', action='store_true', default=False)
     optionalArgs.add_argument(
         '--proc', '-p', nargs='+', action='store', type=str)
+    optionalArgs.add_argument(
+        '--masses', '-M', nargs='+', action='store', type=str)
     optionalArgs.add_argument(
         '--applyNNLOPSweights', action='store_true', default=False)
     options = parser.parse_args()

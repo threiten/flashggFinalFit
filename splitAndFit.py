@@ -205,8 +205,8 @@ def main(options):
             refProcWV = replacementDic[year][options.extension]['procWV'] if 'procWV' in replacementDic[year][options.extension].keys() else replacementDic[year][options.extension]['proc']
             replStr = '--refTagDiff={0} --refTagWV={2} --refProcWV={3} --refProcDiff={1} --refProc={1}'.format(
                 replacementDic[year][options.extension]['tag'], replacementDic[year][options.extension]['proc'], refTagWV, refProcWV)
-            bkgFitsP.append(subprocess.Popen(r"bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runBackgroundOnly=1 --DatacardOpt=--noSysts --sigModOpt=--noSysts --inputDir={5}".format(
-                yrLabel, ext, variable, replStr, cmssw_path, inpDir), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True)) #--bkgModOpt=--noSysts  --bkgLabel={0}
+            bkgFitsP.append(subprocess.Popen(r"bash runFinalFitsScripts_differential_univ_{0}.sh --obs={2} --ext={1} --procs=$(head -n1 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1),OutsideAcceptance --cats=$(head -n2 {5}/m125_{1}/proc_cat_names_gen{2}.txt | tail -1) {3} --runBackgroundOnly=1 --bkgLabel={0} --inputDir={5}".format(
+                yrLabel, ext, variable, replStr, cmssw_path, inpDir), cwd='{0}/src/flashggFinalFit'.format(cmssw_path), shell=True))
             commands['Background_{}'.format(year)] = bkgFitsP[-1].args
 
         retCodes = [subp.wait() for subp in bkgFitsP]

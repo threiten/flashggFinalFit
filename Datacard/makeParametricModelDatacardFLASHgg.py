@@ -321,6 +321,8 @@ if not options.statonly:
    theorySyst['scaleWeights'] = [4,8,"asym"]
    theorySyst['alphaSWeights'] = [0,1,"asym"]
    theorySyst['pdfWeights'] = [1,60,"sym"]
+   # theorySyst['pdfWeights_16'] = [1,60,"sym"]
+   # theorySyst['pdfWeights_17_18'] = [1,60,"sym"]
    
    theorySystAbsScale={}
    theorySystAbsScale['names'] = ["QCDscale_qqbar_up","QCDscale_gg_up","QCDscale_qqbar_down","QCDscale_gg_down","pdf_alphaS_qqbar","pdf_alphaS_gg","pdf_qqbar","pdf_gg","alphaS_qqbar","alphaS_gg"] #QCD scale up, QCD scale down, PDF+alpha S, PDF, alpha S 
@@ -354,6 +356,8 @@ def getNominalDFs():
          df['weight'] = np.array(weightVec)
          if 'JetBTagCutWeightCentral' in df.columns:
             df['JetBTagCutWeight'] = df['JetBTagCutWeightCentral']
+         df = df.loc[abs(df['scaleWeights0'])>0.05, :]
+         df = df.loc[abs(df['pdfWeights0'])>0.05, :]
          ret[datasetname] = df
 
    return ret
@@ -390,6 +394,13 @@ def printTheorySysts():
       asymmetric=("asym" in systDetails[-1])
       thSystEntries = range(systDetails[0], systDetails[1]) if not asymmetric else range(0, len(systDetails[:-1])-1)
       asymInds = None if not asymmetric else systDetails[:-1]
+      years = []
+      for it in systName.split('_'):
+         if it in ['16', '17', '18']:
+            years.append(it)
+      if len(years) == 0:
+         years = ['16', '17', '18']
+      print(years)
       for i in thSystEntries:
         name="CMS_hgg_"+systName+str(i) if not asymmetric else "CMS_hgg_"+systName #FIXME
         if (not "Theory" in allSystList ) :allSystList.append("Theory")
@@ -399,18 +410,21 @@ def printTheorySysts():
         outFile.write('%-35s  lnN   '%(name))
         print "CATEGORIES"
         print options.cats
-        for c in options.cats:
-          for p in options.procs:
+        for c in options.cats: 
+          for p in options.procs: 
             if '%s:%s'%(p,c) in options.toSkip: continue
 ###            if "bkg" in flashggProc[p] : 
             if "bkg" in p : 
+              outFile.write('- ')
+              continue
+            elif c[-2:] not in years:
               outFile.write('- ')
               continue
             else:
 ###              outFile.write(getFlashggLineTheoryWeights(flashggProc[p],c,systName,i,asymmetric))
                # tbw = getFlashggLineTheoryWeights(p,c,systName,i,asymmetric,asymInds)
                normalizeAccrProc = True if systName in ['scaleWeights', 'alphaSWeights'] else False
-               tbw = getTheoryWeightsLineFast(p,c,systName,i,asymmetric,asymInds,normalizeAccrProc)
+               tbw = getTheoryWeightsLineFast(p,c,systName.split("_")[0],i,asymmetric,asymInds,normalizeAccrProc)
                print "This is what we get back from getFlashggLineTheoryWeights"
                print tbw
 ###              outFile.write(getFlashggLineTheoryWeights(p,c,systName,i,asymmetric))
@@ -1576,7 +1590,7 @@ def printTTHSysts():
       outFile.write('\n')
   outFile.write('\n')
 
-def printSimpleTTHSysts():
+def printSimpleTHSysts():
   for systName, systVal in ggHforttHSysts.items():
     outFile.write('%-35s   lnN   '%systName)
     for c in options.cats:
