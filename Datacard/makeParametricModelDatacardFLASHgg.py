@@ -1221,9 +1221,9 @@ def getFlashggLine(proc,cat,syst):
   if (asymmetric and eventweight) :
 
      df = nominalDFDict[datasetname]
-     for tpeWeight in ['ElectronIDWeight', 'ElectronRecoWeight', 'MuonIsoWeight', 'MuonIDWeight', 'JetBTagCutWeight']:
-        if tpeWeight in df.columns:
-           df['weight'] = df.eval('weight/{}'.format(tpeWeight))
+     # for tpeWeight in ['ElectronIDWeight', 'ElectronRecoWeight', 'MuonIsoWeight', 'MuonIDWeight', 'JetBTagCutWeight']:
+     #    if tpeWeight in df.columns:
+     #       df['weight'] = df.eval('weight/{}'.format(tpeWeight))
      wDown = df.eval('{}Down01sigma*(weight/centralObjectWeight)'.format(syst))
      wUp = df.eval('{}Up01sigma*(weight/centralObjectWeight)'.format(syst))
      downS = 1 + ((wDown.sum() - df['weight'].sum())/df['weight'].sum())
@@ -1272,26 +1272,26 @@ def getFlashggLine(proc,cat,syst):
      weightNew = r.RooRealVar("weight","weight",0)
      massNew = inWS.var("CMS_hgg_mass")
      exWgtList = []
-     for tpeWeight in ['ElectronIDWeight', 'ElectronRecoWeight', 'MuonIsoWeight', 'MuonIDWeight', 'JetBTagCutWeightCentral']:
-        if inWS.var(tpeWeight) is not None:
-           weight_tpe = inWS.var(tpeWeight)
-           exWgtList.append(weight_tpe)
-           use_nominal = True
-     print "use_nominal: ", use_nominal, " exWgtList: ", exWgtList
-     if use_nominal:
-        if dataNOMINAL.GetName() not in reweightedDatasets.keys():
-           for i in range(0, int(dataNOMINAL.numEntries())):
-              massNew.setVal(dataNOMINAL.get(i).getRealValue("CMS_hgg_mass"))
-              wgtNOM = dataNOMINAL.weight()
-              wgtSet = wgtNOM
-              for tpeWgt in exWgtList:
-                 wgtSet /= dataNOMINAL.get(i).getRealValue(tpeWgt.GetName())
-              weightNew.setVal(wgtSet)
-              data_nominal.add(r.RooArgSet(massNew, weightNew), weightNew.getVal())
-           reweightedDatasets[data_nominal.GetName()] = data_nominal
-        systVals = interp1SigmaDataset(reweightedDatasets[dataNOMINAL.GetName()],dataDOWN,dataUP)
-     else:
-        systVals = interp1SigmaDataset(dataNOMINAL,dataDOWN,dataUP)
+     # for tpeWeight in ['ElectronIDWeight', 'ElectronRecoWeight', 'MuonIsoWeight', 'MuonIDWeight', 'JetBTagCutWeightCentral']:
+     #    if inWS.var(tpeWeight) is not None:
+     #       weight_tpe = inWS.var(tpeWeight)
+     #       exWgtList.append(weight_tpe)
+     #       use_nominal = True
+     # print "use_nominal: ", use_nominal, " exWgtList: ", exWgtList
+     # if use_nominal:
+     #    if dataNOMINAL.GetName() not in reweightedDatasets.keys():
+     #       for i in range(0, int(dataNOMINAL.numEntries())):
+     #          massNew.setVal(dataNOMINAL.get(i).getRealValue("CMS_hgg_mass"))
+     #          wgtNOM = dataNOMINAL.weight()
+     #          wgtSet = wgtNOM
+     #          for tpeWgt in exWgtList:
+     #             wgtSet /= dataNOMINAL.get(i).getRealValue(tpeWgt.GetName())
+     #          weightNew.setVal(wgtSet)
+     #          data_nominal.add(r.RooArgSet(massNew, weightNew), weightNew.getVal())
+     #       reweightedDatasets[data_nominal.GetName()] = data_nominal
+     #    systVals = interp1SigmaDataset(reweightedDatasets[dataNOMINAL.GetName()],dataDOWN,dataUP)
+     # else:
+     systVals = interp1SigmaDataset(dataNOMINAL,dataDOWN,dataUP)
      flashggSystDump.write('proc: %s, cat: %s, %s nominal: %5.3f up: %5.3f down: %5.3f vals: [%5.3f,%5.3f] \n'%(proc,cat,syst,dataNOMINAL.sumEntries(),dataUP.sumEntries(),dataDOWN.sumEntries(),systVals[0],systVals[1]))
   print "systvals ", systVals 
   if systVals[0]==1 and systVals[1]==1:
